@@ -26,10 +26,10 @@ public class Member extends Timestamped {
     private String nickname;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String password;
+
+    @Column
+    private Long kakaoId;
 
     @Column
     private String profileUrl;
@@ -44,5 +44,11 @@ public class Member extends Timestamped {
         }
         Member member = (Member) o;
         return id != null && Objects.equals(id, member.id);
+    }
+
+    public Member(String nickname, String password, Long kakaoId){
+        this.nickname = nickname;
+        this.password = password;
+        this.kakaoId = kakaoId;
     }
 }
