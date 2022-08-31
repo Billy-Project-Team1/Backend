@@ -50,6 +50,12 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(TokenNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleTokenNotExistExcetpion() {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.TOKEN_NOT_EXIST.getCode(), ErrorCode.TOKEN_NOT_EXIST.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleApiRequestException(IllegalArgumentException ex) {
         Exception exception = new Exception();
