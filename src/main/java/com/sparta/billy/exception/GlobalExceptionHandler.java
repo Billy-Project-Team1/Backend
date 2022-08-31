@@ -32,9 +32,9 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NotFoundCommentException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundCommentException() {
-        return new ResponseEntity<>(new ErrorResponse(ErrorCode.NOT_FOUND_COMMENT.getCode(), ErrorCode.NOT_FOUND_COMMENT.getMessage()),
+    @ExceptionHandler(NotFoundReviewException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundReviewException() {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.NOT_FOUND_REVIEW.getCode(), ErrorCode.NOT_FOUND_REVIEW.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 

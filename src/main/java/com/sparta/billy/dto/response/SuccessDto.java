@@ -9,7 +9,6 @@ public class SuccessDto {
     private Boolean success;
 
     public static SuccessDto valueOf(String value){
-
         SuccessDto successDto = new SuccessDto();
         if ( value.equals("true")){ successDto.success = true; }
         else if ( value.equals("false") ){ successDto.success = false; }

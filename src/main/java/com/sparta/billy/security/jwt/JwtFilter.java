@@ -59,15 +59,11 @@ public class JwtFilter extends OncePerRequestFilter {
       }
 
       if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().println(
-            new ObjectMapper().writeValueAsString(
-                ResponseDto.fail("BAD_REQUEST", "Token이 유효햐지 않습니다.")
-            )
-        );
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Origin,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization,Access-Token-Expire-Time");
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+          response.setContentType("application/json;charset=UTF-8");
+          response.sendError(HttpServletResponse.SC_BAD_REQUEST, "토큰이 유효하지 않습니다.");
+          response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+          response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Origin,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization,Access-Token-Expire-Time");
+          response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       }
 
       String subject = claims.getSubject();

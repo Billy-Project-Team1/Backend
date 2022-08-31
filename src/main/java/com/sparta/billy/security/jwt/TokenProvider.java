@@ -2,6 +2,8 @@ package com.sparta.billy.security.jwt;
 
 import com.sparta.billy.dto.TokenDto;
 import com.sparta.billy.dto.response.ResponseDto;
+import com.sparta.billy.dto.response.SuccessDto;
+import com.sparta.billy.exception.ex.TokenNotExistException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
 import com.sparta.billy.model.UserDetailsImpl;
@@ -13,6 +15,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -110,13 +113,13 @@ public class TokenProvider {
   }
 
   @Transactional
-  public ResponseDto<?> deleteRefreshToken(Member member) {
+  public ResponseEntity<SuccessDto> deleteRefreshToken(Member member) {
     RefreshToken refreshToken = isPresentRefreshToken(member);
     if (null == refreshToken) {
-      return ResponseDto.fail("TOKEN_NOT_FOUND", "존재하지 않는 Token 입니다.");
+      throw new TokenNotExistException();
     }
 
     refreshTokenRepository.delete(refreshToken);
-    return ResponseDto.success("success");
+    return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
   }
 }
