@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
@@ -18,17 +19,27 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/members/signup")
-    public ResponseEntity<?> signup(@RequestBody MemberSignupRequestDto signupRequestDto) {
+    public ResponseEntity<SuccessDto> signup(@RequestBody MemberSignupRequestDto signupRequestDto) {
         return memberService.signup(signupRequestDto);
     }
 
     @GetMapping("/members/email-check")
-    public ResponseEntity<?> emailDuplicateCheck(String email) {
+    public ResponseEntity<SuccessDto> emailDuplicateCheck(String email) {
         return memberService.emailDuplicateCheck(email);
     }
 
     @PostMapping("/members/login")
     public ResponseDto<?> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
         return memberService.login(loginDto, response);
+    }
+
+    @PostMapping("/members/reissue")
+    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(request, response);
+    }
+
+    @PostMapping("/members/logout")
+    public ResponseEntity<SuccessDto> logout(HttpServletRequest request) {
+        return memberService.logout(request);
     }
 }
