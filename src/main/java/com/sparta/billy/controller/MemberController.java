@@ -34,8 +34,8 @@ public class MemberController {
     }
 
     @PostMapping("/members/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        return memberService.reissue(request, response);
+    public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(email, request, response);
     }
 
     @PostMapping("/members/logout")

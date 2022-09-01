@@ -2,6 +2,7 @@ package com.sparta.billy.util;
 
 import com.sparta.billy.exception.ex.MemberNotFoundException;
 import com.sparta.billy.exception.ex.TokenExpiredException;
+import com.sparta.billy.exception.ex.TokenNotExistException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.repository.MemberRepository;
 import com.sparta.billy.security.jwt.TokenProvider;
@@ -19,7 +20,7 @@ public class Check {
     private final TokenProvider tokenProvider;
 
     public void tokenCheck(HttpServletRequest request, Member member) {
-        if (request.getHeader("Authorization") == null) throw new TokenExpiredException();
+        if (request.getHeader("Authorization") == null) throw new TokenNotExistException();
         if (member == null) throw new MemberNotFoundException();
     }
 
