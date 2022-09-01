@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 public class KakaoMemberController {
     private final KakaoMemberService kakaoMemberService;
 
-    @GetMapping("/member/kakaoLogin/callback")
+    @GetMapping("/oauth/kakao/callback")
     public ResponseEntity<?> kakaoLogin(@RequestParam(value = "code") String code,HttpServletResponse response) throws JsonProcessingException{
         return kakaoMemberService.kakaoLogin(code,response);
     }

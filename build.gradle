@@ -37,10 +37,8 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
-
-    // 카카오로그인
-    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
+    // aws
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.2'
 }
 
 tasks.named('test') {
