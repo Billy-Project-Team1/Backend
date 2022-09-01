@@ -31,8 +31,8 @@ public class Check {
 
     @Transactional
     public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Authorization").substring(7))) {
-            throw new TokenExpiredException();
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            return null;
         }
         return tokenProvider.getMemberFromAuthentication();
     }
