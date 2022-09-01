@@ -1,7 +1,15 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.7.3'
     id 'io.spring.dependency-management' version '1.0.13.RELEASE'
     id 'java'
+    //querydsl 추가
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.sparta'
@@ -39,7 +47,39 @@ dependencies {
 
     // aws
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.2'
+
+    // tika
+    implementation group: 'org.apache.tika', name: 'tika-parsers', version: '1.24.1'
+
+    //querydsl 추가
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // swagger
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 }
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets {
+    main.java.srcDir querydslDir
+}
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+//querydsl 추가 끝
 
 tasks.named('test') {
     useJUnitPlatform()
