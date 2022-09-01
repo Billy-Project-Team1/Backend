@@ -84,32 +84,32 @@ public class MemberService {
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
 
-    @Transactional
-    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        // RefreshToken 유효성 검사
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            throw new RuntimeException("Refresh-Token 기간이 만료 되었습니다.");
-        }
-
-        // 유저 정보 꺼내기
-        Member member = refreshTokenRepository.findByValue(refreshToken);
-        if (member == null) {
-            throw new RuntimeException("토큰 정보가 없습니다.");
-        }
-
-        RefreshToken refreshTokenConfirm = refreshTokenRepository.findByMember(member).orElseThrow();
-
-        if (refreshToken.equals(refreshTokenConfirm.getValue())) {
-            // 토큰 재발행
-            TokenDto tokenDto = tokenProvider.generateAccessTokenDto(member);
-            accessTokenToHeaders(tokenDto, response);
-            return new ResponseEntity<>(ResponseDto.success("ACCESS_TOKEN_REISSUE"), HttpStatus.OK);
-        }
-        // 기존 토큰 삭제
-        tokenProvider.deleteRefreshToken(memberRepository.findById(member.getId()).get());
-        throw new MemberNotFoundException();
-
-    }
+//    @Transactional
+//    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+//        // RefreshToken 유효성 검사
+//        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+//            throw new RuntimeException("Refresh-Token 기간이 만료 되었습니다.");
+//        }
+//
+//        // 유저 정보 꺼내기
+//        Member member = refreshTokenRepository.findByValue(refreshToken);
+//        if (member == null) {
+//            throw new RuntimeException("토큰 정보가 없습니다.");
+//        }
+//
+//        RefreshToken refreshTokenConfirm = refreshTokenRepository.findByMember(member).orElseThrow();
+//
+//        if (refreshToken.equals(refreshTokenConfirm.getValue())) {
+//            // 토큰 재발행
+//            TokenDto tokenDto = tokenProvider.generateAccessTokenDto(member);
+//            accessTokenToHeaders(tokenDto, response);
+//            return new ResponseEntity<>(ResponseDto.success("ACCESS_TOKEN_REISSUE"), HttpStatus.OK);
+//        }
+//        // 기존 토큰 삭제
+//        tokenProvider.deleteRefreshToken(memberRepository.findById(member.getId()).get());
+//        throw new MemberNotFoundException();
+//
+//    }
     public void accessTokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
