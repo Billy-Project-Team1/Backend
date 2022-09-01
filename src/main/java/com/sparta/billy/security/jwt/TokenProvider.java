@@ -3,6 +3,8 @@ package com.sparta.billy.security.jwt;
 import com.sparta.billy.dto.TokenDto;
 import com.sparta.billy.dto.response.ResponseDto;
 import com.sparta.billy.dto.response.SuccessDto;
+import com.sparta.billy.exception.ex.ErrorCode;
+import com.sparta.billy.exception.ex.TokenExpiredException;
 import com.sparta.billy.exception.ex.TokenNotExistException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
@@ -31,7 +33,7 @@ import java.util.Optional;
 public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;       //30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 1;       //30분
     private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24 * 7;     //7일
 
     private final Key key;
@@ -110,20 +112,20 @@ public class TokenProvider {
         return ((UserDetailsImpl) authentication.getPrincipal()).getMember();
     }
 
+    // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(setTokenName(token));
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token, 만료된 JWT token 입니다.");
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        } catch (Exception e) {
+            log.info("토큰에러");
+            return false;
         }
-        return false;
+    }
+
+    // Bearer 삭제
+    private String setTokenName(String bearerToken){
+        return bearerToken.replace("Bearer ", "");
     }
 
     @Transactional(readOnly = true)
