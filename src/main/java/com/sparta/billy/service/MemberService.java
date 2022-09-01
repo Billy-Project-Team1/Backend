@@ -13,6 +13,7 @@ import com.sparta.billy.exception.ex.TokenNotExistException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
 import com.sparta.billy.repository.MemberRepository;
+import com.sparta.billy.repository.RefreshTokenRepository;
 import com.sparta.billy.security.jwt.TokenProvider;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import java.io.IOException;
 public class MemberService {
     private final AwsS3Service awsS3Service;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final Check check;
@@ -77,37 +79,52 @@ public class MemberService {
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
 
-//    @Transactional
-//    public ResponseDto<?> updateProfile(Long memberId, MemberRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
-//        Member checkMember = check.validateMember(request);
-//        check.tokenCheck(request, checkMember);
-//
-//        if (!checkMember.getId().equals(memberId)) {
-//            throw new IllegalArgumentException("자신의 프로필만 수정가능합니다.");
-//        }
-//
-//        Member member = check.getCurrentMember(memberId);
-//        String profileUrl;
-//        if (file != null) {
-//            if (member.getProfileUrl() != null) {
-//                String key = member.getProfileUrl().substring("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/".length());
-//                awsS3Service.deleteS3(key);
-//            }
-//            profileUrl = awsS3Service.upload(file);
-//            member.updateProfile(memberRequestDto, profileUrl);
-//        } else {
-//            member.updateProfile(memberRequestDto, null);
-//        }
-//
-//        return ResponseDto.success(MemberResponseDto.builder()
-//                .id(member.getId())
-//                .email(member.getEmail())
-//                .profileUrl(member.getProfileUrl())
-//                .nickname(member.getNickname())
-//                .createdAt(member.getCreatedAt())
-//                .updatedAt(member.getUpdatedAt())
-//                .build());
-//    }
+    @Transactional
+    public ResponseDto<?> updateProfile(Long memberId, MemberRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
+        Member checkMember = check.validateMember(request);
+        check.tokenCheck(request, checkMember);
+
+        if (!checkMember.getId().equals(memberId)) {
+            throw new IllegalArgumentException("자신의 프로필만 수정가능합니다.");
+        }
+
+        Member member = check.getCurrentMember(memberId);
+        String profileUrl;
+        if (file != null) {
+            if (member.getProfileUrl() != null) {
+                String key = member.getProfileUrl().substring("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/".length());
+                awsS3Service.deleteS3(key);
+            }
+            profileUrl = awsS3Service.upload(file);
+            member.updateProfile(memberRequestDto, profileUrl);
+        } else {
+            member.updateProfile(memberRequestDto, null);
+        }
+
+        return ResponseDto.success(MemberResponseDto.builder()
+                .id(member.getId())
+                .email(member.getEmail())
+                .profileUrl(member.getProfileUrl())
+                .nickname(member.getNickname())
+                .createdAt(member.getCreatedAt())
+                .updatedAt(member.getUpdatedAt())
+                .build());
+    }
+
+    @Transactional
+    public ResponseEntity<SuccessDto> deleteMember(Long memberId) {
+        Member member = check.getCurrentMember(memberId);
+
+        if (member == null) {
+            throw new MemberNotFoundException();
+        }
+
+        if (refreshTokenRepository.findByMember(member).isPresent()) {
+            refreshTokenRepository.deleteByMember(member);
+        }
+        memberRepository.delete(member);
+        return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
+    }
 
     @Transactional
     public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
@@ -134,5 +151,6 @@ public class MemberService {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
+
 
 }
