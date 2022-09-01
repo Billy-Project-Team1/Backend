@@ -120,6 +120,10 @@ fabric.properties
 
 # 설정 파일
 application.properties
+.gradle
+.idea
+
+.gradle
 
 # Log file
 *.log
