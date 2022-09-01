@@ -1,10 +1,7 @@
 package com.sparta.billy.security.jwt;
 
 import com.sparta.billy.dto.TokenDto;
-import com.sparta.billy.dto.response.ResponseDto;
 import com.sparta.billy.dto.response.SuccessDto;
-import com.sparta.billy.exception.ex.ErrorCode;
-import com.sparta.billy.exception.ex.TokenExpiredException;
 import com.sparta.billy.exception.ex.TokenNotExistException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
@@ -68,7 +65,7 @@ public class TokenProvider {
         RefreshToken refreshTokenObject = RefreshToken.builder()
                 .id(member.getId())
                 .member(member)
-                .value(accessToken)
+                .value(refreshToken)
                 .build();
 
         refreshTokenRepository.save(refreshTokenObject);
@@ -82,6 +79,15 @@ public class TokenProvider {
 
     }
 
+    public Member getMemberFromAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || AnonymousAuthenticationToken.class.
+                isAssignableFrom(authentication.getClass())) {
+            return null;
+        }
+        return ((UserDetailsImpl) authentication.getPrincipal()).getMember();
+    }
+
     public TokenDto generateAccessTokenDto(Member member) {
         long now = (new Date().getTime());
 
@@ -93,7 +99,7 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        String refreshToken = String.valueOf(refreshTokenRepository.findByMember(member));
+        String refreshToken = refreshTokenRepository.findByMember(member).get().getValue();
 
         return TokenDto.builder()
                 .grantType(BEARER_PREFIX)
@@ -101,31 +107,24 @@ public class TokenProvider {
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)
                 .build();
-    }
 
-    public Member getMemberFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || AnonymousAuthenticationToken.class.
-                isAssignableFrom(authentication.getClass())) {
-            return null;
-        }
-        return ((UserDetailsImpl) authentication.getPrincipal()).getMember();
     }
 
     // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(setTokenName(token));
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            log.info("토큰에러");
-            return false;
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (SecurityException | MalformedJwtException e) {
+            log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token, 만료된 JWT token 입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
-    }
-
-    // Bearer 삭제
-    private String setTokenName(String bearerToken){
-        return bearerToken.replace("Bearer ", "");
+        return false;
     }
 
     @Transactional(readOnly = true)

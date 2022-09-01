@@ -33,10 +33,11 @@ public class MemberController {
         return memberService.login(loginDto, response);
     }
 
-//    @PostMapping("/members/reissue")
-//    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-//        return memberService.reissue(request, response);
-//    }
+
+    @PostMapping("/members/reissue")
+    public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(email, request, response);
+    }
 
     @PostMapping("/members/logout")
     public ResponseEntity<SuccessDto> logout(HttpServletRequest request) {
