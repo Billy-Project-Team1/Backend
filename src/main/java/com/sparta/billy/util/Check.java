@@ -37,4 +37,10 @@ public class Check {
         }
         return tokenProvider.getMemberFromAuthentication();
     }
+
+    @Transactional(readOnly = true)
+    public Member getMemberByEmail(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        return optionalMember.orElse(null);
+    }
 }

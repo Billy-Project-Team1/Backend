@@ -75,6 +75,9 @@ public class MemberService {
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
 
+
+    public void accessTokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
+
     @Transactional
     public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
