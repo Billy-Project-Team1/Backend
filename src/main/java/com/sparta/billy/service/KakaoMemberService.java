@@ -50,7 +50,7 @@ public class KakaoMemberService {
         Member kakaoMember = registerKakaoMemberIfNeeded(kakaoMemberInfo);
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(kakaoMember);
-        memberService.tokenToHeaders(tokenDto , response);
+        memberService.tokenToHeaders(tokenDto, response);
 
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }

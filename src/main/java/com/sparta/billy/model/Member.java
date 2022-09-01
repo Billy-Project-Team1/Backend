@@ -1,5 +1,6 @@
 package com.sparta.billy.model;
 
+import com.sparta.billy.dto.request.MemberRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,5 +51,14 @@ public class Member extends Timestamped {
         this.nickname = nickname;
         this.password = password;
         this.kakaoId = kakaoId;
+    }
+
+    public void updateProfile(MemberRequestDto memberRequestDto, String profileUrl) {
+        if (memberRequestDto.getNickname() != null) {
+            this.nickname = memberRequestDto.getNickname();
+        }
+        if (profileUrl != null) {
+            this.profileUrl = profileUrl;
+        }
     }
 }
