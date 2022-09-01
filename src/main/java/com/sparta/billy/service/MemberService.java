@@ -85,9 +85,9 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseEntity<?> reissue(String refreshToken, HttpServletResponse response) {
+    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         // RefreshToken 유효성 검사
-        if (!tokenProvider.validateToken(refreshToken)) {
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
             throw new RuntimeException("Refresh-Token 기간이 만료 되었습니다.");
         }
 
