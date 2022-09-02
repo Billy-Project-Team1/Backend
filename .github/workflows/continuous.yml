@@ -66,9 +66,9 @@ jobs:
            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: 
         aws deploy create-deployment
-       --application-name billy
-       —deployment-config-name CodeDeployDefault.AllAtOnce
-       —deployment-group-name billy-group
-       —s3-location bucket=billyprojectbucket,bundleType=zip,key=billy.zip
-       --region ap-northeast-2
+        --application-name billy
+        -—deployment-group-name billy-group
+        --file-exists-behavior OVERWRITE 
+        —s3-location bucket=billyprojectbucket,bundleType=zip,key=billy.zip
+        --region ap-northeast-2
        
