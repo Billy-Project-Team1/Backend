@@ -49,7 +49,6 @@ public class Member extends Timestamped {
 
     @Builder
     public Member(String email, String password, String profileUrl, String nickname, Long kakaoId) {
-        this.id = getId();
         this.email = email;
         this.password = password;
         this.profileUrl = profileUrl;
