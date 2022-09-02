@@ -39,14 +39,14 @@ jobs:
       
     # appspec.yml 파일 복사
     - name: Copy appspec.yml
-      run: cp appspec.yml .
+      run: cp appspec.yml ./deploy
 
     # script files 복사
     - name: Copy script
       run: cp ./*.sh ./deploy
     
     - name: Make zip file
-      run: zip -r ./billy.zip .
+      run: zip -r ./billy.zip ./deploy
       shell: bash
 
     - name: Configure AWS credentials
@@ -67,7 +67,6 @@ jobs:
        --application-name billy
        —deployment-config-name CodeDeployDefault.AllAtOnce
        —deployment-group-name billy-group
-       --file-exists-behavior OVERWRITE 
        —s3-location bucket=billyprojectbucket,bundleType=zip,key=billy.zip
        --region ap-northeast-2
        
