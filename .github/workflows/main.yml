@@ -71,8 +71,8 @@ jobs:
 
 
     # script files 복사
-    - name: Copy script
-      run: cp ./scripts/*.sh ./deploy
+#     - name: Copy script
+#       run: cp ./scripts/*.sh ./deploy
 
     - name: Make zip file
       run: zip -r ./billy.zip ./deploy
