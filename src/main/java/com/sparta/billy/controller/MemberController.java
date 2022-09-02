@@ -1,17 +1,19 @@
 package com.sparta.billy.controller;
 
 import com.sparta.billy.dto.request.LoginDto;
+import com.sparta.billy.dto.request.MemberRequestDto;
 import com.sparta.billy.dto.request.MemberSignupRequestDto;
 import com.sparta.billy.dto.response.ResponseDto;
 import com.sparta.billy.dto.response.SuccessDto;
-import com.sparta.billy.exception.ex.DuplicateEmailException;
 import com.sparta.billy.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,10 +35,23 @@ public class MemberController {
         return memberService.login(loginDto, response);
     }
 
-//    @PostMapping("/members/reissue")
-//    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-//        return memberService.reissue(request, response);
-//    }
+    @PatchMapping("/members/profile/{memberId}")
+    public ResponseDto<?> updateProfile(@PathVariable Long memberId,
+                                        @RequestPart("data") MemberRequestDto memberRequestDto,
+                                        @RequestPart(value = "image", required = false) MultipartFile file,
+                                        HttpServletRequest request) throws IOException {
+        return memberService.updateProfile(memberId, memberRequestDto, file, request);
+    }
+
+    @DeleteMapping("/members/withdrawal/{memberId}")
+    public ResponseEntity<SuccessDto> deleteMember(@PathVariable Long memberId) {
+        return memberService.deleteMember(memberId);
+    }
+
+    @PostMapping("/members/reissue")
+    public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(email, request, response);
+    }
 
     @PostMapping("/members/logout")
     public ResponseEntity<SuccessDto> logout(HttpServletRequest request) {

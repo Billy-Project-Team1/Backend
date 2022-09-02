@@ -14,5 +14,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findById(Long memberId);
 
     Long countByEmail(String email);
+    void deleteById(Long memberId);
 
 }

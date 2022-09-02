@@ -26,6 +26,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.ws.rs.HEAD;
 import java.util.UUID;
 
 @RequiredArgsConstructor
