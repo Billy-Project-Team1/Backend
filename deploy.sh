@@ -1,22 +1,31 @@
-REPOSITORY=/home/ubuntu/app #REPOSITORY 변수에 파일 위치 지정
-cd $REPOSITORY
+#!/usr/bin/env bash
 
-#각각의 변수들에 값 담아주기
-APP_NAME=billy
-JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep '.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+REPOSITORY=/home/ubuntu/app
 
-#돌아가고 있는 nohup pid 값 담아줌
-CURRENT_PID=$(pgrep -f $APP_NAME)
+echo "> 현재 구동 중인 애플리케이션 pid 확인"
 
-if [ -z $CURRENT_PID ] # 구동 중인 서버가 없다면
-then
-  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
-else # 구동 중인 서버가 있다면 꺼줌
-  echo "> kill -9 $CURRENT_PID"
-  sudo kill -9 $CURRENT_PID
+CURRENT_PID=$(pgrep -fla java | grep hayan | awk '{print $1}')
+
+echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
+
+if [ -z "$CURRENT_PID" ]; then
+  echo "현재 구동 중인 애플리케이션이 없으므로 종료하지 않습니다."
+else
+  echo "> kill -15 $CURRENT_PID"
+  kill -15 $CURRENT_PID
   sleep 5
 fi
 
-echo "> $JAR_PATH 배포"
-nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+echo "> 새 애플리케이션 배포"
+
+JAR_NAME=$(ls -tr $REPOSITORY/*SNAPSHOT.jar | tail -n 1)
+
+echo "> JAR NAME: $JAR_NAME"
+
+echo "> $JAR_NAME 에 실행권한 추가"
+
+chmod +x $JAR_NAME
+
+echo "> $JAR_NAME 실행"
+
+nohup java -jar -Duser.timezone=Asia/Seoul $JAR_NAME >> $REPOSITORY/nohup.out 2>&1 &
