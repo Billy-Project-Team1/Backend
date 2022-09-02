@@ -1,2 +1,4 @@
-package com.sparta.billy.controller;public class PostController {
+package com.sparta.billy.controller;
+
+public class PostController {
 }

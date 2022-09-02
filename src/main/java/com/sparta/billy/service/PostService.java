@@ -1,2 +1,4 @@
-package com.sparta.billy.service;public class PostService {
+package com.sparta.billy.service;
+
+public class PostService {
 }

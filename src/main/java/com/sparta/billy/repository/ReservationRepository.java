@@ -1,2 +1,4 @@
-package com.sparta.billy.repository;public class ReservationRepository {
+package com.sparta.billy.repository;
+
+public class ReservationRepository {
 }
