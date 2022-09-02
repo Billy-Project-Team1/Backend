@@ -29,8 +29,16 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew clean build
 
+    # 디렉토리 생성
+    - name: Make Directory
+      run: mkdir -p deploy
+
+    #Jar 파일  복사
+    - name: Copy Jar
+      run: cp ./build/libs/*.jar ./deploy
+    
     - name: Make zip file
-      run: zip -r ./$GITHUB_SHA.zip .
+      run: zip -r ./billy.zip .
       shell: bash
 
     - name: Configure AWS credentials
@@ -42,11 +50,11 @@ jobs:
 
 
     - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+      run: aws s3 cp --region ap-northeast-2 ./billy.zip s3://$S3_BUCKET_NAME/
       
-    - name: Code Deploy
-      run: aws deploy create-deployment 
-           --application-name billy
-           —deployment-config-name CodeDeployDefault.AllAtOnce
-           —deployment-group-name billy-group
-           —s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
+#     - name: Code Deploy
+#       run: aws deploy create-deployment 
+#            --application-name billy
+#            —deployment-config-name CodeDeployDefault.AllAtOnce
+#            —deployment-group-name billy-group
+#            —s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
