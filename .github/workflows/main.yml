@@ -24,15 +24,15 @@ jobs:
         java-version: '11'
         distribution: 'temurin'  
         ## gradle caching
-    - name: Gradle Caching
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+#     - name: Gradle Caching
+#       uses: actions/cache@v3
+#       with:
+#         path: |
+#           ~/.gradle/caches
+#           ~/.gradle/wrapper
+#         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#         restore-keys: |
+#           ${{ runner.os }}-gradle-
     
 #     - name: Setup MySQL
 #       uses: samin/mysql-action@v1
@@ -43,12 +43,12 @@ jobs:
 #           mysql password: ${{ secrets.MYSQL_PASSWORD }} 
           
     ## create application-dev.properties
-    - name: make application.properties
-      run: |
-        cd ./src/main/resources
-        touch ./application.properties
-        echo "${{ secrets.PROPERTIES }}" > ./application.properties
-      shell: bash
+#     - name: make application.properties
+#       run: |
+#         cd ./src/main/resources
+#         touch ./application.properties
+#         echo "${{ secrets.PROPERTIES }}" > ./application.properties
+#       shell: bash
 
         
     - name: Grant execute permission for gradlew
