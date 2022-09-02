@@ -65,4 +65,4 @@ jobs:
        --application-name billy
        —deployment-config-name CodeDeployDefault.AllAtOnce
        —deployment-group-name billy-group
-       —s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=billy.zip
+       —s3-location bucket=billyprojectbucket,bundleType=zip,key=billy.zip
