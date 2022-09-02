@@ -10,6 +10,7 @@ public class BillyApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BillyApplication.class, args);
+        System.out.println(org.hibernate.Version.getVersionString());
     }
 
 }

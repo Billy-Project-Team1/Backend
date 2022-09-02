@@ -51,6 +51,9 @@ dependencies {
     // tika
     implementation group: 'org.apache.tika', name: 'tika-parsers', version: '1.24.1'
 
+    // https://mavenlibs.com/maven/dependency/org.hibernate/hibernate-spatial
+    implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.6.11.Final'
+
     //querydsl 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
