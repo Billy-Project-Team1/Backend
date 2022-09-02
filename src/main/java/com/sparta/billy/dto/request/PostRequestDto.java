@@ -13,7 +13,7 @@ public class PostRequestDto {
     private String content;
     private int price;
     private int deposit;
-    private Date blockDate;
+    private List blockDate;
     private Point location;
     private Double latitude;
     private Double longitude;
