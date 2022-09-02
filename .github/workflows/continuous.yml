@@ -1,4 +1,4 @@
-name: billyuser
+name: billyContinuous
 
 on:
   push:
