@@ -11,6 +11,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.sparta.billy.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -60,12 +61,12 @@ public class AwsS3Service {
         objectMetadata.setContentLength(bytes.length);
         ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(bytes);
 
-//        if (!file.isEmpty()) {
-//            boolean isValid = FileUtils.validateImgFile(file.getInputStream());
-//            if (!isValid) {
-//                return "false";
-//            }
-//        }
+        if (!file.isEmpty()) {
+            boolean isValid = FileUtils.validateImgFile(file.getInputStream());
+            if (!isValid) {
+                return "false";
+            }
+        }
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, byteArrayIs, objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));

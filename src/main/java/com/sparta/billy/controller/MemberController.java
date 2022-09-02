@@ -43,6 +43,11 @@ public class MemberController {
         return memberService.updateProfile(memberId, memberRequestDto, file, request);
     }
 
+    @DeleteMapping("/members/withdrawal/{memberId}")
+    public ResponseEntity<SuccessDto> deleteMember(@PathVariable Long memberId) {
+        return memberService.deleteMember(memberId);
+    }
+
     @PostMapping("/members/reissue")
     public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
         return memberService.reissue(email, request, response);

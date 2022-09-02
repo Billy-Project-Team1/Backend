@@ -23,6 +23,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.ws.rs.HEAD;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -61,7 +63,7 @@ public class WebSecurityConfig {
                 .antMatchers("/members/signup").permitAll()
                 .antMatchers("/members/email-check").permitAll()
                 .antMatchers("/members/login").permitAll()
-                .antMatchers("/member/kakaoLogin/callback").permitAll()
+                .antMatchers("/oauth/**").permitAll()
                 .antMatchers("/members/reissue").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // CORS 설정
                 .antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**" ,
