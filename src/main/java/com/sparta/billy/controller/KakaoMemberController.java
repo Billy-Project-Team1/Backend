@@ -1,8 +1,9 @@
 package com.sparta.billy.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.billy.dto.TokenDto;
-import com.sparta.billy.dto.response.SuccessDto;
+import com.sparta.billy.dto.MemberDto.TokenDto;
+import com.sparta.billy.dto.ResponseDto;
+import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.KakaoMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,7 @@ public class KakaoMemberController {
     private final KakaoMemberService kakaoMemberService;
 
     @GetMapping("/oauth/kakao/callback")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        TokenDto tokenDto = kakaoMemberService.kakaoLogin(code);
-        tokenDto.tokenToHeaders(response);
-        return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
+    public ResponseDto<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        return kakaoMemberService.kakaoLogin(code, response);
     }
 }
