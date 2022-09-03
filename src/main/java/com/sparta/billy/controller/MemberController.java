@@ -6,6 +6,8 @@ import com.sparta.billy.dto.MemberDto.MemberSignupRequestDto;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.MemberService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Api(tags = {"회원관리 Controller"})
 @RequiredArgsConstructor
 @RestController
 public class MemberController {
@@ -37,7 +40,7 @@ public class MemberController {
 
     @PutMapping("/members/profile/{memberId}")
     public ResponseDto<?> memberUpdate(@PathVariable Long memberId,
-                                        @RequestPart("data") MemberUpdateRequestDto memberRequestDto,
+                                       @RequestPart(value = "data") MemberUpdateRequestDto memberRequestDto,
                                         @RequestPart(value = "image", required = false) MultipartFile file,
                                         HttpServletRequest request) throws IOException {
         return memberService.updateMember(memberId, memberRequestDto, file, request);
@@ -54,8 +57,8 @@ public class MemberController {
     }
 
     @PostMapping("/members/reissue")
-    public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
-        return memberService.reissue(email, request, response);
+    public ResponseDto<?> reissue(String userId, HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(userId, request, response);
     }
 
     @PostMapping("/members/logout")

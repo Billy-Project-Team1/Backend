@@ -88,8 +88,8 @@ public class Check {
     }
 
     @Transactional(readOnly = true)
-    public Member getMemberByEmail(String email) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+    public Member getMemberByUserId(String userId) {
+        Optional<Member> optionalMember = memberRepository.findByUserId(userId);
         return optionalMember.orElse(null);
     }
 }
