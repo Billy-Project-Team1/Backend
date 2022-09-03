@@ -1,15 +1,15 @@
 package com.sparta.billy.service;
 
-import com.sparta.billy.dto.TokenDto;
-import com.sparta.billy.dto.request.LoginDto;
-import com.sparta.billy.dto.request.MemberRequestDto;
-import com.sparta.billy.dto.request.MemberSignupRequestDto;
-import com.sparta.billy.dto.response.MemberResponseDto;
-import com.sparta.billy.dto.response.ResponseDto;
-import com.sparta.billy.dto.response.SuccessDto;
+import com.sparta.billy.dto.MemberDto.TokenDto;
+import com.sparta.billy.dto.MemberDto.LoginDto;
+import com.sparta.billy.dto.MemberDto.MemberUpdateRequestDto;
+import com.sparta.billy.dto.MemberDto.MemberSignupRequestDto;
+import com.sparta.billy.dto.MemberDto.MemberResponseDto;
+import com.sparta.billy.dto.ResponseDto;
+import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.exception.ex.DuplicateEmailException;
 import com.sparta.billy.exception.ex.MemberNotFoundException;
-import com.sparta.billy.exception.ex.TokenNotExistException;
+import com.sparta.billy.exception.ex.TokenExpiredException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
 import com.sparta.billy.repository.MemberRepository;
@@ -17,6 +17,7 @@ import com.sparta.billy.repository.RefreshTokenRepository;
 import com.sparta.billy.security.jwt.TokenProvider;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -39,7 +41,7 @@ public class MemberService {
 
     // 회원가입
     @Transactional
-    public ResponseEntity<SuccessDto> signup(MemberSignupRequestDto signupRequestDto) {
+    public ResponseEntity<SuccessDto> createMember(MemberSignupRequestDto signupRequestDto) {
         Member member = Member.builder()
                 .email(signupRequestDto.getEmail())
                 .nickname(signupRequestDto.getNickname())
@@ -66,6 +68,10 @@ public class MemberService {
             throw new MemberNotFoundException();
         }
 
+        if (refreshTokenRepository.findByMember(member).isPresent()) {
+            refreshTokenRepository.deleteByMember(member);
+        }
+
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);
 
@@ -80,7 +86,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> updateProfile(Long memberId, MemberRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
+    public ResponseDto<?> updateMember(Long memberId, MemberUpdateRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
         Member checkMember = check.validateMember(request);
         check.tokenCheck(request, checkMember);
 
@@ -112,6 +118,24 @@ public class MemberService {
     }
 
     @Transactional
+    public ResponseDto<?> getMemberDetails(Long memberId) {
+        Member member = check.getCurrentMember(memberId);
+        if (member != null) {
+            return ResponseDto.success(
+                    MemberResponseDto.builder()
+                            .id(member.getId())
+                            .nickname(member.getNickname())
+                            .email(member.getEmail())
+                            .profileUrl(member.getProfileUrl())
+                            .createdAt(member.getCreatedAt())
+                            .updatedAt(member.getUpdatedAt())
+                            .build()
+            );
+        }
+        throw new MemberNotFoundException();
+    }
+
+    @Transactional
     public ResponseEntity<SuccessDto> deleteMember(Long memberId) {
         Member member = check.getCurrentMember(memberId);
 
@@ -129,7 +153,7 @@ public class MemberService {
     @Transactional
     public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            throw new TokenNotExistException();
+            throw new TokenExpiredException();
         }
         Member member = memberRepository.findByEmail(email).orElse(null);
         if (null == member) {
@@ -138,7 +162,7 @@ public class MemberService {
         RefreshToken refreshToken = tokenProvider.presentRefreshToken(member);
 
         if (!refreshToken.getValue().equals(request.getHeader("Refresh-Token"))) {
-            throw new TokenNotExistException();
+            throw new TokenExpiredException();
         }
 
         TokenDto tokenDto = tokenProvider.generateAccessTokenDto(member);

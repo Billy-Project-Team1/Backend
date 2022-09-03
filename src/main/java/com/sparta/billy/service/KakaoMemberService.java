@@ -3,8 +3,10 @@ package com.sparta.billy.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.billy.dto.KakaoMemberInfoDto;
-import com.sparta.billy.dto.TokenDto;
+import com.sparta.billy.dto.MemberDto.KakaoMemberInfoDto;
+import com.sparta.billy.dto.MemberDto.MemberResponseDto;
+import com.sparta.billy.dto.MemberDto.TokenDto;
+import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.repository.MemberRepository;
@@ -26,6 +28,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -42,7 +45,7 @@ public class KakaoMemberService {
     @Value("${myKaKaoRestAplKey}")
     private String myKaKaoRestAplKey;
 
-    public TokenDto kakaoLogin(String code) throws JsonProcessingException {
+    public ResponseDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -73,9 +76,21 @@ public class KakaoMemberService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Member member = check.getMemberByEmail(kakaoMember.getEmail());
-        return tokenProvider.generateTokenDto(member);
+        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+        tokenDto.tokenToHeaders(response);
 
+        return ResponseDto.success(
+                MemberResponseDto.builder()
+                        .id(member.getId())
+                        .nickname(member.getNickname())
+                        .email(member.getEmail())
+                        .profileUrl(member.getProfileUrl())
+                        .createdAt(member.getCreatedAt())
+                        .updatedAt(member.getUpdatedAt())
+                        .build()
+        );
     }
+
 
     private String getAccessToken(String code) throws JsonProcessingException {
         // HTTP Header 생성
@@ -130,11 +145,8 @@ public class KakaoMemberService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("kakao_account").get("profile")
                 .get("nickname").asText();
-//        String name = jsonNode.get("kakao_account")
-//                .get("name").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-//        String email = "kakao"+jsonNode.get("id")+"@kakao.com";
         String profilePhoto = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
 
 
