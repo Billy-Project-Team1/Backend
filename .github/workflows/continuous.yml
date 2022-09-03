@@ -1,10 +1,9 @@
 name: billy CI/CD
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
+    types: [closed]
 
 env:
   S3_BUCKET_NAME: billyteambucket
@@ -21,13 +20,40 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'temurin'
+        distribution: 'temurin'  
+        ## gradle caching
+    - name: Gradle Caching
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    
+#     - name: Setup MySQL
+#       uses: samin/mysql-action@v1
+#       with:
+#           character set server: 'utf8'
+#           mysql database: planit
+#           mysql user: whddlrs
+#           mysql password: ${{ secrets.MYSQL_PASSWORD }} 
+          
+    ## create application-dev.properties
+    - name: make application.properties
+      run: |
+        cd ./src/main/resources
+        touch ./application.properties
+        echo "${{ secrets.PROPERTIES }}" > ./application.properties
+      shell: bash
+
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     
     - name: Build with Gradle
-      run: ./gradlew clean build
+      run: ./gradlew build -x test  
       
     # 디렉토리 생성
     - name: Make Directory
@@ -36,7 +62,12 @@ jobs:
     # Jar 파일 복사
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy
-      
+
+    - name: Make zip file
+      run: zip -r ./billy.zip ./deploy
+      shell: bash
+          
+
     # appspec.yml 파일 복사
     - name: Copy appspec.yml
       run: cp appspec.yml ./deploy
@@ -47,30 +78,29 @@ jobs:
       run: cp ./scripts/*.sh ./deploy
 
     - name: Make zip file
-      run: zip -r ./billy.zip ./deploy
+      run: zip -r ./billyscript.zip ./deploy
       shell: bash
-
+          
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.IAMACCESSKEY }}
+        aws-secret-access-key: ${{ secrets.IAMSECRETKEY }}
         aws-region: ap-northeast-2
 
     - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./billy.zip s3://$S3_BUCKET_NAME/
-
-
-
+      run: aws s3 cp —region ap-northeast-2 ./billyscript.zip s3://$S3_BUCKET_NAME/
+      
+      
     # Deploy
     - name: Deploy
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
+        AWS_ACCESS_KEY_ID: ${{ secrets.IAMACCESSKEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.IAMSECRETKEY }}
+      run: 
         aws deploy create-deployment 
-        --application-name billy
-        --deployment-group-name billy-group
-        --file-exists-behavior OVERWRITE 
-        --s3-location bucket=billyteambucket,bundleType=zip,key=billy.zip
-        --region ap-northeast-2
+        —application-name billy
+        —deployment-group-name billy-group
+        —file-exists-behavior OVERWRITE 
+        —s3-location bucket=billyteambucket,bundleType=zip,key=billyscript.zip
+        —region ap-northeast-2
