@@ -100,8 +100,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.IAMSECRETKEY }}
       run: 
         aws deploy create-deployment 
-        -—application-name billy
-        -—deployment-group-name billy-group
-        -—file-exists-behavior OVERWRITE 
-        -—s3-location bucket=billyteambucket,bundleType=zip,key=billyscript.zip
-        -—region ap-northeast-2
+        --application-name billy
+        --deployment-group-name billy-group
+        --file-exists-behavior OVERWRITE 
+        --s3-location bucket=billyteambucket,bundleType=zip,key=billyscript.zip
+        --region ap-northeast-2
