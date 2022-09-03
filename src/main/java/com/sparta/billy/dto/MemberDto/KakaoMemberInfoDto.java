@@ -1,4 +1,4 @@
-package com.sparta.billy.dto;
+package com.sparta.billy.dto.MemberDto;
 
 import lombok.Getter;
 

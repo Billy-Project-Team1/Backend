@@ -1,10 +1,10 @@
 package com.sparta.billy.controller;
 
-import com.sparta.billy.dto.request.LoginDto;
-import com.sparta.billy.dto.request.MemberRequestDto;
-import com.sparta.billy.dto.request.MemberSignupRequestDto;
-import com.sparta.billy.dto.response.ResponseDto;
-import com.sparta.billy.dto.response.SuccessDto;
+import com.sparta.billy.dto.MemberDto.LoginDto;
+import com.sparta.billy.dto.MemberDto.MemberUpdateRequestDto;
+import com.sparta.billy.dto.MemberDto.MemberSignupRequestDto;
+import com.sparta.billy.dto.ResponseDto;
+import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/members/signup")
-    public ResponseEntity<SuccessDto> signup(@RequestBody MemberSignupRequestDto signupRequestDto) {
-        return memberService.signup(signupRequestDto);
+    public ResponseEntity<SuccessDto> memberCreate(@RequestBody MemberSignupRequestDto signupRequestDto) {
+        return memberService.createMember(signupRequestDto);
     }
 
     @GetMapping("/members/email-check")
@@ -35,16 +35,21 @@ public class MemberController {
         return memberService.login(loginDto, response);
     }
 
-    @PatchMapping("/members/profile/{memberId}")
-    public ResponseDto<?> updateProfile(@PathVariable Long memberId,
-                                        @RequestPart("data") MemberRequestDto memberRequestDto,
+    @PutMapping("/members/profile/{memberId}")
+    public ResponseDto<?> memberUpdate(@PathVariable Long memberId,
+                                        @RequestPart("data") MemberUpdateRequestDto memberRequestDto,
                                         @RequestPart(value = "image", required = false) MultipartFile file,
                                         HttpServletRequest request) throws IOException {
-        return memberService.updateProfile(memberId, memberRequestDto, file, request);
+        return memberService.updateMember(memberId, memberRequestDto, file, request);
+    }
+
+    @GetMapping("/members/profile/{memberId}")
+    public ResponseDto<?> memberDetails(@PathVariable Long memberId) {
+        return memberService.getMemberDetails(memberId);
     }
 
     @DeleteMapping("/members/withdrawal/{memberId}")
-    public ResponseEntity<SuccessDto> deleteMember(@PathVariable Long memberId) {
+    public ResponseEntity<SuccessDto> memberDelete(@PathVariable Long memberId) {
         return memberService.deleteMember(memberId);
     }
 

@@ -20,7 +20,7 @@ public class RefreshToken extends Timestamped {
   private Long id;
 
   @JoinColumn(name = "member_id", nullable = false)
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToOne(fetch = FetchType.LAZY)
   private Member member;
 
   @Column(nullable = false, name = "refreshToken_value")

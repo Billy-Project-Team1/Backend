@@ -1,15 +1,12 @@
 package com.sparta.billy.model;
 
+import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Point;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-
-import java.util.Date;
 import java.util.List;
 
 @Builder
@@ -22,26 +19,20 @@ public class Post extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     private String content;
 
-    @Column
+    @Column(nullable = false)
     private int deposit;
 
-    @Column
+    @Column(nullable = false)
     private int price;
 
-    @ElementCollection
-    @CollectionTable
-    @Column(name = "block_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private List<Date> blockDate;
-
     @Column(nullable = false)
-    private Point location;
+    private String location;
 
     @Column(nullable = false)
     private Double latitude;
@@ -49,14 +40,39 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private Double longitude;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImgUrl> postImgUrlList;
-
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reservation> reservationList;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BlockDate> blockDateList;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImgUrl> postImgUrlList;
+    public void update(PostUploadRequestDto requestDto) {
+        if (requestDto.getTitle() != null) {
+            this.title = requestDto.getTitle();
+        }
+        if (requestDto.getContent() != null) {
+            this.content = requestDto.getContent();
+        }
+        if (requestDto.getDeposit() != 0) {
+            this.deposit = requestDto.getDeposit();
+        }
+        if (requestDto.getPrice() != 0) {
+            this.price = requestDto.getPrice();
+        }
+        if (requestDto.getLocation() != null) {
+            this.location = requestDto.getLocation();
+        }
+        if (requestDto.getLatitude() != null) {
+            this.latitude = requestDto.getLatitude();
+        }
+        if (requestDto.getLongitude() != null) {
+            this.longitude = requestDto.getLongitude();
+        }
+        if (requestDto.getLongitude() != null) {
+            this.longitude = requestDto.getLongitude();
+        }
+    }
 }
