@@ -1,7 +1,7 @@
 package com.sparta.billy.security.jwt;
 
-import com.sparta.billy.dto.TokenDto;
-import com.sparta.billy.dto.response.SuccessDto;
+import com.sparta.billy.dto.MemberDto.TokenDto;
+import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.exception.ex.TokenNotExistException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;

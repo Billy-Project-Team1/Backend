@@ -1,10 +1,10 @@
-package com.sparta.billy.dto.request;
+package com.sparta.billy.dto.MemberDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberRequestDto {
+public class MemberUpdateRequestDto {
     private String nickname;
 }

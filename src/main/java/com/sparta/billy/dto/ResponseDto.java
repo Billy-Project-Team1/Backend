@@ -1,4 +1,4 @@
-package com.sparta.billy.dto.response;
+package com.sparta.billy.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
