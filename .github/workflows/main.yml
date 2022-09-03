@@ -1,4 +1,4 @@
-name: billyuser
+name: billy CI/CD
 
 on:
   pull_request:
