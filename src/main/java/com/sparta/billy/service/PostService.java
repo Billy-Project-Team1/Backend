@@ -1,20 +1,15 @@
 package com.sparta.billy.service;
 
-import com.querydsl.core.Tuple;
-import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import com.sparta.billy.dto.PostDto.BlockDateResponseDto;
 import com.sparta.billy.dto.PostDto.PostDetailResponseDto;
 import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
+import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.model.BlockDate;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.PostImgUrl;
-import com.sparta.billy.repository.BlockDateRepository;
-import com.sparta.billy.repository.MemberRepository;
-import com.sparta.billy.repository.PostImgUrlRepository;
-import com.sparta.billy.repository.PostRepository;
-import com.sparta.billy.repository.PostQueryRepository;
+import com.sparta.billy.repository.*;
 import com.sparta.billy.security.jwt.TokenProvider;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +23,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
