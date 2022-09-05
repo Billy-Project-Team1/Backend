@@ -66,6 +66,7 @@ public class KakaoMemberService {
             String profileUrl = kakaoMemberInfo.getProfileUrl();
             String nickname = kakaoMemberInfo.getNickname();
             Long kakaoId= kakaoMemberInfo.getId();
+
             kakaoMember = new Member(email, encodedPassword, profileUrl, nickname, kakaoId);
             memberRepository.save(kakaoMember);
         }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -35,6 +36,13 @@ public class Member extends Timestamped {
     @Column
     private String profileUrl;
 
+    @Setter
+    @Column(nullable = false)
+    private Boolean isOwner = false;
+
+    @Column
+    private String intro;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -54,6 +62,8 @@ public class Member extends Timestamped {
         this.profileUrl = profileUrl;
         this.nickname = nickname;
         this.kakaoId = kakaoId;
+//        this.isOwner = isOwner;
+//        this.intro = intro;
     }
 
     public void updateProfile(MemberUpdateRequestDto memberRequestDto, String profileUrl) {
