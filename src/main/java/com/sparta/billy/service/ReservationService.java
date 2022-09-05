@@ -1,14 +1,14 @@
 package com.sparta.billy.service;
 
-import com.sparta.billy.dto.ReservationDto.ChangeStateResponseDto;
+import com.sparta.billy.dto.ReservationDto.ReservationDetailResponseDto;
 import com.sparta.billy.dto.ReservationDto.ReservationRequestDto;
-import com.sparta.billy.dto.ReservationDto.ReservationResponseDto;
 import com.sparta.billy.dto.ReservationDto.ReservationStateRequestDto;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.Reservation;
+import com.sparta.billy.repository.ReservationQueryRepository;
 import com.sparta.billy.repository.ReservationRepository;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
+    private final ReservationQueryRepository reservationQueryRepository;
     private final Check check;
 
     @Transactional
@@ -36,13 +35,6 @@ public class ReservationService {
         Post post = check.getCurrentPost(reservationRequestDto.getPostId());
         check.checkPost(post);
         check.tokenCheck(request, billyMember);
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate startDate = LocalDate.parse(reservationRequestDto.getStartDate() , dtf);
-        LocalDate endDate = LocalDate.parse(reservationRequestDto.getEndDate() , dtf);
-
-        // 두 날짜의 값 차이 return
-        int totalAmount = (int)(ChronoUnit.DAYS.between(startDate, endDate)) * post.getPrice();
 
         Reservation reservation = Reservation.builder()
                 .post(post)
@@ -112,10 +104,11 @@ public class ReservationService {
         return ResponseDto.success("수령 완료!");
     }
 
-//    @Transactional
-//    public ResponseDto<?> getReservationByBillyAndState(Long billyId,
-//                                                        int state,
-//                                                        HttpServletRequest request) {
-//
-//    }
+    @Transactional
+    public ResponseDto<?> getReservationByBillyAndState(int state, HttpServletRequest request) {
+        Member billy = check.validateMember(request);
+        check.tokenCheck(request, billy);
+        List<ReservationDetailResponseDto> response = reservationQueryRepository.findReservationByBillyAndState(billy, state);
+        return ResponseDto.success(response);
+    }
 }
