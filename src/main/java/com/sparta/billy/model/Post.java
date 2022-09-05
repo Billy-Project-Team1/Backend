@@ -1,16 +1,13 @@
 package com.sparta.billy.model;
 
 import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -44,11 +41,6 @@ public class Post extends Timestamped {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BlockDate> blockDateList;
-
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImgUrl> postImgUrlList;
     public void update(PostUploadRequestDto requestDto) {
         if (requestDto.getTitle() != null) {
             this.title = requestDto.getTitle();

@@ -5,15 +5,15 @@ import com.sparta.billy.dto.PostDto.PostDetailResponseDto;
 import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
 import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import com.sparta.billy.dto.ResponseDto;
-import com.sparta.billy.model.BlockDate;
-import com.sparta.billy.model.Member;
-import com.sparta.billy.model.Post;
-import com.sparta.billy.model.PostImgUrl;
+import com.sparta.billy.dto.ReviewDto.ReviewChildrenResponseDto;
+import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
+import com.sparta.billy.dto.SuccessDto;
+import com.sparta.billy.model.*;
 import com.sparta.billy.repository.*;
-import com.sparta.billy.security.jwt.TokenProvider;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,11 +30,11 @@ import java.util.List;
 public class PostService {
     private final AwsS3Service awsS3Service;
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
     private final PostQueryRepository postQueryRepository;
     private final PostImgUrlRepository postImgUrlRepository;
     private final BlockDateRepository blockDateRepository;
-    private final TokenProvider tokenProvider;
+    private final ReviewRepository reviewRepository;
+    private final ReviewQueryRepository reviewQueryRepository;
     private final Check check;
 
     // 게시글 작성
@@ -89,8 +89,8 @@ public class PostService {
             dateList.add(date);
             blockDateDto = new BlockDateResponseDto(dateList);
         }
-        
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto));
+
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, null, false));
     }
 
     // 게시글 수정
@@ -140,32 +140,48 @@ public class PostService {
             }
         }
         post.update(postUploadRequestDto);
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto));
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, null, false));
+    }
+
+    @Transactional
+    public ResponseEntity<SuccessDto> deletePost(Long postId, HttpServletRequest request) {
+        Member member = check.validateMember(request);
+        Post post = check.getCurrentPost(postId);
+        check.checkPost(post);
+        check.checkPostAuthor(member, post);
+
+        List<BlockDate> blockDates = check.getBlockDateByPost(post);
+        List<PostImgUrl> postImgUrls = check.getPostImgUrlByPost(post);
+        List<Review> reviews = check.getReviewByPost(post);
+        List<Reservation> reservations = check.getReservationByPost(post);
+
+        if (!blockDates.isEmpty()) {
+            blockDateRepository.deleteByPost(post);
+        }
+        if (!postImgUrls.isEmpty()) {
+            postImgUrlRepository.deleteByPost(post);
+        }
+        if (!reviews.isEmpty()) {
+            reviewRepository.deleteByPost(post);
+        }
+        if (!reservations.isEmpty()) {
+            for (Reservation r : reservations) {
+                r.setPost(null);
+            }
+        }
+
+        postRepository.delete(post);
+        return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
 
     //게시글 상세 조회
     @Transactional
-    public ResponseDto<?> getPostsDetails(Long postId) {
+    public ResponseDto<?> getPostsDetails(Long postId, Long memberId) {
         Post post = check.getCurrentPost(postId);
         PostImgUrlResponseDto postImgUrlResponseDto = postQueryRepository.findPostImgListByPostId(postId);
         BlockDateResponseDto blockDateResponseDto = postQueryRepository.findBlockDateByPostId(postId);
-
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto, postImgUrlResponseDto));
-//        return ResponseDto.success(PostDetailResponseDto.builder()
-//                .id(post.getId())
-//                .authorId(post.getMember().getId())
-//                .profileUrl(post.getMember().getProfileUrl())
-//                .nickname(post.getMember().getNickname())
-//                .title(post.getTitle())
-//                .content(post.getContent())
-//                .price(post.getPrice())
-//                .deposit(post.getDeposit())
-//                .location(post.getLocation())
-//                .latitude(post.getLatitude())
-//                .longitude(post.getLongitude())
-//                .postImgUrl(postImgUrlResponseDto)
-//                .blockDate(blockDateResponseDto)
-//                .build()
-//        );
+        List<ReviewResponseDto> reviews = reviewQueryRepository.findReviewByPostId(postId, memberId);
+        boolean isMyPost = post.getMember().getId().equals(memberId);
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto, postImgUrlResponseDto, reviews, isMyPost));
     }
 }
