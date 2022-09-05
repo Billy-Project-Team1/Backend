@@ -82,7 +82,7 @@ public class MemberService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);
 
-        return ResponseDto.success(new MemberResponseDto(member));
+        return ResponseDto.success(new MemberResponseDto(member, true));
     }
 
     @Transactional

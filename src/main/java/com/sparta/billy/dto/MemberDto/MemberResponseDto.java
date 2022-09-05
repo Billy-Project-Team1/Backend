@@ -17,6 +17,7 @@ public class MemberResponseDto {
     private String email;
     private String userId;
     private String nickname;
+    private boolean isMine;
     private String profileUrl;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -25,7 +26,7 @@ public class MemberResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
 
-    public MemberResponseDto(Member member) {
+    public MemberResponseDto(Member member, boolean isMine) {
         this.id = member.getId();
         this.email = member.getEmail();
         this.userId = member.getUserId();
@@ -33,5 +34,6 @@ public class MemberResponseDto {
         this.profileUrl = member.getProfileUrl();
         this.createdAt = member.getCreatedAt();
         this.updatedAt = member.getUpdatedAt();
+        this.isMine = true;
     }
 }
