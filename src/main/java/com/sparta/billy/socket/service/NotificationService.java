@@ -1,6 +1,6 @@
 package com.sparta.billy.socket.service;
 
-import com.sparta.billy.exception.PostApiException;
+import com.sparta.billy.exception.ex.NotFoundPostException;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.repository.PostRepository;
@@ -40,7 +40,7 @@ public class NotificationService {
                 if (Objects.equals(String.valueOf(invitedMember.getPostId()), findChatMessageDto.getRoomId())) {
                     if (invitedMember.getReadCheckTime().isBefore(findChatMessageDto.getCreatedAt())) {
                         Post post = postRepository.findById(Long.valueOf(findChatMessageDto.getRoomId())).orElseThrow(
-                                () -> new PostApiException("존재하지 않는 게시물 입니다.")
+                                NotFoundPostException::new
                         );
                         NotificationDto notificationDto = new NotificationDto();
                         if (findChatMessageDto.getMessage().isEmpty()) {

@@ -25,6 +25,9 @@ public class Member extends Timestamped {
     private String email;
 
     @Column(nullable = false)
+    private String userId;
+
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)
@@ -56,8 +59,9 @@ public class Member extends Timestamped {
     }
 
     @Builder
-    public Member(String email, String password, String profileUrl, String nickname, Long kakaoId) {
+    public Member(String email, String userId, String password, String profileUrl, String nickname, Long kakaoId) {
         this.email = email;
+        this.userId = userId;
         this.password = password;
         this.profileUrl = profileUrl;
         this.nickname = nickname;

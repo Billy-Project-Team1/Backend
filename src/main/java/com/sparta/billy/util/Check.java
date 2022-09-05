@@ -1,17 +1,8 @@
 package com.sparta.billy.util;
 
-import com.sparta.billy.exception.ex.MemberNotFoundException;
-import com.sparta.billy.exception.ex.NotAuthorException;
-import com.sparta.billy.exception.ex.NotFoundPostException;
-import com.sparta.billy.exception.ex.TokenNotExistException;
-import com.sparta.billy.model.BlockDate;
-import com.sparta.billy.model.Member;
-import com.sparta.billy.model.Post;
-import com.sparta.billy.model.PostImgUrl;
-import com.sparta.billy.repository.BlockDateRepository;
-import com.sparta.billy.repository.MemberRepository;
-import com.sparta.billy.repository.PostImgUrlRepository;
-import com.sparta.billy.repository.PostRepository;
+import com.sparta.billy.exception.ex.*;
+import com.sparta.billy.model.*;
+import com.sparta.billy.repository.*;
 import com.sparta.billy.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -28,54 +19,86 @@ public class Check {
     private final PostRepository postRepository;
     private final PostImgUrlRepository postImgUrlRepository;
     private final BlockDateRepository blockDateRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReservationRepository reservationRepository;
     private final TokenProvider tokenProvider;
 
     public void checkPost(Post post) {
         if (post == null) throw new NotFoundPostException();
     }
-//
-//    public void checkComment(Comment comment) {
-//        if (comment == null) throw new NotFoundCommentException();
-//    }
+
+    public void checkReview(Review review) {
+        if (review == null) throw new NotFoundReviewException();
+    }
+
+    public void checkReservation(Reservation reservation) { if (reservation == null) throw new NotFoundReservationException(); }
 
     public void checkPostAuthor(Member member, Post post) {
         if (!post.getMember().equals(member)) throw new NotAuthorException();
     }
-//
-//    public void checkCommentAuthor(Member member, Comment comment) {
-//        if (!comment.getMember().equals(member)) throw new NotAuthorException();
-//    }
 
-    @Transactional(readOnly = true)
+    public void checkReviewAuthor(Member member, Review review) {
+        if (!review.getMember().equals(member)) throw new NotAuthorException();
+    }
+
+    public void checkReservationPostAuthor(Member member, Reservation reservation) {
+        if (!reservation.getJully().equals(member)) throw new IllegalArgumentException("게시글 작성자만 예약 상태를 변경할 수 있습니다.");
+    }
+
+    public void checkReservationAuthor(Member member, Reservation reservation) {
+        if (!reservation.getBilly().equals(member)) throw new IllegalArgumentException("예약 당사자만 취소할 수 있습니다.");
+    }
+
+    public void validateReservation(Reservation reservation) {
+        if (reservation.getState() == 3) throw new IllegalArgumentException("이미 취소된 예약건입니다.");
+    }
+
+    public void validateDelivery(int state, Reservation reservation) {
+        if (state == 4) {
+            if (!reservation.isDelivery()) throw new IllegalArgumentException("아직 빌리가 전달받지 않은 상태입니다.");
+        }
+    }
+
     public Post getCurrentPost(Long id) {
         Optional<Post> optionalPost = postRepository.findById(id);
         return optionalPost.orElse(null);
     }
 
-    @Transactional(readOnly = true)
-    public List<PostImgUrl> getCurrentPostImgUrl(Post post) {
+    public Reservation getCurrentReservation(Long id) {
+        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
+        return optionalReservation.orElse(null);
+    }
+
+    public List<PostImgUrl> getPostImgUrlByPost(Post post) {
         return postImgUrlRepository.findAllByPost(post);
     }
 
-    @Transactional(readOnly = true)
-    public List<BlockDate> getCurrentBlockDate(Post post) {
+    public List<BlockDate> getBlockDateByPost(Post post) {
         return blockDateRepository.findAllByPost(post);
     }
-//
-//    @Transactional(readOnly = true)
-//    public Comment getCurrentComment(Long id) {
-//        Optional<Comment> optionalComment = commentRepository.findById(id);
-//        return optionalComment.orElse(null);
-//    }
+
+    public List<Review> getReviewByPost(Post post) {
+        return reviewRepository.findAllByPost(post);
+    }
+
+    public List<Reservation> getReservationByPost(Post post) { return reservationRepository.findAllByPost(post); }
+    public Review getCurrentReview(Long id) {
+        Optional<Review> optionalReview = reviewRepository.findById(id);
+        return optionalReview.orElse(null);
+    }
 
     public void tokenCheck(HttpServletRequest request, Member member) {
         if (request.getHeader("Authorization") == null) throw new TokenNotExistException();
         if (member == null) throw new MemberNotFoundException();
     }
 
-    @Transactional(readOnly = true)
     public Member getCurrentMember(Long id) {
         Optional<Member> optionalMember = memberRepository.findById(id);
+        return optionalMember.orElse(null);
+    }
+
+    public Member getMemberByUserId(String userId) {
+        Optional<Member> optionalMember = memberRepository.findByUserId(userId);
         return optionalMember.orElse(null);
     }
 
@@ -87,9 +110,7 @@ public class Check {
         return tokenProvider.getMemberFromAuthentication();
     }
 
-    @Transactional(readOnly = true)
-    public Member getMemberByEmail(String email) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        return optionalMember.orElse(null);
+    public Member getMember() {
+        return tokenProvider.getMemberFromAuthentication();
     }
 }

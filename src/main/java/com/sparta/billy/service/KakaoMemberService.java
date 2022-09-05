@@ -62,12 +62,13 @@ public class KakaoMemberService {
 
             // password: random UUID
             String password = UUID.randomUUID().toString();
+            String userId = UUID.randomUUID().toString().substring(0, 8);
             String encodedPassword = passwordEncoder.encode(password);
             String profileUrl = kakaoMemberInfo.getProfileUrl();
             String nickname = kakaoMemberInfo.getNickname();
             Long kakaoId= kakaoMemberInfo.getId();
+            kakaoMember = new Member(email, userId, encodedPassword, profileUrl, nickname, kakaoId);
 
-            kakaoMember = new Member(email, encodedPassword, profileUrl, nickname, kakaoId);
             memberRepository.save(kakaoMember);
         }
 
@@ -76,7 +77,7 @@ public class KakaoMemberService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Member member = check.getMemberByEmail(kakaoMember.getEmail());
+        Member member = check.getMemberByUserId(kakaoMember.getUserId());
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenDto.tokenToHeaders(response);
 

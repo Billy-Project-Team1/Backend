@@ -27,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -42,14 +44,18 @@ public class MemberService {
     // 회원가입
     @Transactional
     public ResponseEntity<SuccessDto> createMember(MemberSignupRequestDto signupRequestDto) {
+        String uuid = UUID.randomUUID().toString();
+        String userId = uuid.substring(0, 8);
         Member member = Member.builder()
                 .email(signupRequestDto.getEmail())
+                .userId(userId)
                 .nickname(signupRequestDto.getNickname())
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
                 .build();
         memberRepository.save(member);
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
+
 
     @Transactional(readOnly = true)
     public ResponseEntity<SuccessDto> emailDuplicateCheck(String email) {
@@ -110,6 +116,7 @@ public class MemberService {
         return ResponseDto.success(MemberResponseDto.builder()
                 .id(member.getId())
                 .email(member.getEmail())
+                .userId(member.getUserId())
                 .profileUrl(member.getProfileUrl())
                 .nickname(member.getNickname())
                 .createdAt(member.getCreatedAt())
@@ -124,9 +131,10 @@ public class MemberService {
             return ResponseDto.success(
                     MemberResponseDto.builder()
                             .id(member.getId())
-                            .nickname(member.getNickname())
                             .email(member.getEmail())
+                            .userId(member.getUserId())
                             .profileUrl(member.getProfileUrl())
+                            .nickname(member.getNickname())
                             .createdAt(member.getCreatedAt())
                             .updatedAt(member.getUpdatedAt())
                             .build()
@@ -151,11 +159,11 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> reissue(String email, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDto<?> reissue(String userId, HttpServletRequest request, HttpServletResponse response) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
             throw new TokenExpiredException();
         }
-        Member member = memberRepository.findByEmail(email).orElse(null);
+        Member member = memberRepository.findByUserId(userId).orElse(null);
         if (null == member) {
             throw new MemberNotFoundException();
         }

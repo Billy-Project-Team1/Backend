@@ -1,9 +1,10 @@
 package com.sparta.billy.socket.repository;
 
-import com.sparta.billy.exception.PostApiException;
+import com.sparta.billy.exception.ex.NotFoundPostException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.PostImgUrl;
+import com.sparta.billy.repository.PostImgUrlRepository;
 import com.sparta.billy.repository.PostRepository;
 import com.sparta.billy.socket.dto.ChatListMessageDto;
 import com.sparta.billy.socket.dto.ChatRoomResponseDto;
@@ -41,6 +42,7 @@ public class ChatRoomRepository {
     private final PostRepository postRepository;
     private final InvitedMembersRepository invitedUsersRepository;
     private final ChatMessageJpaRepository chatMessageJpaRepository;
+    private final PostImgUrlRepository postImgUrlRepository;
     private final StringRedisTemplate stringRedisTemplate; // StringRedisTemplate 사용
     private static final String CHAT_ROOMS = "CHAT_ROOM";
     private final RedisTemplate<String, Object> redisTemplate;
@@ -64,7 +66,7 @@ public class ChatRoomRepository {
                 invitedUser.setReadCheckTime(LocalDateTime.now());
             }
             Post post = postRepository.findById(invitedUser.getPostId()).orElseThrow(
-                    () -> new PostApiException("해당 게시글을 찾을 수 없습니다."));
+                    NotFoundPostException::new);
             ChatMessage chatMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedUser.getPostId().toString());
             ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto();
             if (chatMessage.getMessage().isEmpty()) {
@@ -77,9 +79,11 @@ public class ChatRoomRepository {
 
             chatRoomResponseDto.setLastMessageTime(createdAtString);
             chatRoomResponseDto.setPostTitle(post.getTitle());
-            if (post.getPostImgUrlList().isEmpty()) {
+
+            List<PostImgUrl> postImgUrlList = postImgUrlRepository.findAllByPost(post);
+            if (postImgUrlList.isEmpty()) {
                 chatRoomResponseDto.setPostUrl(null);
-            }else {
+            } else {
                 chatRoomResponseDto.setPostUrl(null);
             }
             chatRoomResponseDto.setPostId(post.getId());

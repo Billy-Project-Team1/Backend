@@ -1,10 +1,9 @@
 package com.sparta.billy.socket.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.billy.exception.MemberApiException;
+import com.sparta.billy.exception.ex.MemberNotFoundException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.UserDetailsImpl;
-import com.sparta.billy.repository.LikeRepository;
 import com.sparta.billy.repository.MemberRepository;
 import com.sparta.billy.repository.PostRepository;
 import com.sparta.billy.socket.dto.ChatMessageDto;
@@ -136,7 +135,7 @@ public class ChatService {
     //채팅방에 참여한 사용자 정보 조회
     public List<MemberinfoDto> getUserinfo(UserDetailsImpl userDetails, String roomId) {
         userRepository.findById(userDetails.getMember().getId()).orElseThrow(
-                () -> new MemberApiException("존재하지 않는 사용자 입니다.")
+                MemberNotFoundException::new
         );
         List<InvitedMembers> invitedMembers = invitedMembersRepository.findAllByPostId(Long.parseLong(roomId));
         List<MemberinfoDto> members = new ArrayList<>();
@@ -150,7 +149,7 @@ public class ChatService {
     //유저 정보 상세조회 (채팅방 안에서)
     public ResponseEntity<MemberDetailDto> getUserDetails(String roomId, Long userId) {
         Member member = userRepository.findById(userId).orElseThrow(
-                () -> new MemberApiException("존재하지 않는 사용자 입니다!")
+                MemberNotFoundException::new
         );
         ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(roomId);
 

@@ -38,6 +38,18 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NotFoundReservationException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundReservationException() {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.NOT_FOUND_RESERVATION.getCode(), ErrorCode.NOT_FOUND_RESERVATION.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DeliveryNotYetException.class)
+    public ResponseEntity<ErrorResponse> handleDeliveryNotYetException() {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.DELIVERY_NOT_YET.getCode(), ErrorCode.DELIVERY_NOT_YET.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NotAuthorException.class)
     public ResponseEntity<ErrorResponse> handleNotAuthorException() {
         return new ResponseEntity<>(new ErrorResponse(ErrorCode.NOT_AUTHOR.getCode(), ErrorCode.NOT_AUTHOR.getMessage()),
