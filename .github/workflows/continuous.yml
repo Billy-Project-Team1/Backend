@@ -1,13 +1,9 @@
 name: billy CI/CD
 
 on: 
-  workflow_dispatch:
-
-# push
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [closed]
 
 env:
   S3_BUCKET_NAME: billyteambucket
