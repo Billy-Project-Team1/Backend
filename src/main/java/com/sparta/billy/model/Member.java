@@ -1,13 +1,12 @@
 package com.sparta.billy.model;
 
 import com.sparta.billy.dto.request.MemberRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Builder
@@ -35,6 +34,13 @@ public class Member extends Timestamped {
     @Column
     private String profileUrl;
 
+    @Setter
+    @Column(nullable = false)
+    private Boolean isOwner = false;
+
+    @Column
+    private String intro;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -55,6 +61,8 @@ public class Member extends Timestamped {
         this.profileUrl = profileUrl;
         this.nickname = nickname;
         this.kakaoId = kakaoId;
+//        this.isOwner = isOwner;
+//        this.intro = intro;
     }
 
     public void updateProfile(MemberRequestDto memberRequestDto, String profileUrl) {

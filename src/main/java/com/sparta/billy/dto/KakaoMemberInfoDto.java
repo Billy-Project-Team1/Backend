@@ -9,6 +9,7 @@ public class KakaoMemberInfoDto {
     private final String profileUrl;
     private final Long id;
 
+
     public KakaoMemberInfoDto(String nickname, String email, String profileUrl, Long id){
         this.nickname=nickname;
         this.email=email;
