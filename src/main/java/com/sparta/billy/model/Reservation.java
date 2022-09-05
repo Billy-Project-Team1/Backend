@@ -1,16 +1,13 @@
 package com.sparta.billy.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.sparta.billy.dto.ReservationDto.ReservationStateRequestDto;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -37,14 +34,21 @@ public class Reservation extends Timestamped {
     private String cancelMessage;
 
     @Column(nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private String startDate;
 
     @Column(nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+    private String endDate;
 
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
+
+    public void changeState(ReservationStateRequestDto requestDto) {
+        this.cancelMessage = requestDto.getCancelMessage();
+        this.state = requestDto.getState();
+    }
+
+    public void setDelivery() {
+        this.delivery = true;
+    }
 }
