@@ -40,8 +40,8 @@ public class Member extends Timestamped {
     private String profileUrl;
 
     @Setter
-    @Column(nullable = false)
-    private Boolean isOwner = false;
+    @Column
+    private Boolean isOwner;
 
     @Column
     private String intro;

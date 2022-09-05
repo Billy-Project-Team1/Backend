@@ -90,7 +90,7 @@ public class PostService {
             blockDateDto = new BlockDateResponseDto(dateList);
         }
 
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, null, false));
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, null, true));
     }
 
     // 게시글 수정

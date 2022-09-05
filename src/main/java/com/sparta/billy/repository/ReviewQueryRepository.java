@@ -18,6 +18,7 @@ import static com.sparta.billy.model.QReview.review;
 @Repository
 @RequiredArgsConstructor
 public class ReviewQueryRepository {
+
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<ReviewResponseDto> findReviewByPostId(Long postId, Long memberId) {
