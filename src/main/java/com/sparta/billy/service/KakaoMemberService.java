@@ -67,7 +67,7 @@ public class KakaoMemberService {
             String profileUrl = kakaoMemberInfo.getProfileUrl();
             String nickname = kakaoMemberInfo.getNickname();
             Long kakaoId= kakaoMemberInfo.getId();
-            kakaoMember = new Member(email, userId, encodedPassword, profileUrl, nickname, kakaoId);
+            kakaoMember = new Member(email, userId, encodedPassword, profileUrl, nickname, kakaoId, false);
 
             memberRepository.save(kakaoMember);
         }
@@ -85,6 +85,7 @@ public class KakaoMemberService {
                 MemberResponseDto.builder()
                         .id(member.getId())
                         .nickname(member.getNickname())
+                        .userId(member.getUserId())
                         .email(member.getEmail())
                         .profileUrl(member.getProfileUrl())
                         .createdAt(member.getCreatedAt())

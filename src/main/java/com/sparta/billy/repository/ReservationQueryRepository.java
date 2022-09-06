@@ -27,16 +27,18 @@ public class ReservationQueryRepository {
                         Projections.constructor(ReservationDetailResponseDto.class,
                         reservation.id, reservation.jully.nickname, reservation.post.title, postImgUrl.imgUrl, reservation.post.price,
                                 reservation.post.deposit, reservation.post.location, reservation.billy.nickname,
-                                reservation.state, reservation.startDate, reservation.endDate
+                                reservation.state, reservation.cancelMessage, reservation.startDate, reservation.endDate
                         )
                 )
                 .from(reservation)
-                .innerJoin(reservation.post, post).on(post.id.eq(reservation.post.id))
-                .innerJoin(reservation.billy, member).on(member.id.eq(reservation.billy.id))
-                .leftJoin(postImgUrl).on(postImgUrl.post.id.eq(reservation.post.id)
+                .innerJoin(reservation.post, post)
+                .on(post.id.eq(reservation.post.id))
+                .innerJoin(reservation.billy, member)
+                .leftJoin(postImgUrl)
+                .on(postImgUrl.post.id.eq(reservation.post.id)
                         .and(postImgUrl.post.id.eq(JPAExpressions.select(postImgUrl.post.id.min())
                         .from(postImgUrl))))
-                .where(reservation.billy.id.eq(billy.getId()), reservation.state.eq(state))
+                .where(reservation.billy.id.eq(billy.getId()).and(reservation.state.eq(state)).or(post.isNull()))
                 .orderBy(reservation.createdAt.desc())
                 .fetch();
     }
