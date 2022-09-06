@@ -32,7 +32,6 @@ public class ReservationResponseDto {
     private String endDate;
     // 대여 총 예상 금액
     private int totalAmount;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
