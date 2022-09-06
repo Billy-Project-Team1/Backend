@@ -40,8 +40,8 @@ public class Member extends Timestamped {
     private String profileUrl;
 
     @Setter
-    @Column(nullable = false)
-    private Boolean isOwner = false;
+    @Column
+    private Boolean isOwner;
 
     @Column
     private String intro;
@@ -59,14 +59,14 @@ public class Member extends Timestamped {
     }
 
     @Builder
-    public Member(String email, String userId, String password, String profileUrl, String nickname, Long kakaoId) {
+    public Member(String email, String userId, String password, String profileUrl, String nickname, Long kakaoId, Boolean isOwner) {
         this.email = email;
         this.userId = userId;
         this.password = password;
         this.profileUrl = profileUrl;
         this.nickname = nickname;
         this.kakaoId = kakaoId;
-//        this.isOwner = isOwner;
+        this.isOwner = isOwner;
 //        this.intro = intro;
     }
 

@@ -41,4 +41,10 @@ public class ReservationController {
                                             HttpServletRequest request) {
         return reservationService.completedDelivery(reservationId, request);
     }
+
+    @GetMapping("/auth/reservations/billy/{state}")
+    public ResponseDto<?> reservationListByBilly(@PathVariable int state,
+                                                 HttpServletRequest request) {
+        return reservationService.getReservationByBillyAndState(state, request);
+    }
 }

@@ -1,31 +1,48 @@
 package com.sparta.billy.dto.ReservationDto;
 
-import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.sparta.billy.repository.PostImgUrlRepository;
+import lombok.*;
 
-@Builder
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReservationDetailResponseDto {
-    private Long postId;
-    private Long jullyId;
+    private Long reservationId;
     private String jullyNickname;
     private String title;
+    private String postImgUrl;
     private int price;
     private int deposit;
-    private PostImgUrlResponseDto postImgUrl;
-    private String location;
-    private String latitude;
-    private String longitude;
-    private Long billyId;
-    private String billyNickname;
-    private int state;
     private String startDate;
     private String endDate;
-    // 대여 총 예상 금액
-    private int totalAmount;
+    private int totalAmount;// 총 대여 금액
+    private String location;
+    private String billyNickname;
+    private int state;
+    private String cancelMessage;
+
+    public ReservationDetailResponseDto(Long reservationId, String jullyNickname, String title, String postImgUrl,
+                                        int price, int deposit, String location,
+                                        String billyNickname, int state, String cancelMessage, String startDate, String endDate) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate localStartDate = LocalDate.parse(startDate, dtf);
+        LocalDate localEndDate = LocalDate.parse(endDate, dtf);
+
+        this.reservationId = reservationId;
+        this.jullyNickname = jullyNickname;
+        this.title = title;
+        this.postImgUrl = postImgUrl;
+        this.totalAmount = (int)(ChronoUnit.DAYS.between(localStartDate, localEndDate)) * price;
+        this.price = price;
+        this.deposit = deposit;
+        this.location = location;
+        this.billyNickname = billyNickname;
+        this.state = state;
+        this.cancelMessage = cancelMessage;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
