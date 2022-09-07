@@ -32,6 +32,12 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(DeletePostException.class)
+    public ResponseEntity<ErrorResponse> handleDeletePostException() {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.ALREADY_DELETE_POST.getCode(), ErrorCode.ALREADY_DELETE_POST.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NotFoundReviewException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundReviewException() {
         return new ResponseEntity<>(new ErrorResponse(ErrorCode.NOT_FOUND_REVIEW.getCode(), ErrorCode.NOT_FOUND_REVIEW.getMessage()),

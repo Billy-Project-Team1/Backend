@@ -88,15 +88,15 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> updateMember(Long memberId, MemberUpdateRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
+    public ResponseDto<?> updateMember(String userId, MemberUpdateRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
         Member checkMember = check.validateMember(request);
         check.tokenCheck(request, checkMember);
 
-        if (!checkMember.getId().equals(memberId)) {
+        if (!checkMember.getUserId().equals(userId)) {
             throw new IllegalArgumentException("자신의 프로필만 수정가능합니다.");
         }
 
-        Member member = check.getCurrentMember(memberId);
+        Member member = check.getMemberByUserId(userId);
         String profileUrl;
         if (file != null) {
             if (member.getProfileUrl() != null) {
@@ -121,27 +121,27 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> getMemberDetails(Long memberId) {
-        Member member = check.getCurrentMember(memberId);
-        if (member != null) {
-            return ResponseDto.success(
-                    MemberResponseDto.builder()
-                            .id(member.getId())
-                            .email(member.getEmail())
-                            .userId(member.getUserId())
-                            .profileUrl(member.getProfileUrl())
-                            .nickname(member.getNickname())
-                            .createdAt(member.getCreatedAt())
-                            .updatedAt(member.getUpdatedAt())
-                            .build()
-            );
+    public ResponseDto<?> getMemberDetails(String userId) {
+        Member member = check.getMemberByUserId(userId);
+        if (member == null) {
+            throw new MemberNotFoundException();
         }
-        throw new MemberNotFoundException();
+        return ResponseDto.success(
+                MemberResponseDto.builder()
+                        .id(member.getId())
+                        .email(member.getEmail())
+                        .userId(member.getUserId())
+                        .profileUrl(member.getProfileUrl())
+                        .nickname(member.getNickname())
+                        .createdAt(member.getCreatedAt())
+                        .updatedAt(member.getUpdatedAt())
+                        .build()
+        );
     }
 
     @Transactional
-    public ResponseEntity<SuccessDto> deleteMember(Long memberId) {
-        Member member = check.getCurrentMember(memberId);
+    public ResponseEntity<SuccessDto> deleteMember(String userId) {
+        Member member = check.getMemberByUserId(userId);
 
         if (member == null) {
             throw new MemberNotFoundException();

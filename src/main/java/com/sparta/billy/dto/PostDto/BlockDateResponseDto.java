@@ -10,9 +10,14 @@ import java.util.List;
 @NoArgsConstructor
 public class BlockDateResponseDto {
     private List<String> blockDateList;
+    private List<String> reservationDateList;
 
-    @QueryProjection
     public BlockDateResponseDto(List<String> blockDateList) {
         this.blockDateList = blockDateList;
+    }
+
+    public BlockDateResponseDto(List<String> blockDateList, List<String> reservationDateList) {
+        this.blockDateList = blockDateList;
+        this.reservationDateList = reservationDateList;
     }
 }

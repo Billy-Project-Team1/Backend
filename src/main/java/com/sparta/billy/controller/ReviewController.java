@@ -41,4 +41,9 @@ public class ReviewController {
     public ResponseDto<?> reviewByPost(@PathVariable Long postId, @RequestParam(required = false) Long memberId) {
         return reviewService.getReviewsByPost(postId, memberId);
     }
+
+    @GetMapping("/auth/reviews/received")
+    public ResponseDto<?> reviewMyReceived(HttpServletRequest request) {
+        return reviewService.getReceivedReview(request);
+    }
 }
