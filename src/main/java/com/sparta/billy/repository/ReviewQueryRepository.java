@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import static com.sparta.billy.model.QMember.member;
 import static com.sparta.billy.model.QPost.post;
 import static com.sparta.billy.model.QReview.review;
+import static com.sparta.billy.model.QReservation.reservation;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,26 +27,65 @@ public class ReviewQueryRepository {
             memberId = 0L;
         }
         List<ReviewResponseDto> response = jpaQueryFactory.select(
-                        Projections.constructor(ReviewResponseDto.class,review.id, review.member.nickname, review.member.profileUrl,
+                        Projections.constructor(ReviewResponseDto.class, review.id, review.member.nickname,
                                 review.member.id, review.star, review.comment, review.reviewImg,
+                                reservation.startDate, reservation.endDate,
                                 review.createdAt, review.updatedAt, review.member.id.eq(memberId))
                 )
                 .from(review)
                 .innerJoin(review.post, post)
                 .innerJoin(review.member, member)
+                .leftJoin(reservation)
+                .on(reservation.post.id.eq(review.post.id))
                 .where(post.id.eq(postId).and(review.parent.id.isNull()))
                 .orderBy(review.createdAt.desc())
                 .fetch();
 
         List<ReviewChildrenResponseDto> comments = jpaQueryFactory.select(
                         Projections.constructor(ReviewChildrenResponseDto.class, review.parent.id,
-                                review.id, review.member.nickname, review.member.profileUrl,
+                                review.id, review.member.nickname,
                                 review.member.id, review.comment, review.createdAt, review.updatedAt,
                                 review.member.id.eq(memberId)
                         ))
                 .from(review)
                 .innerJoin(review.post, post).innerJoin(review.member, member)
                 .where(post.id.eq(postId).and(review.parent.id.isNotNull()))
+                .fetch();
+
+        response.stream()
+                .forEach(parent -> {
+                    parent.setChildren(comments.stream()
+                            .filter(child -> child.getParentId().equals(parent.getReviewId()))
+                            .collect(Collectors.toList()));
+                });
+        return response;
+    }
+
+    public List<ReviewResponseDto> findReviewReceived(Member member1) {
+        List<ReviewResponseDto> response = jpaQueryFactory.select(
+                        Projections.constructor(ReviewResponseDto.class, review.id, review.member.nickname,
+                                review.member.id, review.star, review.comment, review.reviewImg,
+                                reservation.startDate, reservation.endDate,
+                                review.createdAt, review.updatedAt, review.member.id.eq(member1.getId()))
+                )
+                .from(review)
+                .innerJoin(review.post, post)
+                .innerJoin(review.member, member)
+                .leftJoin(reservation)
+                .on(reservation.post.id.eq(review.post.id))
+                .where(review.parent.id.isNull(), reservation.post.id.eq(member1.getId()))
+                .orderBy(review.createdAt.desc())
+                .fetch();
+
+        List<ReviewChildrenResponseDto> comments = jpaQueryFactory.select(
+                        Projections.constructor(ReviewChildrenResponseDto.class, review.parent.id,
+                                review.id, review.member.nickname,
+                                review.member.id, review.comment, review.createdAt, review.updatedAt,
+                                review.member.id.eq(member1.getId())
+                        ))
+                .from(review)
+                .innerJoin(review.post, post).innerJoin(review.member, member)
+                .where(review.parent.id.isNotNull())
                 .fetch();
 
         response.stream()
