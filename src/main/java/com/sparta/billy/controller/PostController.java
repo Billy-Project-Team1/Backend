@@ -45,6 +45,11 @@ public class PostController {
 
     @GetMapping("/posts/details/{postId}")
     public ResponseDto<?> postDetails(@PathVariable Long postId, @RequestParam(required = false) Long memberId) {
-        return postService.getPostsDetails(postId, memberId);
+        return postService.getPostDetails(postId, memberId);
+    }
+
+    @GetMapping("/auth/posts/my-page")
+    public ResponseDto<?> postMyUpload(HttpServletRequest request) {
+        return postService.getMyPost(request);
     }
 }

@@ -5,7 +5,6 @@ import com.sparta.billy.dto.PostDto.PostDetailResponseDto;
 import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
 import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import com.sparta.billy.dto.ResponseDto;
-import com.sparta.billy.dto.ReviewDto.ReviewChildrenResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.model.*;
@@ -35,6 +34,8 @@ public class PostService {
     private final BlockDateRepository blockDateRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewQueryRepository reviewQueryRepository;
+    private final LikeRepository likeRepository;
+    private final ReservationRepository reservationRepository;
     private final Check check;
 
     // 게시글 작성
@@ -79,8 +80,6 @@ public class PostService {
         BlockDateResponseDto blockDateDto = null;
         List<String> dateList = new ArrayList<>();
         for (String date : blockDateDtoList) {
-//            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//            LocalDate localDate = LocalDate.parse(d , dtf);
             BlockDate blockDate = BlockDate.builder()
                     .blockDate(date)
                     .post(post)
@@ -176,12 +175,30 @@ public class PostService {
 
     //게시글 상세 조회
     @Transactional
-    public ResponseDto<?> getPostsDetails(Long postId, Long memberId) {
+    public ResponseDto<?> getPostDetails(Long postId, Long memberId) {
         Post post = check.getCurrentPost(postId);
         PostImgUrlResponseDto postImgUrlResponseDto = postQueryRepository.findPostImgListByPostId(postId);
         BlockDateResponseDto blockDateResponseDto = postQueryRepository.findBlockDateByPostId(postId);
         List<ReviewResponseDto> reviews = reviewQueryRepository.findReviewByPostId(postId, memberId);
+        int likeCount = likeRepository.countByPost(post);
+
+        // 게시글에 따른 평균 별점
+        int sum = 0;
+        for (int i = 0; i < reviews.size(); i++) {
+            sum += reviews.get(i).getStar();
+        }
+        float avg = (float)sum / (float)reviews.size();
+        String num = String.format("%.1f" , avg);
+
+        // 내가 작성한 글인지 확인 (게시글 상세 조회는 로그인하지 않은 상태로도 조회가 가능하기 때문에 memberId를 따로 전달)
         boolean isMyPost = post.getMember().getId().equals(memberId);
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto, postImgUrlResponseDto, reviews, isMyPost));
+
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto, postImgUrlResponseDto, reviews, isMyPost, num, likeCount));
+    }
+
+    @Transactional
+    public ResponseDto<?> getMyPost(HttpServletRequest request) {
+        Member member = check.validateMember(request);
+        return ResponseDto.success(postQueryRepository.findMyPost(member));
     }
 }

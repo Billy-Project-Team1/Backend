@@ -18,6 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PostDetailResponseDto {
     private Long id;
+    private String avg;
+    private int reviewCount;
+    private int likeCount;
     private String nickname;
     private String profileUrl;
     private Long authorId;
@@ -44,6 +47,32 @@ public class PostDetailResponseDto {
                                  BlockDateResponseDto blockDate,
                                  PostImgUrlResponseDto postImgUrl,
                                  List<ReviewResponseDto> reviews,
+                                 boolean isMine, String avg, int likeCount) {
+        this.id = post.getId();
+        this.avg = avg;
+        this.likeCount = likeCount;
+        this.nickname = post.getMember().getNickname();
+        this.profileUrl = post.getMember().getProfileUrl();
+        this.authorId = post.getMember().getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.price = post.getPrice();
+        this.deposit = post.getDeposit();
+        this.blockDate = blockDate;
+        this.postImgUrl = postImgUrl;
+        this.location = post.getLocation();
+        this.latitude = post.getLatitude();
+        this.longitude = post.getLongitude();
+        this.isMine = isMine;
+        this.reviews = reviews;
+        this.createdAt = post.getCreatedAt();
+        this.updatedAt = post.getUpdatedAt();
+    }
+
+    public PostDetailResponseDto(Post post,
+                                 BlockDateResponseDto blockDate,
+                                 PostImgUrlResponseDto postImgUrl,
+                                 List<ReviewResponseDto> reviews,
                                  boolean isMine) {
         this.id = post.getId();
         this.nickname = post.getMember().getNickname();
@@ -63,23 +92,4 @@ public class PostDetailResponseDto {
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
     }
-
-    @QueryProjection
-    public PostDetailResponseDto(Post post, boolean isMine) {
-        this.id = post.getId();
-        this.nickname = post.getMember().getNickname();
-        this.profileUrl = post.getMember().getProfileUrl();
-        this.authorId = post.getMember().getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.price = post.getPrice();
-        this.deposit = post.getDeposit();
-        this.location = post.getLocation();
-        this.latitude = post.getLatitude();
-        this.longitude = post.getLongitude();
-        this.isMine = isMine;
-        this.createdAt = post.getCreatedAt();
-        this.updatedAt = post.getUpdatedAt();
-    }
-
 }
