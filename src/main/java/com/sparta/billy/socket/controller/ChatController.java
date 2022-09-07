@@ -38,7 +38,7 @@ public class ChatController {
 
 
     //채팅방에 참여한 사용자 정보 조회
-    @GetMapping("/chat/message/userinfo/{roomId}")
+    @GetMapping("/chat/message/memberinfo/{roomId}")
     @ResponseBody
     public List<MemberinfoDto> getUserInfo(
             @PathVariable String roomId,
@@ -47,9 +47,9 @@ public class ChatController {
     }
 
     //유저 정보 상세 조회 (채팅방 안에서)
-    @GetMapping("/chat/details/{roomId}/{userId}")
+    @GetMapping("/chat/details/{roomId}/{memberId}")
     @ResponseBody
-    public ResponseEntity<MemberDetailDto> getUserDetails(@PathVariable String roomId, @PathVariable Long userId) {
-        return chatService.getUserDetails(roomId,userId);
+    public ResponseEntity<MemberDetailDto> getUserDetails(@PathVariable String roomId, @PathVariable Long memberId) {
+        return chatService.getUserDetails(roomId,memberId);
     }
 }

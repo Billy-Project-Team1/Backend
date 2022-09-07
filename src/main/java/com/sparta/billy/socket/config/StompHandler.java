@@ -27,7 +27,7 @@ public class StompHandler implements ChannelInterceptor {
         String sessionId = (String) message.getHeaders().get("simpSessionId");
         // websocket 연결시 헤더의 jwt token 검증
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            tokenProvider.validateToken(accessor.getFirstNativeHeader("token"));
+            tokenProvider.validateToken(accessor.getFirstNativeHeader("Authorization"));
             // 구독 요청시 유저의 카운트수를 저장하고 최대인원수를 관리하며 , 세션정보를 저장한다.
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             String roomId = chatRoomService.getRoomId((String) Optional.ofNullable(message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
