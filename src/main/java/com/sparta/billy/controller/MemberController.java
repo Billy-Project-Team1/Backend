@@ -38,22 +38,22 @@ public class MemberController {
         return memberService.login(loginDto, response);
     }
 
-    @PatchMapping("/auth/members/profile/{memberId}")
-    public ResponseDto<?> memberUpdate(@PathVariable Long memberId,
+    @PatchMapping("/auth/members/profile/{userId}")
+    public ResponseDto<?> memberUpdate(@PathVariable String userId,
                                        @RequestPart(value = "data") MemberUpdateRequestDto memberRequestDto,
                                         @RequestPart(value = "image", required = false) MultipartFile file,
                                         HttpServletRequest request) throws IOException {
-        return memberService.updateMember(memberId, memberRequestDto, file, request);
+        return memberService.updateMember(userId, memberRequestDto, file, request);
     }
 
-    @GetMapping("/auth/members/profile/{memberId}")
-    public ResponseDto<?> memberDetails(@PathVariable Long memberId) {
-        return memberService.getMemberDetails(memberId);
+    @GetMapping("/auth/members/profile/{userId}")
+    public ResponseDto<?> memberDetails(@PathVariable String userId) {
+        return memberService.getMemberDetails(userId);
     }
 
-    @DeleteMapping("/auth/members/withdrawal/{memberId}")
-    public ResponseEntity<SuccessDto> memberDelete(@PathVariable Long memberId) {
-        return memberService.deleteMember(memberId);
+    @DeleteMapping("/auth/members/withdrawal/{userId}")
+    public ResponseEntity<SuccessDto> memberDelete(@PathVariable String userId) {
+        return memberService.deleteMember(userId);
     }
 
     @PostMapping("/auth/members/reissue")

@@ -59,6 +59,7 @@ public class Check {
         }
     }
 
+
     public Post getCurrentPost(Long id) {
         Optional<Post> optionalPost = postRepository.findById(id);
         return optionalPost.orElse(null);
@@ -96,6 +97,7 @@ public class Check {
         Optional<Member> optionalMember = memberRepository.findById(id);
         return optionalMember.orElse(null);
     }
+
 
     public Member getMemberByUserId(String userId) {
         Optional<Member> optionalMember = memberRepository.findByUserId(userId);
