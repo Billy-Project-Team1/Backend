@@ -67,6 +67,7 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // CORS 설정
                 .antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**" ,
                         /*Probably not needed*/ "/swagger.json").permitAll()
+                .antMatchers("/wss/chat/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()

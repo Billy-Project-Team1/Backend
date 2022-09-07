@@ -147,8 +147,8 @@ public class ChatService {
     }
 
     //유저 정보 상세조회 (채팅방 안에서)
-    public ResponseEntity<MemberDetailDto> getUserDetails(String roomId, Long userId) {
-        Member member = userRepository.findById(userId).orElseThrow(
+    public ResponseEntity<MemberDetailDto> getUserDetails(String roomId, Long memberId) {
+        Member member = userRepository.findById(memberId).orElseThrow(
                 MemberNotFoundException::new
         );
         ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(roomId);
