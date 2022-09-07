@@ -27,7 +27,7 @@ public class ReservationDetailResponseDto {
     public ReservationDetailResponseDto(Long reservationId, String jullyNickname, String title, String postImgUrl,
                                         int price, int deposit, String location,
                                         String billyNickname, int state, String cancelMessage, String startDate, String endDate) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localStartDate = LocalDate.parse(startDate, dtf);
         LocalDate localEndDate = LocalDate.parse(endDate, dtf);
 

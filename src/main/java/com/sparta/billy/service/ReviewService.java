@@ -6,7 +6,9 @@ import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
+import com.sparta.billy.model.Reservation;
 import com.sparta.billy.model.Review;
+import com.sparta.billy.repository.ReservationRepository;
 import com.sparta.billy.repository.ReviewQueryRepository;
 import com.sparta.billy.repository.ReviewRepository;
 import com.sparta.billy.util.Check;
@@ -28,6 +30,7 @@ public class ReviewService {
     private final AwsS3Service awsS3Service;
     private final ReviewRepository reviewRepository;
     private final ReviewQueryRepository reviewQueryRepository;
+    private final ReservationRepository reservationRepository;
     private final Check check;
 
     @Transactional
@@ -38,6 +41,15 @@ public class ReviewService {
         Post post = check.getCurrentPost(reviewRequestDto.getPostId());
         check.checkPost(post);
         check.tokenCheck(request, member);
+
+        List<Reservation> reservations = reservationRepository.findAllByPost(post);
+        for (Reservation r : reservations) {
+            if (!r.getBilly().equals(member)) {
+                if (r.getState() != 5) {
+                    throw new IllegalArgumentException("반납 완료한 예약자만 작성가능합니다.");
+                }
+            }
+        }
 
         String imgUrl;
         if (file != null) {
@@ -100,7 +112,18 @@ public class ReviewService {
 
     @Transactional
     public ResponseDto<?> getReviewsByPost(Long postId, Long memberId) {
+        Post post = check.getCurrentPost(postId);
+        check.checkPost(post);
         List<ReviewResponseDto> reviews = reviewQueryRepository.findReviewByPostId(postId, memberId);
         return ResponseDto.success(reviews);
+    }
+
+    @Transactional
+    public ResponseDto<?> getReceivedReview(HttpServletRequest request) {
+        Member member = check.validateMember(request);
+        check.tokenCheck(request, member);
+
+        List<ReviewResponseDto> response = reviewQueryRepository.findReviewReceived(member);
+        return ResponseDto.success(response);
     }
 }

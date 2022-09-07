@@ -82,6 +82,7 @@ public class Check {
     }
 
     public List<Reservation> getReservationByPost(Post post) { return reservationRepository.findAllByPost(post); }
+
     public Review getCurrentReview(Long id) {
         Optional<Review> optionalReview = reviewRepository.findById(id);
         return optionalReview.orElse(null);
@@ -90,11 +91,6 @@ public class Check {
     public void tokenCheck(HttpServletRequest request, Member member) {
         if (request.getHeader("Authorization") == null) throw new TokenNotExistException();
         if (member == null) throw new MemberNotFoundException();
-    }
-
-    public Member getCurrentMember(Long id) {
-        Optional<Member> optionalMember = memberRepository.findById(id);
-        return optionalMember.orElse(null);
     }
 
     public Member getMemberByUserId(String userId) {

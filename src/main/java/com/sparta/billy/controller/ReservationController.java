@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,7 +19,7 @@ public class ReservationController {
 
     @PostMapping("/auth/reservations")
     public ResponseDto<?> reservationCreate(@RequestBody ReservationRequestDto reservationRequestDto,
-                                            HttpServletRequest request) {
+                                            HttpServletRequest request) throws ParseException {
         return reservationService.createReservation(reservationRequestDto, request);
     }
 
@@ -46,5 +47,11 @@ public class ReservationController {
     public ResponseDto<?> reservationListByBilly(@PathVariable int state,
                                                  HttpServletRequest request) {
         return reservationService.getReservationByBillyAndState(state, request);
+    }
+
+    @GetMapping("/auth/reservations/jully/{state}")
+    public ResponseDto<?> reservationListByJully(@PathVariable int state,
+                                                 HttpServletRequest request) {
+        return reservationService.getReservationByJullyAndState(state, request);
     }
 }
