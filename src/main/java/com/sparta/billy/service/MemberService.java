@@ -131,7 +131,7 @@ public class MemberService {
 
         String totalAvg = reviewQueryRepository.getTotalAvg(member);
         return ResponseDto.success(new MemberResponseDto(member.getId(), member.getEmail(), member.getNickname(),
-                member.getProfileUrl(), totalAvg));
+                member.getUserId(), member.getProfileUrl(), totalAvg));
     }
 
     @Transactional
@@ -174,6 +174,4 @@ public class MemberService {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
-
-
 }
