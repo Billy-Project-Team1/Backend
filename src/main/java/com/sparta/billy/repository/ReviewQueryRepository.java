@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.billy.dto.ReviewDto.ReviewChildrenResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.model.Member;
+import com.sparta.billy.model.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -22,22 +23,21 @@ public class ReviewQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<ReviewResponseDto> findReviewByPostId(Long postId, Long memberId) {
-        if (memberId == null) {
-            memberId = 0L;
+    public List<ReviewResponseDto> findReviewByPostId(Long postId, String userId) {
+        if (userId == null) {
+            userId = null;
         }
+
         List<ReviewResponseDto> response = jpaQueryFactory.select(
                         Projections.constructor(ReviewResponseDto.class, review.id, review.member.nickname,
                                 review.member.id, review.star, review.comment, review.reviewImg,
                                 reservation.startDate, reservation.endDate,
-                                review.createdAt, review.updatedAt, review.member.id.eq(memberId))
+                                review.createdAt, review.updatedAt, review.member.userId.eq(userId))
                 )
                 .from(review)
-                .innerJoin(review.post, post)
                 .innerJoin(review.member, member)
-                .leftJoin(reservation)
-                .on(reservation.post.id.eq(review.post.id))
-                .where(post.id.eq(postId).and(review.parent.id.isNull()))
+                .innerJoin(review.reservation, reservation)
+                .where(review.post.id.eq(postId), review.parent.id.isNull())
                 .orderBy(review.createdAt.desc())
                 .fetch();
 
@@ -45,11 +45,11 @@ public class ReviewQueryRepository {
                         Projections.constructor(ReviewChildrenResponseDto.class, review.parent.id,
                                 review.id, review.member.nickname,
                                 review.member.id, review.comment, review.createdAt, review.updatedAt,
-                                review.member.id.eq(memberId)
+                                review.member.userId.eq(userId)
                         ))
                 .from(review)
-                .innerJoin(review.post, post).innerJoin(review.member, member)
-                .where(post.id.eq(postId).and(review.parent.id.isNotNull()))
+                .innerJoin(review.member, member)
+                .where(review.parent.id.isNotNull())
                 .fetch();
 
         response.stream()
@@ -58,6 +58,7 @@ public class ReviewQueryRepository {
                             .filter(child -> child.getParentId().equals(parent.getReviewId()))
                             .collect(Collectors.toList()));
                 });
+
         return response;
     }
 
@@ -71,9 +72,8 @@ public class ReviewQueryRepository {
                 .from(review)
                 .innerJoin(review.post, post)
                 .innerJoin(review.member, member)
-                .leftJoin(reservation)
-                .on(reservation.post.id.eq(review.post.id))
-                .where(review.parent.id.isNull(), reservation.post.id.eq(member1.getId()))
+                .innerJoin(review.reservation, reservation)
+                .where(review.parent.id.isNull(), reservation.jully.id.eq(member1.getId()))
                 .orderBy(review.createdAt.desc())
                 .fetch();
 
@@ -96,4 +96,29 @@ public class ReviewQueryRepository {
                 });
         return response;
     }
+
+    public String getTotalAvg(Member member1) {
+        List<Integer> reviewStar = jpaQueryFactory.select(review.star)
+                .from(review)
+                .where(review.parent.id.isNull(), review.reservation.jully.id.eq(member1.getId()))
+                .fetch();
+        int sum = 0;
+        for (int i : reviewStar) {
+            sum += i;
+        }
+        return String.format("%.1f" , (float)sum / (float)reviewStar.size());
+    }
+
+    public String getPostAvg(Post post1) {
+        List<Integer> reviewStar = jpaQueryFactory.select(review.star)
+                .from(review)
+                .where(review.parent.id.isNull(), review.post.id.eq(post1.getId()))
+                .fetch();
+        int sum = 0;
+        for (int i : reviewStar) {
+            sum += i;
+        }
+        return String.format("%.1f" , (float)sum / (float)reviewStar.size());
+    }
+
 }

@@ -89,7 +89,7 @@ public class PostService {
             blockDateDto = new BlockDateResponseDto(dateList);
         }
 
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, null, true));
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, true));
     }
 
     // 게시글 수정
@@ -139,7 +139,7 @@ public class PostService {
             }
         }
         post.update(postUploadRequestDto);
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, null, false));
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, true));
     }
 
     @Transactional
@@ -175,25 +175,26 @@ public class PostService {
 
     //게시글 상세 조회
     @Transactional
-    public ResponseDto<?> getPostDetails(Long postId, Long memberId) {
+    public ResponseDto<?> getPostDetails(Long postId, String userId) {
         Post post = check.getCurrentPost(postId);
         PostImgUrlResponseDto postImgUrlResponseDto = postQueryRepository.findPostImgListByPostId(postId);
         BlockDateResponseDto blockDateResponseDto = postQueryRepository.findBlockDateByPostId(postId);
-        List<ReviewResponseDto> reviews = reviewQueryRepository.findReviewByPostId(postId, memberId);
+
+        // 관심 수
         int likeCount = likeRepository.countByPost(post);
 
         // 게시글에 따른 평균 별점
-        int sum = 0;
-        for (int i = 0; i < reviews.size(); i++) {
-            sum += reviews.get(i).getStar();
-        }
-        float avg = (float)sum / (float)reviews.size();
-        String num = String.format("%.1f" , avg);
+        String postAvg = reviewQueryRepository.getPostAvg(post);
+        if (postAvg.equals("NaN")) postAvg = "0";
 
-        // 내가 작성한 글인지 확인 (게시글 상세 조회는 로그인하지 않은 상태로도 조회가 가능하기 때문에 memberId를 따로 전달)
-        boolean isMyPost = post.getMember().getId().equals(memberId);
+        // 게시글에 달린 리뷰 수
+        int reviewCount = reviewRepository.countByPost(post);
 
-        return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto, postImgUrlResponseDto, reviews, isMyPost, num, likeCount));
+        // 내가 작성한 글인지 확인 (게시글 상세 조회는 로그인하지 않은 상태로도 조회가 가능해야하기 때문에 memberId를 따로 전달)
+        boolean isMyPost = post.getMember().getUserId().equals(userId);
+
+        return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto,
+                postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount));
     }
 
     @Transactional

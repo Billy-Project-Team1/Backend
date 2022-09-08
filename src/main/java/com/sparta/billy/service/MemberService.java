@@ -10,6 +10,7 @@ import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
 import com.sparta.billy.repository.MemberRepository;
 import com.sparta.billy.repository.RefreshTokenRepository;
+import com.sparta.billy.repository.ReviewQueryRepository;
 import com.sparta.billy.security.jwt.TokenProvider;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ReviewQueryRepository reviewQueryRepository;
     private final TokenProvider tokenProvider;
     private final Check check;
 
@@ -126,17 +128,10 @@ public class MemberService {
         if (member == null) {
             throw new MemberNotFoundException();
         }
-        return ResponseDto.success(
-                MemberResponseDto.builder()
-                        .id(member.getId())
-                        .email(member.getEmail())
-                        .userId(member.getUserId())
-                        .profileUrl(member.getProfileUrl())
-                        .nickname(member.getNickname())
-                        .createdAt(member.getCreatedAt())
-                        .updatedAt(member.getUpdatedAt())
-                        .build()
-        );
+
+        String totalAvg = reviewQueryRepository.getTotalAvg(member);
+        return ResponseDto.success(new MemberResponseDto(member.getId(), member.getEmail(), member.getNickname(),
+                member.getProfileUrl(), totalAvg));
     }
 
     @Transactional

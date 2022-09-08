@@ -18,9 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PostDetailResponseDto {
     private Long id;
-    private String avg;
-    private int reviewCount;
     private int likeCount;
+    private String postAvg;
+    private int reviewCount;
     private String nickname;
     private String profileUrl;
     private Long authorId;
@@ -34,7 +34,6 @@ public class PostDetailResponseDto {
     private Double latitude;
     private Double longitude;
     private boolean isMine;
-    private List<ReviewResponseDto> reviews = new ArrayList<>();
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
@@ -46,11 +45,11 @@ public class PostDetailResponseDto {
     public PostDetailResponseDto(Post post,
                                  BlockDateResponseDto blockDate,
                                  PostImgUrlResponseDto postImgUrl,
-                                 List<ReviewResponseDto> reviews,
-                                 boolean isMine, String avg, int likeCount) {
+                                 boolean isMine, int likeCount, String postAvg, int reviewCount) {
         this.id = post.getId();
-        this.avg = avg;
         this.likeCount = likeCount;
+        this.postAvg = postAvg;
+        this.reviewCount = reviewCount;
         this.nickname = post.getMember().getNickname();
         this.profileUrl = post.getMember().getProfileUrl();
         this.authorId = post.getMember().getId();
@@ -64,7 +63,6 @@ public class PostDetailResponseDto {
         this.latitude = post.getLatitude();
         this.longitude = post.getLongitude();
         this.isMine = isMine;
-        this.reviews = reviews;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
     }
@@ -72,7 +70,6 @@ public class PostDetailResponseDto {
     public PostDetailResponseDto(Post post,
                                  BlockDateResponseDto blockDate,
                                  PostImgUrlResponseDto postImgUrl,
-                                 List<ReviewResponseDto> reviews,
                                  boolean isMine) {
         this.id = post.getId();
         this.nickname = post.getMember().getNickname();
@@ -88,7 +85,6 @@ public class PostDetailResponseDto {
         this.latitude = post.getLatitude();
         this.longitude = post.getLongitude();
         this.isMine = isMine;
-        this.reviews = reviews;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
     }

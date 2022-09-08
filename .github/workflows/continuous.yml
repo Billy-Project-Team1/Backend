@@ -1,6 +1,6 @@
 name: billy CI/CD
 
-on:
+on: 
   pull_request:
     branches: [ main ]
     types: [closed]

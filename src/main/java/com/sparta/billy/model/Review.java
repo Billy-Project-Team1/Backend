@@ -44,6 +44,10 @@ public class Review extends Timestamped {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @JoinColumn(name = "reservation_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private Reservation reservation;
+
     public void update(ReviewRequestDto requestDto, String reviewImg) {
         if (requestDto.getStar() != 0) {
             this.star = requestDto.getStar();

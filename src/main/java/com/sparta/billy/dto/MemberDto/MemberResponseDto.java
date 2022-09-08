@@ -18,6 +18,7 @@ public class MemberResponseDto {
     private String userId;
     private String nickname;
     private String profileUrl;
+    private String totalAvg;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
@@ -33,5 +34,14 @@ public class MemberResponseDto {
         this.profileUrl = member.getProfileUrl();
         this.createdAt = member.getCreatedAt();
         this.updatedAt = member.getUpdatedAt();
+    }
+
+    public MemberResponseDto(Long id, String email, String nickname,
+                             String profileUrl, String totalAvg) {
+        this.id = id;
+        this.email = email;
+        this.nickname = nickname;
+        this.profileUrl = profileUrl;
+        this.totalAvg = totalAvg;
     }
 }
