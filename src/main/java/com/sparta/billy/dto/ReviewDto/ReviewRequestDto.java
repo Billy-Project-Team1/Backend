@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 public class ReviewRequestDto {
-    private Long postId;
+    private Long reservationId;
 
     private int star;
 

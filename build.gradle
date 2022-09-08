@@ -53,7 +53,7 @@ dependencies {
     // tika
     implementation group: 'org.apache.tika', name: 'tika-parsers', version: '1.24.1'
 
-    //querydsl 추가
+    // querydsl 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
@@ -64,14 +64,19 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    //websocket
+    // websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.webjars:sockjs-client:1.5.1'
     implementation 'org.webjars:stomp-websocket:2.3.4'
 
+    /* elasticsearch */
+    compile 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.6'
+    compile 'org.elasticsearch.client:elasticsearch-rest-client:8.4.1'
+    compile 'org.elasticsearch:elasticsearch:8.4.1'
 }
 
-//querydsl 추가 시작
+// querydsl 추가 시작
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
@@ -90,7 +95,7 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
-//querydsl 추가 끝
+// querydsl 추가 끝
 
 tasks.named('test') {
     useJUnitPlatform()

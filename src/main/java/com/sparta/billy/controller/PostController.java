@@ -44,8 +44,8 @@ public class PostController {
     }
 
     @GetMapping("/posts/details/{postId}")
-    public ResponseDto<?> postDetails(@PathVariable Long postId, @RequestParam(required = false) Long memberId) {
-        return postService.getPostDetails(postId, memberId);
+    public ResponseDto<?> postDetails(@PathVariable Long postId, @RequestParam(required = false) String userId) {
+        return postService.getPostDetails(postId, userId);
     }
 
     @GetMapping("/auth/posts/my-page")

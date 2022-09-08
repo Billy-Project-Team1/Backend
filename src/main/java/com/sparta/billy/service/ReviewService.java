@@ -4,6 +4,7 @@ import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewRequestDto;
 import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.dto.SuccessDto;
+import com.sparta.billy.exception.ex.NotFoundReservationException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.Reservation;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -38,17 +40,22 @@ public class ReviewService {
                                        MultipartFile file,
                                        HttpServletRequest request) throws IOException {
         Member member = check.validateMember(request);
-        Post post = check.getCurrentPost(reviewRequestDto.getPostId());
-        check.checkPost(post);
         check.tokenCheck(request, member);
 
-        List<Reservation> reservations = reservationRepository.findAllByPost(post);
-        for (Reservation r : reservations) {
-            if (!r.getBilly().equals(member)) {
-                if (r.getState() != 5) {
-                    throw new IllegalArgumentException("반납 완료한 예약자만 작성가능합니다.");
-                }
-            }
+        Reservation reservation = reservationRepository.findById(reviewRequestDto.getReservationId())
+                .orElseThrow(NotFoundReservationException::new);
+
+        Post post = reservation.getPost();
+        check.checkPost(post);
+
+        if (reservation.getState() != 5) {
+            throw new IllegalArgumentException("반납완료된 예약건이 아닙니다.");
+        }
+
+        Optional<Review> optionalReview = reviewRepository.findByMemberAndReservation(member, reservation);
+
+        if (optionalReview.isPresent()) {
+            throw new IllegalArgumentException("이미 리뷰를 남긴 예약건입니다.");
         }
 
         String imgUrl;
@@ -65,6 +72,7 @@ public class ReviewService {
         Review review = Review.builder()
                 .member(member)
                 .post(post)
+                .reservation(reservation)
                 .star(reviewRequestDto.getStar())
                 .reviewImg(imgUrl)
                 .comment(reviewRequestDto.getComment())
@@ -111,10 +119,10 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseDto<?> getReviewsByPost(Long postId, Long memberId) {
+    public ResponseDto<?> getReviewsByPost(Long postId, String userId) {
         Post post = check.getCurrentPost(postId);
         check.checkPost(post);
-        List<ReviewResponseDto> reviews = reviewQueryRepository.findReviewByPostId(postId, memberId);
+        List<ReviewResponseDto> reviews = reviewQueryRepository.findReviewByPostId(postId, userId);
         return ResponseDto.success(reviews);
     }
 
