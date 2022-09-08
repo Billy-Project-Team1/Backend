@@ -1,9 +1,6 @@
 package com.sparta.billy.service;
 
-import com.sparta.billy.dto.PostDto.BlockDateResponseDto;
-import com.sparta.billy.dto.PostDto.PostDetailResponseDto;
-import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
-import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
+import com.sparta.billy.dto.PostDto.*;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.dto.SuccessDto;
@@ -12,6 +9,9 @@ import com.sparta.billy.repository.*;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -201,5 +201,11 @@ public class PostService {
     public ResponseDto<?> getMyPost(HttpServletRequest request) {
         Member member = check.validateMember(request);
         return ResponseDto.success(postQueryRepository.findMyPost(member));
+    }
+
+    @Transactional
+    public ResponseDto<?> getAllPosts(Long lastPostId, Pageable pageable) {
+        Slice<PostResponseDto> response = postQueryRepository.findAllPostByPaging(lastPostId, pageable);
+        return ResponseDto.success(response);
     }
 }
