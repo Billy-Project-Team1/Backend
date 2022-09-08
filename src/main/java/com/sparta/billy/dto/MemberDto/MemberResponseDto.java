@@ -36,11 +36,12 @@ public class MemberResponseDto {
         this.updatedAt = member.getUpdatedAt();
     }
 
-    public MemberResponseDto(Long id, String email, String nickname,
+    public MemberResponseDto(Long id, String email, String nickname, String userId,
                              String profileUrl, String totalAvg) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
+        this.userId = userId;
         this.profileUrl = profileUrl;
         this.totalAvg = totalAvg;
     }
