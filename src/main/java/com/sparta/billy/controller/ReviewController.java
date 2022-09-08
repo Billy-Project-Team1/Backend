@@ -38,8 +38,8 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{postId}")
-    public ResponseDto<?> reviewByPost(@PathVariable Long postId, @RequestParam(required = false) Long memberId) {
-        return reviewService.getReviewsByPost(postId, memberId);
+    public ResponseDto<?> reviewByPost(@PathVariable Long postId, @RequestParam(required = false) String userId) {
+        return reviewService.getReviewsByPost(postId, userId);
     }
 
     @GetMapping("/auth/reviews/received")
