@@ -5,6 +5,7 @@ import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,5 +52,10 @@ public class PostController {
     @GetMapping("/auth/posts/my-page")
     public ResponseDto<?> postMyUpload(HttpServletRequest request) {
         return postService.getMyPost(request);
+    }
+
+    @GetMapping("/posts")
+    public ResponseDto<?> postAll(Long lastPostId, Pageable pageable) {
+        return postService.getAllPosts(lastPostId, pageable);
     }
 }

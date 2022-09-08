@@ -1,9 +1,7 @@
 package com.sparta.billy.repository;
 
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.MathExpressions;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.billy.dto.PostDto.BlockDateResponseDto;
@@ -11,8 +9,10 @@ import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
 import com.sparta.billy.dto.PostDto.PostResponseDto;
 import com.sparta.billy.model.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sparta.billy.model.QBlockDate.blockDate1;
@@ -21,7 +21,6 @@ import static com.sparta.billy.model.QPost.post;
 import static com.sparta.billy.model.QPostImgUrl.postImgUrl;
 import static com.sparta.billy.model.QReservationDate.reservationDate1;
 import static com.sparta.billy.model.QReview.review;
-import static com.sparta.billy.model.QMember.member;
 
 @Repository
 @RequiredArgsConstructor
@@ -91,5 +90,54 @@ public class PostQueryRepository {
                         .from(postImgUrl).where(postImgUrl.post.id.eq(post.id))))
                 .where(post.member.id.eq(member1.getId()))
                 .fetch();
+    }
+
+    public Slice<PostResponseDto> findAllPostByPaging(Long lastPostId, Pageable pageable) {
+        List<PostResponseDto> results = jpaQueryFactory.select(Projections.constructor(PostResponseDto.class,
+                        post.id, post.title, postImgUrl.imgUrl, post.location,
+                        post.price, post.deposit,
+                        JPAExpressions.select(review.star.avg())
+                                .from(review)
+                                .where(review.post.id.eq(post.id).and(review.parent.isNull())),
+                        JPAExpressions.select(review.count())
+                                .from(review)
+                                .where(review.post.id.eq(post.id)),
+                        JPAExpressions.select(like.id.count())
+                                .from(like)
+                                .where(like.post.id.eq(post.id))))
+                .from(post)
+                .leftJoin(postImgUrl)
+                .on(postImgUrl.post.id.eq(post.id), postImgUrl.id.eq(JPAExpressions.select(postImgUrl.id.min())
+                        .from(postImgUrl).where(postImgUrl.post.id.eq(post.id))))
+                .where(ltPostId(lastPostId))
+                .orderBy(post.createdAt.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+
+        return checkLastPage(pageable, results);
+    }
+
+    // no-offset 방식 처리하는 메서드
+    private BooleanExpression ltPostId(Long storeId) {
+        if (storeId == null) {
+            return null;
+        }
+
+        return post.id.lt(storeId);
+    }
+
+    // 무한 스크롤 방식 처리하는 메서드
+    private Slice<PostResponseDto> checkLastPage(Pageable pageable, List<PostResponseDto> results) {
+
+        boolean hasNext = false;
+
+        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
+        if (results.size() > pageable.getPageSize()) {
+            hasNext = true;
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
     }
 }
