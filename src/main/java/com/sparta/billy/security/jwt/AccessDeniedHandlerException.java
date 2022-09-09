@@ -15,7 +15,7 @@ public class AccessDeniedHandlerException implements AccessDeniedHandler {
   public void handle(HttpServletRequest request, HttpServletResponse response,
       AccessDeniedException accessDeniedException) throws IOException {
       response.setContentType("application/json;charset=UTF-8");
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "로그인이 필요합니다.");
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
       response.setStatus(HttpServletResponse.SC_FORBIDDEN);
   }
 }
