@@ -1,13 +1,11 @@
 package com.sparta.billy.model;
 
-import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @Getter

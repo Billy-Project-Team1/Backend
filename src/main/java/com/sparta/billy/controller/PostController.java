@@ -21,19 +21,20 @@ public class PostController {
 
     @PostMapping("/auth/posts")
     public ResponseDto<?> postCreate(@RequestPart PostUploadRequestDto postUploadRequestDto,
-                                     @RequestParam List<String> blockDateDtoList,
+                                     @RequestParam(required = false) List<String> blockDateDtoList,
                                      @RequestPart(required = false) List<MultipartFile> files,
                                      HttpServletRequest request) throws IOException {
-        if (files.isEmpty()) {
+        if (files == null) {
             throw new IllegalArgumentException("MULTIPART FILE IS EMPTY");
         }
+
         return postService.createPost(postUploadRequestDto, blockDateDtoList, files, request);
     }
 
     @PatchMapping("/auth/posts/{postId}")
     public ResponseDto<?> postUpdate(@PathVariable Long postId,
-                                     @RequestPart PostUploadRequestDto postUploadRequestDto,
-                                     @RequestParam List<String> blockDateDtoList,
+                                     @RequestPart(required = false) PostUploadRequestDto postUploadRequestDto,
+                                     @RequestParam(required = false) List<String> blockDateDtoList,
                                      @RequestPart(required = false) List<MultipartFile> files,
                                      HttpServletRequest request) throws IOException {
         return postService.updatePost(postId, postUploadRequestDto, blockDateDtoList, files, request);
@@ -58,4 +59,10 @@ public class PostController {
     public ResponseDto<?> postAll(Long lastPostId, Pageable pageable) {
         return postService.getAllPosts(lastPostId, pageable);
     }
+
+//    @GetMapping("/posts/search")
+//    public ResponseDto<?> postBySearching(@RequestPart(required = false) String keyword) {
+//        List<PostResponseDto> response = hibernateSearchService.searchPost(keyword);
+//        return ResponseDto.success(response);
+//    }
 }
