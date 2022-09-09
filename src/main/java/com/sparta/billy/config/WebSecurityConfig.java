@@ -68,6 +68,7 @@ public class WebSecurityConfig {
                 .antMatchers("/oauth/**").permitAll()
                 .antMatchers("/posts/**").permitAll()
                 .antMatchers("/reviews/**").permitAll()
+                .antMatchers("/auth/members/reissue").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // CORS 설정
                 .antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**" ,
                         /*Probably not needed*/ "/swagger.json").permitAll()
@@ -98,6 +99,7 @@ public class WebSecurityConfig {
         return source;
     }
 
+    // 매개변수 userId 로 할 때 String 값으로 넣으면서 더블슬래시 현상이 생겨서 아래의 코드 추가
     @Bean
     public HttpFirewall getHttpFirewall() {
         return new DefaultHttpFirewall();
