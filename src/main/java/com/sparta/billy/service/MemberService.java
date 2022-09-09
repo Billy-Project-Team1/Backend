@@ -150,11 +150,11 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> reissue(String userId, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDto<?> reissue(RefreshTokenDto refreshTokenDto, HttpServletRequest request, HttpServletResponse response) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
             throw new TokenExpiredException();
         }
-        Member member = memberRepository.findByUserId(userId).orElse(null);
+        Member member = memberRepository.findByUserId(refreshTokenDto.getUserId()).orElse(null);
         if (null == member) {
             throw new MemberNotFoundException();
         }

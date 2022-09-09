@@ -30,60 +30,61 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-  public static String AUTHORIZATION_HEADER = "Authorization";
-  public static String BEARER_PREFIX = "Bearer ";
+    public static String AUTHORIZATION_HEADER = "Authorization";
+    public static String BEARER_PREFIX = "Bearer ";
 
-  public static String AUTHORITIES_KEY = "auth";
+    public static String AUTHORITIES_KEY = "auth";
 
-  private final String SECRET_KEY;
+    private final String SECRET_KEY;
 
-  private final TokenProvider tokenProvider;
-  private final UserDetailsServiceImpl userDetailsService;
+    private final TokenProvider tokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
 
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
 
-    byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-    Key key = Keys.hmacShaKeyFor(keyBytes);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
 
-    String jwt = resolveToken(request);
+        String jwt = resolveToken(request);
 
-    if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-      Claims claims;
-      try {
-        claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-      } catch (ExpiredJwtException e) {
-        claims = e.getClaims();
-      }
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+            Claims claims;
+            try {
+                claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+            } catch (ExpiredJwtException e) {
+                claims = e.getClaims();
+            }
 
-      if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
-          response.setContentType("application/json;charset=UTF-8");
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
-          response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-          response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Origin,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization,Access-Token-Expire-Time");
-          response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      }
+            if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
+                response.setContentType("application/json;charset=UTF-8");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+                response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+                response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Origin,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization,Access-Token-Expire-Time");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
 
-      String subject = claims.getSubject();
-      Collection<? extends GrantedAuthority> authorities =
-          Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-              .map(SimpleGrantedAuthority::new)
-              .collect(Collectors.toList());
+            String subject = claims.getSubject();
+            Collection<? extends GrantedAuthority> authorities =
+                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
 
-      UserDetails principal = userDetailsService.loadUserByUsername(subject);
+            UserDetails principal = userDetailsService.loadUserByUsername(subject);
 
-      Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+        filterChain.doFilter(request, response);
     }
 
-    filterChain.doFilter(request, response);
-  }
-  private String resolveToken(HttpServletRequest request) {
-    String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-      return bearerToken.substring(7);
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
-    return null;
-  }
 
 }
