@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,17 +20,17 @@ public class ReviewController {
 
     @PostMapping("/auth/reviews")
     public ResponseDto<?> reviewCreate(@RequestPart ReviewRequestDto reviewRequestDto,
-                                       @RequestPart(required = false) MultipartFile file,
+                                       @RequestPart(required = false) List<MultipartFile> files,
                                        HttpServletRequest request) throws IOException {
-        return reviewService.createReview(reviewRequestDto, file, request);
+        return reviewService.createReview(reviewRequestDto, files, request);
     }
 
     @PatchMapping("/auth/reviews/{reviewId}")
     public ResponseDto<?> reviewUpdate(@PathVariable Long reviewId,
                                        @RequestPart ReviewRequestDto reviewRequestDto,
-                                       @RequestPart(required = false) MultipartFile file,
+                                       @RequestPart(required = false) List<MultipartFile> files,
                                        HttpServletRequest request) throws IOException {
-        return reviewService.updateReview(reviewId, reviewRequestDto, file, request);
+        return reviewService.updateReview(reviewId, reviewRequestDto, files, request);
     }
 
     @DeleteMapping("/auth/reviews/{reviewId}")
