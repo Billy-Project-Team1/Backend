@@ -62,8 +62,8 @@ public class PostController {
         return postService.getAllPosts(lastPostId, pageable);
     }
 
-//    @GetMapping("/posts/search")
-//    public ResponseDto<?> postBySearching(@RequestPart(required = false) SearchRequestDto searchRequestDto) {
-//        return postService.getPostsBySearching(searchRequestDto);
-//    }
+    @GetMapping("/posts/search")
+    public ResponseDto<?> postBySearching(@RequestBody(required = false) SearchRequestDto searchRequestDto) {
+        return postService.getPostsBySearching(searchRequestDto);
+    }
 }
