@@ -3,6 +3,7 @@ package com.sparta.billy.dto.ReviewDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import com.sparta.billy.model.Review;
+import com.sparta.billy.model.ReviewImgUrl;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -26,8 +27,6 @@ public class ReviewResponseDto {
 
     private String comment;
 
-    private String reviewImg;
-
     private String startDate;
 
     private String endDate;
@@ -35,6 +34,8 @@ public class ReviewResponseDto {
     private int dateCount;
 
     private boolean isMine;
+
+    private List<ReviewImgUrlResponseDto> reviewImgUrl;
 
     private List<ReviewChildrenResponseDto> children = new ArrayList<>();
 
@@ -46,7 +47,7 @@ public class ReviewResponseDto {
 
     @QueryProjection
     public ReviewResponseDto(Long reviewId, String nickname, Long authorId,
-                             int star, String comment, String reviewImg, String startDate, String endDate,
+                             int star, String comment, String startDate, String endDate,
                              LocalDateTime createAt, LocalDateTime updateAt, boolean isMine) {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -58,7 +59,6 @@ public class ReviewResponseDto {
         this.authorId = authorId;
         this.star = star;
         this.comment = comment;
-        this.reviewImg = reviewImg;
         this.startDate = startDate;
         this.endDate = endDate;
         this.dateCount = (int)(ChronoUnit.DAYS.between(localStartDate, localEndDate));
@@ -68,13 +68,13 @@ public class ReviewResponseDto {
     }
 
     @QueryProjection
-    public ReviewResponseDto(Review review, boolean isMine) {
+    public ReviewResponseDto(Review review, List<ReviewImgUrlResponseDto> reviewImgUrl, boolean isMine) {
         this.reviewId = review.getId();
         this.nickname = review.getMember().getNickname();
         this.authorId = review.getMember().getId();
         this.star = review.getStar();
         this.comment = review.getComment();;
-        this.reviewImg = review.getReviewImg();
+        this.reviewImgUrl = reviewImgUrl;
         this.isMine = isMine;
         this.createAt = review.getCreatedAt();
         this.updateAt = review.getUpdatedAt();

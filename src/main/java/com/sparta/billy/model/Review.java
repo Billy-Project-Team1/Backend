@@ -26,15 +26,15 @@ public class Review extends Timestamped {
     @Column
     private String comment;
 
-    @Column
-    private String reviewImg;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Review parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> children = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewImgUrl> reviewImgUrlList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -48,15 +48,12 @@ public class Review extends Timestamped {
     @OneToOne(fetch = FetchType.LAZY)
     private Reservation reservation;
 
-    public void update(ReviewRequestDto requestDto, String reviewImg) {
+    public void update(ReviewRequestDto requestDto) {
         if (requestDto.getStar() != 0) {
             this.star = requestDto.getStar();
         }
         if (requestDto.getComment() != null) {
             this.comment = requestDto.getComment();
-        }
-        if (reviewImg != null) {
-            this.reviewImg = reviewImg;
         }
     }
 
