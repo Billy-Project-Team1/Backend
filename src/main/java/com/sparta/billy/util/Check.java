@@ -21,6 +21,7 @@ public class Check {
     private final BlockDateRepository blockDateRepository;
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
+    private final ReviewImgUrlRepository reviewImgUrlRepository;
     private final TokenProvider tokenProvider;
 
     public void checkPost(Post post) {
@@ -81,6 +82,7 @@ public class Check {
         return reviewRepository.findAllByPost(post);
     }
 
+    public List<ReviewImgUrl> getReviewImgUrlByReview(Review review) { return reviewImgUrlRepository.findAllByReview(review); }
     public List<Reservation> getReservationByPost(Post post) { return reservationRepository.findAllByPost(post); }
 
     public Review getCurrentReview(Long id) {

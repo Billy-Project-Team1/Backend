@@ -16,7 +16,7 @@ public class AuthenticationEntryPointException implements
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) throws IOException {
       response.setContentType("application/json;charset=UTF-8");
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "로그인이 필요합니다.");
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 }
