@@ -7,12 +7,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.billy.dto.PostDto.BlockDateResponseDto;
 import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
 import com.sparta.billy.dto.PostDto.PostResponseDto;
+import com.sparta.billy.dto.PostDto.SearchRequestDto;
 import com.sparta.billy.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.sparta.billy.model.QBlockDate.blockDate1;
@@ -118,6 +118,30 @@ public class PostQueryRepository {
         return checkLastPage(pageable, results);
     }
 
+//    public List<PostResponseDto> findPostBySearching(SearchRequestDto searchRequestDto) {
+//        String location = searchRequestDto.getKeyword().split("")[0];
+//        String title = searchRequestDto.getKeyword().split("")[1];
+//        return jpaQueryFactory.select(Projections.constructor(PostResponseDto.class,
+//                        post.id, post.title, postImgUrl.imgUrl, post.location,
+//                        post.price, post.deposit,
+//                        JPAExpressions.select(review.star.avg())
+//                                .from(review)
+//                                .where(review.post.id.eq(post.id).and(review.parent.isNull())),
+//                        JPAExpressions.select(review.count())
+//                                .from(review)
+//                                .where(review.post.id.eq(post.id)),
+//                        JPAExpressions.select(like.id.count())
+//                                .from(like)
+//                                .where(like.post.id.eq(post.id))))
+//                .from(post)
+//                .leftJoin(postImgUrl)
+//                .on(postImgUrl.post.id.eq(post.id), postImgUrl.id.eq(JPAExpressions.select(postImgUrl.id.min())
+//                        .from(postImgUrl).where(postImgUrl.post.id.eq(post.id))))
+//                .where()
+//                .orderBy(post.createdAt.desc())
+//                .fetch();
+//    }
+
     // no-offset 방식 처리하는 메서드
     private BooleanExpression ltPostId(Long storeId) {
         if (storeId == null) {
@@ -140,4 +164,5 @@ public class PostQueryRepository {
 
         return new SliceImpl<>(results, pageable, hasNext);
     }
+
 }

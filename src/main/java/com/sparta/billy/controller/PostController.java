@@ -1,6 +1,8 @@
 package com.sparta.billy.controller;
 
+import com.sparta.billy.dto.PostDto.PostResponseDto;
 import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
+import com.sparta.billy.dto.PostDto.SearchRequestDto;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.PostService;
@@ -61,8 +63,7 @@ public class PostController {
     }
 
 //    @GetMapping("/posts/search")
-//    public ResponseDto<?> postBySearching(@RequestPart(required = false) String keyword) {
-//        List<PostResponseDto> response = hibernateSearchService.searchPost(keyword);
-//        return ResponseDto.success(response);
+//    public ResponseDto<?> postBySearching(@RequestPart(required = false) SearchRequestDto searchRequestDto) {
+//        return postService.getPostsBySearching(searchRequestDto);
 //    }
 }

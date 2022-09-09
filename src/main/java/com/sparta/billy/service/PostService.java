@@ -207,9 +207,9 @@ public class PostService {
         return ResponseDto.success(response);
     }
 
-    @Transactional
-    public ResponseDto<?> getPostsBySearching(String keyword) {
-        List<PostResponseDto> response = postQueryRepository.findPostBySearching(keyword);
-        return ResponseDto.success(response);
-    }
+//    @Transactional
+//    public ResponseDto<?> getPostsBySearching(SearchRequestDto searchRequestDto) {
+//        List<PostResponseDto> response = postQueryRepository.findPostBySearching(searchRequestDto);
+//        return ResponseDto.success(response);
+//    }
 }
