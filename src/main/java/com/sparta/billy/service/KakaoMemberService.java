@@ -10,6 +10,7 @@ import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.repository.MemberRepository;
+import com.sparta.billy.repository.RefreshTokenRepository;
 import com.sparta.billy.security.jwt.TokenProvider;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class KakaoMemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
 
@@ -56,6 +58,10 @@ public class KakaoMemberService {
         String email = kakaoMemberInfo.getEmail();
         Member kakaoMember = memberRepository.findByEmail(email)
                 .orElse(null);
+
+        if (refreshTokenRepository.findByMember(kakaoMember).isPresent()) {
+            refreshTokenRepository.deleteByMember(kakaoMember);
+        }
         if (kakaoMember == null) {
             // 회원가입
             // username: kakao nickname
