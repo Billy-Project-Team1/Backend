@@ -3,6 +3,7 @@ package com.sparta.billy.controller;
 import com.sparta.billy.dto.MemberDto.LoginDto;
 import com.sparta.billy.dto.MemberDto.MemberUpdateRequestDto;
 import com.sparta.billy.dto.MemberDto.MemberSignupRequestDto;
+import com.sparta.billy.dto.MemberDto.RefreshTokenDto;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.MemberService;
@@ -57,8 +58,8 @@ public class MemberController {
     }
 
     @PostMapping("/auth/members/reissue")
-    public ResponseDto<?> reissue(String userId, HttpServletRequest request, HttpServletResponse response) {
-        return memberService.reissue(userId, request, response);
+    public ResponseDto<?> reissue(@RequestBody RefreshTokenDto refreshTokenDto, HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(refreshTokenDto, request, response);
     }
 
     @PostMapping("/auth/members/logout")
