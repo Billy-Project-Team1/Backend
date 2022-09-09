@@ -2,14 +2,12 @@ package com.sparta.billy.service;
 
 import com.sparta.billy.dto.PostDto.*;
 import com.sparta.billy.dto.ResponseDto;
-import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.model.*;
 import com.sparta.billy.repository.*;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -74,21 +72,21 @@ public class PostService {
             postImgUrlRepository.save(postImgUrl);
             imgList.add(imgUrl);
             postImgUrlDto = new PostImgUrlResponseDto(imgList);
-
         }
 
         BlockDateResponseDto blockDateDto = null;
         List<String> dateList = new ArrayList<>();
-        for (String date : blockDateDtoList) {
-            BlockDate blockDate = BlockDate.builder()
-                    .blockDate(date)
-                    .post(post)
-                    .build();
-            blockDateRepository.save(blockDate);
-            dateList.add(date);
-            blockDateDto = new BlockDateResponseDto(dateList);
+        if (blockDateDtoList != null) {
+            for (String date : blockDateDtoList) {
+                BlockDate blockDate = BlockDate.builder()
+                        .blockDate(date)
+                        .post(post)
+                        .build();
+                blockDateRepository.save(blockDate);
+                dateList.add(date);
+                blockDateDto = new BlockDateResponseDto(dateList);
+            }
         }
-
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, true));
     }
 
@@ -125,7 +123,7 @@ public class PostService {
         }
 
         BlockDateResponseDto blockDateDto = null;
-        if (!blockDateDtoList.isEmpty()) {
+        if (blockDateDtoList != null) {
             blockDateRepository.deleteByPost(post);
             List<String> dateList = new ArrayList<>();
             for (String date : blockDateDtoList) {
@@ -206,6 +204,12 @@ public class PostService {
     @Transactional
     public ResponseDto<?> getAllPosts(Long lastPostId, Pageable pageable) {
         Slice<PostResponseDto> response = postQueryRepository.findAllPostByPaging(lastPostId, pageable);
+        return ResponseDto.success(response);
+    }
+
+    @Transactional
+    public ResponseDto<?> getPostsBySearching(String keyword) {
+        List<PostResponseDto> response = postQueryRepository.findPostBySearching(keyword);
         return ResponseDto.success(response);
     }
 }
