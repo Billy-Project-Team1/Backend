@@ -44,6 +44,8 @@ public class KakaoMemberService {
 
     private final Check check;
 
+    //
+
     @Value("${myKaKaoRestAplKey}")
     private String myKaKaoRestAplKey;
 
