@@ -31,6 +31,7 @@ public class PostDetailResponseDto {
     private BlockDateResponseDto blockDate;
     private PostImgUrlResponseDto postImgUrl;
     private String location;
+    private String detailLocation;
     private Double latitude;
     private Double longitude;
     private boolean isMine;
@@ -60,6 +61,7 @@ public class PostDetailResponseDto {
         this.blockDate = blockDate;
         this.postImgUrl = postImgUrl;
         this.location = post.getLocation();
+        this.detailLocation = post.getDetailLocation();
         this.latitude = post.getLatitude();
         this.longitude = post.getLongitude();
         this.isMine = isMine;
@@ -82,6 +84,7 @@ public class PostDetailResponseDto {
         this.blockDate = blockDate;
         this.postImgUrl = postImgUrl;
         this.location = post.getLocation();
+        this.detailLocation = post.getDetailLocation();
         this.latitude = post.getLatitude();
         this.longitude = post.getLongitude();
         this.isMine = isMine;

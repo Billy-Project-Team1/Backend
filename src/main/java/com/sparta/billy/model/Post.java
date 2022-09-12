@@ -32,6 +32,9 @@ public class Post extends Timestamped {
     private String location;
 
     @Column(nullable = false)
+    private String detailLocation;
+
+    @Column(nullable = false)
     private Double latitude;
 
     @Column(nullable = false)

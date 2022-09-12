@@ -11,6 +11,7 @@ public class PostUploadRequestDto {
     private int price;
     private int deposit;
     private String location;
+    private String detailLocation;
     private Double latitude;
     private Double longitude;
 }
