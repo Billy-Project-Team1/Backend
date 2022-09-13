@@ -53,7 +53,7 @@ public class ReservationService {
                 .build();
         reservationRepository.save(reservation);
 
-        final String DATE_PATTERN = "yyyy-MM-dd";
+        final String DATE_PATTERN = "yyyy/MM/dd";
         String inputStartDate = reservationRequestDto.getStartDate();
         String inputEndDate = reservationRequestDto.getEndDate();;
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
