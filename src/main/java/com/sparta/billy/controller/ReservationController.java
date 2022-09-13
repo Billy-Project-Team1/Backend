@@ -54,4 +54,14 @@ public class ReservationController {
                                                  HttpServletRequest request) {
         return reservationService.getReservationByJullyAndState(state, request);
     }
+
+    @GetMapping("/auth/reservations/billy")
+    public ResponseDto<?> reservationCountByBilly(HttpServletRequest request) {
+        return reservationService.getReservationCountByBillyAndState(request);
+    }
+
+    @GetMapping("/auth/reservations/jully")
+    public ResponseDto<?> reservationCountByJully(HttpServletRequest request) {
+        return reservationService.getReservationCountByJullyAndState(request);
+    }
 }
