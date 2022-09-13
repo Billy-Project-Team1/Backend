@@ -1,6 +1,5 @@
 package com.sparta.billy.dto.ReservationDto;
 
-import com.sparta.billy.repository.PostImgUrlRepository;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -27,7 +26,7 @@ public class ReservationDetailResponseDto {
     public ReservationDetailResponseDto(Long reservationId, String jullyNickname, String title, String postImgUrl,
                                         int price, int deposit, String location,
                                         String billyNickname, int state, String cancelMessage, String startDate, String endDate) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate localStartDate = LocalDate.parse(startDate, dtf);
         LocalDate localEndDate = LocalDate.parse(endDate, dtf);
 
