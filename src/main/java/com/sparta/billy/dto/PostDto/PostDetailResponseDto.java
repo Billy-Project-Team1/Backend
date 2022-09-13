@@ -2,14 +2,10 @@ package com.sparta.billy.dto.PostDto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
-import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.model.Post;
-import com.sparta.billy.model.Review;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @Getter
@@ -23,7 +19,7 @@ public class PostDetailResponseDto {
     private int reviewCount;
     private String nickname;
     private String profileUrl;
-    private Long authorId;
+    private String authorId;
     private String title;
     private String content;
     private int price;
@@ -53,7 +49,7 @@ public class PostDetailResponseDto {
         this.reviewCount = reviewCount;
         this.nickname = post.getMember().getNickname();
         this.profileUrl = post.getMember().getProfileUrl();
-        this.authorId = post.getMember().getId();
+        this.authorId = post.getMember().getUserId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.price = post.getPrice();
@@ -76,7 +72,7 @@ public class PostDetailResponseDto {
         this.id = post.getId();
         this.nickname = post.getMember().getNickname();
         this.profileUrl = post.getMember().getProfileUrl();
-        this.authorId = post.getMember().getId();
+        this.authorId = post.getMember().getUserId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.price = post.getPrice();

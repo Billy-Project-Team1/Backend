@@ -21,7 +21,7 @@ public class ReviewResponseDto {
 
     private String nickname;
 
-    private Long authorId;
+    private String authorId;
 
     private int star;
 
@@ -46,7 +46,7 @@ public class ReviewResponseDto {
     private LocalDateTime updateAt;
 
     @QueryProjection
-    public ReviewResponseDto(Long reviewId, String nickname, Long authorId,
+    public ReviewResponseDto(Long reviewId, String nickname, String authorId,
                              int star, String comment, String startDate, String endDate,
                              LocalDateTime createAt, LocalDateTime updateAt, boolean isMine) {
 
@@ -71,7 +71,7 @@ public class ReviewResponseDto {
     public ReviewResponseDto(Review review, List<ReviewImgUrlResponseDto> reviewImgUrl, boolean isMine) {
         this.reviewId = review.getId();
         this.nickname = review.getMember().getNickname();
-        this.authorId = review.getMember().getId();
+        this.authorId = review.getMember().getUserId();
         this.star = review.getStar();
         this.comment = review.getComment();;
         this.reviewImgUrl = reviewImgUrl;
