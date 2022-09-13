@@ -22,7 +22,7 @@ public class ReviewChildrenResponseDto {
 
     private String nickname;
 
-    private Long authorId;
+    private String authorId;
 
     private boolean isMine;
 
@@ -37,7 +37,7 @@ public class ReviewChildrenResponseDto {
         this.parentId = review.getParent().getId();
         this.commentId = review.getId();
         this.nickname = review.getMember().getNickname();
-        this.authorId = review.getMember().getId();
+        this.authorId = review.getMember().getUserId();
         this.comment = review.getComment();;
         this.createAt = review.getCreatedAt();
         this.updateAt = review.getUpdatedAt();
@@ -48,7 +48,7 @@ public class ReviewChildrenResponseDto {
         this.parentId = review.getParent().getId();
         this.commentId = review.getId();
         this.nickname = review.getMember().getNickname();
-        this.authorId = review.getMember().getId();
+        this.authorId = review.getMember().getUserId();
         this.comment = review.getComment();;
         this.isMine = isMine;
         this.createAt = review.getCreatedAt();
@@ -57,7 +57,7 @@ public class ReviewChildrenResponseDto {
 
     @QueryProjection
     public ReviewChildrenResponseDto(Long parentId, Long commentId, String nickname,
-                                     Long authorId, String comment,
+                                     String authorId, String comment,
                                      LocalDateTime createAt, LocalDateTime updateAt, boolean isMine) {
         this.parentId = parentId;
         this.commentId = commentId;
