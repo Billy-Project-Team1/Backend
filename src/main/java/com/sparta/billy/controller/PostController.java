@@ -66,4 +66,8 @@ public class PostController {
         return postService.getPostsBySearching(searchRequestDto);
     }
 
+    @GetMapping("/posts/elasticsearch")
+    public ResponseDto<?> search(@RequestBody(required = false) SearchRequestDto searchRequestDto) throws IOException {
+        return postService.getPostsByElasticSearch(searchRequestDto);
+    }
 }

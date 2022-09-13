@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.github.adedayo.intellij.sdk:gradle-tooling-extension-impl:142.1'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -71,6 +72,10 @@ dependencies {
 
     // elasticsearch
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+
+    // Needed only if you use the spring-dependency-management and spring-boot Gradle plugins
+    implementation 'jakarta.json:jakarta.json-api:2.0.1'
 }
 
 // querydsl 추가 시작

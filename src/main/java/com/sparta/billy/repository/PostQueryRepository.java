@@ -122,10 +122,6 @@ public class PostQueryRepository {
 
     public List<PostResponseDto> findPostBySearching(SearchRequestDto searchRequestDto) {
         String[] keyword = searchRequestDto.getKeyword().split("\\s");
-//        String location = searchRequestDto.getKeyword().split("\\s")[0];
-//        String title = searchRequestDto.getKeyword().split("\\s")[1];
-        log.info(keyword[0]);
-        log.info(keyword[1]);
         return jpaQueryFactory.select(Projections.constructor(PostResponseDto.class,
                         post.id, post.title, postImgUrl.imgUrl, post.location,
                         post.price, post.deposit,
@@ -152,7 +148,6 @@ public class PostQueryRepository {
         if (storeId == null) {
             return null;
         }
-
         return post.id.lt(storeId);
     }
 
