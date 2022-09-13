@@ -1,6 +1,7 @@
 package com.sparta.billy.controller;
 
-import com.sparta.billy.dto.PostDto.PostResponseDto;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.sparta.billy.config.DocTestsTransport;
 import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import com.sparta.billy.dto.PostDto.SearchRequestDto;
 import com.sparta.billy.dto.ResponseDto;
@@ -62,8 +63,9 @@ public class PostController {
         return postService.getAllPosts(lastPostId, pageable);
     }
 
-    @GetMapping("/posts/search")
+    @PostMapping("/posts/search")
     public ResponseDto<?> postBySearching(@RequestBody(required = false) SearchRequestDto searchRequestDto) {
         return postService.getPostsBySearching(searchRequestDto);
     }
+    
 }
