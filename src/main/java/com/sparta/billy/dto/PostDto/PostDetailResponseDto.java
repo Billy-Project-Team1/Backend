@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class PostDetailResponseDto {
     private Long id;
     private int likeCount;
+    private int reservationCount;
     private String postAvg;
     private int reviewCount;
     private String nickname;
@@ -42,9 +43,10 @@ public class PostDetailResponseDto {
     public PostDetailResponseDto(Post post,
                                  BlockDateResponseDto blockDate,
                                  PostImgUrlResponseDto postImgUrl,
-                                 boolean isMine, int likeCount, String postAvg, int reviewCount) {
+                                 boolean isMine, int likeCount, String postAvg, int reviewCount, int reservationCount) {
         this.id = post.getId();
         this.likeCount = likeCount;
+        this.reservationCount = reservationCount;
         this.postAvg = postAvg;
         this.reviewCount = reviewCount;
         this.nickname = post.getMember().getNickname();
