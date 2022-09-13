@@ -35,7 +35,7 @@ public class ReviewQueryRepository {
 
         List<ReviewResponseDto> response = jpaQueryFactory.select(
                         Projections.constructor(ReviewResponseDto.class, review.id, review.member.nickname,
-                                review.member.id, review.star, review.comment,
+                                review.member.userId, review.star, review.comment,
                                 reservation.startDate, reservation.endDate,
                                 review.createdAt, review.updatedAt, review.member.userId.eq(userId))
                 )
@@ -49,7 +49,7 @@ public class ReviewQueryRepository {
         List<ReviewChildrenResponseDto> comments = jpaQueryFactory.select(
                         Projections.constructor(ReviewChildrenResponseDto.class, review.parent.id,
                                 review.id, review.member.nickname,
-                                review.member.id, review.comment, review.createdAt, review.updatedAt,
+                                review.member.userId, review.comment, review.createdAt, review.updatedAt,
                                 review.member.userId.eq(userId)
                         ))
                 .from(review)
@@ -83,9 +83,9 @@ public class ReviewQueryRepository {
     public List<ReviewResponseDto> findReviewReceived(Member member1) {
         List<ReviewResponseDto> response = jpaQueryFactory.select(
                         Projections.constructor(ReviewResponseDto.class, review.id, review.member.nickname,
-                                review.member.id, review.star, review.comment,
+                                review.member.userId, review.star, review.comment,
                                 reservation.startDate, reservation.endDate,
-                                review.createdAt, review.updatedAt, review.member.id.eq(member1.getId()))
+                                review.createdAt, review.updatedAt, review.member.userId.eq(member1.getUserId()))
                 )
                 .from(review)
                 .innerJoin(review.post, post)
@@ -98,8 +98,8 @@ public class ReviewQueryRepository {
         List<ReviewChildrenResponseDto> comments = jpaQueryFactory.select(
                         Projections.constructor(ReviewChildrenResponseDto.class, review.parent.id,
                                 review.id, review.member.nickname,
-                                review.member.id, review.comment, review.createdAt, review.updatedAt,
-                                review.member.id.eq(member1.getId())
+                                review.member.userId, review.comment, review.createdAt, review.updatedAt,
+                                review.member.userId.eq(member1.getUserId())
                         ))
                 .from(review)
                 .innerJoin(review.post, post).innerJoin(review.member, member)
