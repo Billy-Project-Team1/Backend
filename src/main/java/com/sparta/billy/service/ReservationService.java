@@ -1,5 +1,6 @@
 package com.sparta.billy.service;
 
+import com.sparta.billy.dto.ReservationDto.ReservationCountDto;
 import com.sparta.billy.dto.ReservationDto.ReservationDetailResponseDto;
 import com.sparta.billy.dto.ReservationDto.ReservationRequestDto;
 import com.sparta.billy.dto.ReservationDto.ReservationStateRequestDto;
@@ -152,5 +153,37 @@ public class ReservationService {
         check.tokenCheck(request, jully);
         List<ReservationDetailResponseDto> response = reservationQueryRepository.findReservationByJullyAndState(jully, state);
         return ResponseDto.success(response);
+    }
+
+    @Transactional
+    public ResponseDto<?> getReservationCountByBillyAndState(HttpServletRequest request) {
+        Member billy = check.validateMember(request);
+        check.tokenCheck(request, billy);
+
+        int state1 = reservationRepository.countReservationByBillyAndState(billy, 1);
+        int state2 = reservationRepository.countReservationByBillyAndState(billy, 2);
+        int state3 = reservationRepository.countReservationByBillyAndState(billy, 3);
+        int state4 = reservationRepository.countReservationByBillyAndState(billy, 4);
+        int state5 = reservationRepository.countReservationByBillyAndState(billy, 5);
+
+        ReservationCountDto reservationCountDto = new ReservationCountDto(state1, state2, state3, state4, state5);
+
+        return ResponseDto.success(reservationCountDto);
+    }
+
+    @Transactional
+    public ResponseDto<?> getReservationCountByJullyAndState(HttpServletRequest request) {
+        Member jully = check.validateMember(request);
+        check.tokenCheck(request, jully);
+
+        int state1 = reservationRepository.countReservationByJullyAndState(jully, 1);
+        int state2 = reservationRepository.countReservationByJullyAndState(jully, 2);
+        int state3 = reservationRepository.countReservationByJullyAndState(jully, 3);
+        int state4 = reservationRepository.countReservationByJullyAndState(jully, 4);
+        int state5 = reservationRepository.countReservationByJullyAndState(jully, 5);
+
+        ReservationCountDto reservationCountDto = new ReservationCountDto(state1, state2, state3, state4, state5);
+
+        return ResponseDto.success(reservationCountDto);
     }
 }
