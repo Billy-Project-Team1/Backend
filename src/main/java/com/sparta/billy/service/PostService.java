@@ -33,8 +33,13 @@ public class PostService {
     private final ReviewRepository reviewRepository;
     private final ReviewQueryRepository reviewQueryRepository;
     private final LikeRepository likeRepository;
+//    private final PostEsRepository postEsRepository;
     private final ReservationRepository reservationRepository;
     private final Check check;
+
+//    private final DocTestsTransport transport = new DocTestsTransport();
+//    private final ElasticsearchClient client = new ElasticsearchClient(transport);
+
 
     // 게시글 작성
     @Transactional
@@ -51,11 +56,17 @@ public class PostService {
                 .price(postUploadRequestDto.getPrice())
                 .deposit(postUploadRequestDto.getDeposit())
                 .location(postUploadRequestDto.getLocation())
+                .detailLocation(postUploadRequestDto.getDetailLocation())
                 .latitude(postUploadRequestDto.getLatitude())
                 .longitude(postUploadRequestDto.getLongitude())
                 .member(member)
                 .build();
         postRepository.save(post);
+
+        // elasticsearch document 저장
+//        PostDocument postDocument = new PostDocument(post.getId(), post.getTitle(),
+//                post.getLocation(), post.getTitle() + " " + post.getLocation());
+//        postEsRepository.save(postDocument);
 
         PostImgUrlResponseDto postImgUrlDto = null;
         List<String> imgList = new ArrayList<>();
@@ -137,6 +148,17 @@ public class PostService {
             }
         }
         post.update(postUploadRequestDto);
+
+        // elasticsearch document 수정
+//        PostDocument postDocument = new PostDocument(post.getId(), post.getTitle(),
+//                post.getLocation(), post.getTitle() + " " + post.getLocation());
+//        postEsRepository.save(postDocument);
+//        Map<String, Object> bodyMap = new HashMap<>();
+//        bodyMap.put("title", post.getTitle());
+//        bodyMap.put("location", post.getLocation());
+//        bodyMap.put("titleAndLocation", post.getTitle() + " " + post.getLocation());
+//        UpdateRequest updateRequest = new UpdateRequest("billy", String.valueOf(post.getId()));
+//        updateRequest.doc(bodyMap);
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, true));
     }
 
@@ -168,6 +190,13 @@ public class PostService {
         }
 
         postRepository.delete(post);
+
+        // elasticsearch document 삭제
+//        PostDocument postDocument = postEsRepository.findById(post.getId()).orElse(null);
+//        postEsRepository.delete(postDocument);
+//        DeleteRequest deleteRequest = new DeleteRequest("billy", post.getId().toString());
+
+
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
 
@@ -181,6 +210,9 @@ public class PostService {
         // 관심 수
         int likeCount = likeRepository.countByPost(post);
 
+        // 대여 수
+        int reservationCount = reservationRepository.countByPost(post);
+
         // 게시글에 따른 평균 별점
         String postAvg = reviewQueryRepository.getPostAvg(post);
         if (postAvg.equals("NaN")) postAvg = "0";
@@ -192,7 +224,7 @@ public class PostService {
         boolean isMyPost = post.getMember().getUserId().equals(userId);
 
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto,
-                postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount));
+                postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount, reservationCount));
     }
 
     @Transactional
@@ -212,4 +244,39 @@ public class PostService {
         List<PostResponseDto> response = postQueryRepository.findPostBySearching(searchRequestDto);
         return ResponseDto.success(response);
     }
+//
+//    @Transactional
+//    public ResponseDto<?> getPostsByElasticSearch(SearchRequestDto searchRequestDto) throws IOException {
+//        SearchResponse<PostDocument> response = client.search(s -> s
+//                        .index("billy") // <1>
+//                        .query(q -> q      // <2>
+//                                .match(t -> t   // <3>
+//                                        .field("title")  // <4>
+//                                        .query(searchRequestDto.getKeyword())
+////                                        .field("location")
+////                                        .query(searchRequestDto.getKeyword())
+//                                )
+//                        ),
+//                PostDocument.class      // <5>
+//        );
+//
+//        TotalHits total = response.hits().total();
+//        boolean isExactResult = total.relation() == TotalHitsRelation.Eq;
+//
+//        if (isExactResult) {
+//            log.info("There are " + total.value() + " results");
+//        } else {
+//            log.info("There are more than " + total.value() + " results");
+//        }
+//
+//        List<Long> postIdList = new ArrayList<>();
+//        List<Hit<PostDocument>> hits = response.hits().hits();
+//        for (Hit<PostDocument> hit: hits) {
+//            PostDocument postDocument = hit.source();
+//            log.info("Found product " + postDocument.getId() + ", score " + hit.score());
+//            postIdList.add(postDocument.getId());
+//        }
+//        //end::search-simple
+//        return ResponseDto.success(postIdList);
+//    }
 }
