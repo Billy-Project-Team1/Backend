@@ -5,6 +5,8 @@ import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.model.*;
 import com.sparta.billy.repository.*;
+import com.sparta.billy.socket.dto.MemberDto;
+import com.sparta.billy.socket.repository.ChatRoomRepository;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,8 @@ public class PostService {
     private final ReviewRepository reviewRepository;
     private final ReviewQueryRepository reviewQueryRepository;
     private final LikeRepository likeRepository;
+
+    private final ChatRoomRepository chatRoomRepository;
 //    private final PostEsRepository postEsRepository;
     private final ReservationRepository reservationRepository;
     private final Check check;
@@ -98,6 +102,8 @@ public class PostService {
                 blockDateDto = new BlockDateResponseDto(dateList);
             }
         }
+        MemberDto memberDto = new MemberDto(member);
+        chatRoomRepository.createChatRoom(post, memberDto);
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, true));
     }
 
