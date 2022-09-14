@@ -75,7 +75,7 @@ public class ChatRoomRepository {
                 chatRoomResponseDto.setLastMessage(chatMessage.getMessage());
             }
             LocalDateTime createdAt = chatMessage.getCreatedAt();
-            String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("dd,MM,yyyy,HH,mm,ss", Locale.KOREA));
+            String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
 
             chatRoomResponseDto.setLastMessageTime(createdAtString);
             chatRoomResponseDto.setPostTitle(post.getTitle());
