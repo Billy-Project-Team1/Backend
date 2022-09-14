@@ -81,7 +81,7 @@ public class ChatMessageRepository {
 
             for (ChatMessage chatMessage : chatMessages) {
                 LocalDateTime createdAt = chatMessage.getCreatedAt();
-                String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("dd,MM,yyyy,HH,mm,ss", Locale.KOREA));
+                String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
                 ChatMessageDto chatMessageDto = new ChatMessageDto(chatMessage,createdAtString);
                 chatMessageDtoList.add(chatMessageDto);
             }
