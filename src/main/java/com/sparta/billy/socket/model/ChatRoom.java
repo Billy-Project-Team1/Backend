@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @Setter
@@ -22,6 +22,7 @@ public class ChatRoom implements Serializable {
     private Long Id;
 
     @Column(nullable = false)
+    @GeneratedValue
     private String roomId;
 
     @Column(nullable = false)
@@ -32,7 +33,7 @@ public class ChatRoom implements Serializable {
     //채팅방 생성
     public static ChatRoom create(Post post, MemberDto memberDto) {
         ChatRoom chatRoom = new ChatRoom();
-        chatRoom.roomId = UUID.randomUUID().toString().substring(0,8);
+        chatRoom.roomId = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
         chatRoom.nickname=memberDto.getNickName();
         chatRoom.postId = post.getId();
         return chatRoom;
