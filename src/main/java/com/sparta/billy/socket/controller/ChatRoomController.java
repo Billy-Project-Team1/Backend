@@ -30,10 +30,9 @@ public class ChatRoomController {
     // 특정 채팅방 입장
     @PostMapping("/chat/room/{postId}/{roomId}")
     @ResponseBody
-    public ResponseDto<?> roomInfo(@PathVariable Long postId, Long roomId) {
+    public ResponseDto<?> roomInfo(@PathVariable Long postId,@PathVariable String roomId) {
 
-        String room = String.valueOf(roomId);
         String post = String.valueOf(postId);
-        return  ResponseDto.success(new ChatResponseDto(room,post));
+        return  ResponseDto.success(new ChatResponseDto(roomId,post));
     }
 }
