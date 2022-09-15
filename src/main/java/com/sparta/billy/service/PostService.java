@@ -6,6 +6,7 @@ import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.model.*;
 import com.sparta.billy.repository.*;
 import com.sparta.billy.socket.dto.MemberDto;
+import com.sparta.billy.socket.model.ChatRoom;
 import com.sparta.billy.socket.repository.ChatRoomRepository;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
@@ -236,9 +237,11 @@ public class PostService {
         Member member = check.validateMember(request);
         check.tokenCheck(request, member);
         Post post = check.getCurrentPost(postId);
+        check.checkPost(post);
         MemberDto memberDto = new MemberDto(member);
-        chatRoomRepository.createChatRoom(post, memberDto);
-        return ResponseDto.success("채팅방이 생성되었습니다.");
+        ChatRoom chatRoom = ChatRoom.create(post, memberDto);
+        chatRoomRepository.createChatRoom(chatRoom);
+        return ResponseDto.success(chatRoom.getRoomId());
     }
 
     @Transactional
