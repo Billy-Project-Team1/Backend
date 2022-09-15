@@ -46,7 +46,7 @@ public class ChatService {
                 () -> new NullPointerException("존재하지 않는 사용자 입니다!")
         );
         LocalDateTime createdAt = LocalDateTime.now();
-        String formatDate = createdAt.format(DateTimeFormatter.ofPattern("dd,MM,yyyy,HH,mm,ss", Locale.KOREA));
+        String formatDate = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
         Long enterUserCnt = chatMessageRepository.getUserCnt(messageDto.getRoomId());
         messageDto.setEnterUserCnt(enterUserCnt);
         messageDto.setSender(member.getNickname());
