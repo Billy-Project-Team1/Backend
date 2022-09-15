@@ -1,8 +1,10 @@
 package com.sparta.billy.socket.controller;
 
+import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.socket.dto.ChatListMessageDto;
+import com.sparta.billy.socket.dto.ChatResponseDto;
 import com.sparta.billy.socket.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,11 +28,12 @@ public class ChatRoomController {
     }
 
     // 특정 채팅방 입장
-    @PostMapping("/chat/room/{postId}")
+    @PostMapping("/chat/room/{postId}/{roomId}")
     @ResponseBody
-    public String roomInfo(@PathVariable Long postId) {
-        return String.valueOf(postId);
+    public ResponseDto<?> roomInfo(@PathVariable Long postId, Long roomId) {
+
+        String room = String.valueOf(roomId);
+        String post = String.valueOf(postId);
+        return  ResponseDto.success(new ChatResponseDto(room,post));
     }
-
-
 }

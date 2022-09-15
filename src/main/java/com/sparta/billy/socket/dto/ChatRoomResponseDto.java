@@ -1,5 +1,6 @@
 package com.sparta.billy.socket.dto;
 
+import com.sparta.billy.model.Member;
 import com.sparta.billy.model.PostImgUrl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatRoomResponseDto {
     private String lastMessage;
-    private List<PostImgUrl> postUrl;
+    private String postUrl;
     private String postTitle;
+    private String nickname;
+    private String profileUrl;
     private String lastMessageTime;
     private Long postId;
+
 }

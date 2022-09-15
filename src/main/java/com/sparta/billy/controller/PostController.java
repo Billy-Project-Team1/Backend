@@ -66,4 +66,9 @@ public class PostController {
         return postService.getPostsBySearching(searchRequestDto);
     }
 
+    @PostMapping("/create/chat/{postId}")
+    public ResponseDto<?> chatRoomCreate(@PathVariable Long postId, HttpServletRequest request) {
+        return postService.createChatRoom(postId, request);
+    }
+
 }
