@@ -85,11 +85,11 @@ public class ChatRoomRepository {
             chatRoomResponseDto.setLastMessageTime(createdAtString);
             chatRoomResponseDto.setPostTitle(post.getTitle());
 
-            PostImgUrl postImgUrl = (PostImgUrl) postImgUrlRepository.findAllByPost(post);
-            if (postImgUrl.getImgUrl().isEmpty()) {
+            List<PostImgUrl> postImgUrl = postImgUrlRepository.findAllByPost(post);
+            if (postImgUrl.isEmpty()) {
                 chatRoomResponseDto.setPostUrl(null);
             } else {
-                chatRoomResponseDto.setPostUrl(postImgUrl.getImgUrl());
+                chatRoomResponseDto.setPostUrl(postImgUrl.get(0).getImgUrl());
             }
 
             chatRoomResponseDto.setProfileUrl(member.getProfileUrl());
