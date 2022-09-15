@@ -120,11 +120,10 @@ public class ChatRoomRepository {
      * 채팅방 생성 , 게시글 생성시 만들어진 postid를 받아와서 게시글 id로 사용한다.
      */
     @Transactional
-    public void createChatRoom(Post post, MemberDto memberDto) {
-        ChatRoom chatRoom = ChatRoom.create(post, memberDto);
+    public void createChatRoom(ChatRoom chatRoom) {
         opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom); // redis 저장
         redisTemplate.expire(CHAT_ROOMS, 48, TimeUnit.HOURS);
-        chatRoomJpaRepository.save(chatRoom); // DB 저장
+        chatRoomJpaRepository.save(chatRoom);// DB 저장
     }
 
     public static ChannelTopic getTopic(String roomId) {
