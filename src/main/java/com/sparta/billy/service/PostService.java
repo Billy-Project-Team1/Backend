@@ -102,8 +102,6 @@ public class PostService {
                 blockDateDto = new BlockDateResponseDto(dateList);
             }
         }
-        MemberDto memberDto = new MemberDto(member);
-        chatRoomRepository.createChatRoom(post, memberDto);
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, true));
     }
 
@@ -231,6 +229,16 @@ public class PostService {
 
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto,
                 postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount, reservationCount));
+    }
+
+    @Transactional
+    public ResponseDto<?> createChatRoom(Long postId, HttpServletRequest request) {
+        Member member = check.validateMember(request);
+        check.tokenCheck(request, member);
+        Post post = check.getCurrentPost(postId);
+        MemberDto memberDto = new MemberDto(member);
+        chatRoomRepository.createChatRoom(post, memberDto);
+        return ResponseDto.success("채팅방이 생성되었습니다.");
     }
 
     @Transactional
