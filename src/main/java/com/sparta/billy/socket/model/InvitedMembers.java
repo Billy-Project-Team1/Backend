@@ -27,7 +27,6 @@ public class InvitedMembers{
     @Column
     private LocalDateTime readCheckTime;
 
-
     public InvitedMembers(Long postId, Member member) {
         this.postId = postId;
         this.member = member;
