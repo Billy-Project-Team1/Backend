@@ -42,7 +42,7 @@ public class MemberController {
     @PatchMapping("/auth/members/profile/{userId}")
     public ResponseDto<?> memberUpdate(@PathVariable String userId,
                                        @RequestPart(value = "data") MemberUpdateRequestDto memberRequestDto,
-                                        @RequestPart(value = "image", required = false) MultipartFile file,
+                                       @RequestPart(value = "image", required = false) MultipartFile file,
                                         HttpServletRequest request) throws IOException {
         return memberService.updateMember(userId, memberRequestDto, file, request);
     }
