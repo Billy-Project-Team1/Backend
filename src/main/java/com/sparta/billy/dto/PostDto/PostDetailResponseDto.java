@@ -32,6 +32,7 @@ public class PostDetailResponseDto {
     private Double latitude;
     private Double longitude;
     private boolean isMine;
+    private boolean isLike;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
@@ -43,7 +44,8 @@ public class PostDetailResponseDto {
     public PostDetailResponseDto(Post post,
                                  BlockDateResponseDto blockDate,
                                  PostImgUrlResponseDto postImgUrl,
-                                 boolean isMine, int likeCount, String postAvg, int reviewCount, int reservationCount) {
+                                 boolean isMine, int likeCount, String postAvg,
+                                 int reviewCount, int reservationCount, boolean isLike) {
         this.id = post.getId();
         this.likeCount = likeCount;
         this.reservationCount = reservationCount;
@@ -63,6 +65,7 @@ public class PostDetailResponseDto {
         this.latitude = post.getLatitude();
         this.longitude = post.getLongitude();
         this.isMine = isMine;
+        this.isLike = isLike;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
     }

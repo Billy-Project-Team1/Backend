@@ -228,8 +228,10 @@ public class PostService {
         // 내가 작성한 글인지 확인 (게시글 상세 조회는 로그인하지 않은 상태로도 조회가 가능해야하기 때문에 memberId를 따로 전달)
         boolean isMyPost = post.getMember().getUserId().equals(userId);
 
+        boolean isLike = likeRepository.findByMemberUserIdAndPost(userId, post).isPresent();
+
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto,
-                postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount, reservationCount));
+                postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount, reservationCount, isLike));
     }
 
     @Transactional
