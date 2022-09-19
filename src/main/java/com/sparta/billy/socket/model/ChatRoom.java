@@ -25,8 +25,9 @@ public class ChatRoom implements Serializable {
     @GeneratedValue
     private String roomId;
 
-    @Column(nullable = false)
-    private Long postId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
     @Column(nullable = false)
     private String nickname;
 
@@ -34,8 +35,8 @@ public class ChatRoom implements Serializable {
     public static ChatRoom create(Post post, MemberDto memberDto) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.roomId = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
-        chatRoom.nickname=memberDto.getNickName();
-        chatRoom.postId = post.getId();
+        chatRoom.nickname = memberDto.getNickName();
+        chatRoom.post = post;
         return chatRoom;
     }
 }

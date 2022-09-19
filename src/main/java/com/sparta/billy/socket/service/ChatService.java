@@ -30,30 +30,25 @@ public class ChatService {
     private final RedisPublisher redisPublisher;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final MemberRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ChatMessageJpaRepository chatMessageJpaRepository;
     private final InvitedMembersRepository invitedMembersRepository;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
-    private final ResignChatRoomJpaRepository resignChatRoomJpaRepository;
     private final PostRepository postRepository;
-    private final ResignChatMessageJpaRepository resignChatMessageJpaRepository;
 
 
     @Transactional
     public void save(ChatMessageDto messageDto, Long pk) throws JsonProcessingException {
         // 토큰에서 유저 아이디 가져오기
-        Member member = userRepository.findById(pk).orElseThrow(
+        Member member = memberRepository.findById(pk).orElseThrow(
                 () -> new NullPointerException("존재하지 않는 사용자 입니다!")
         );
         LocalDateTime createdAt = LocalDateTime.now();
         String formatDate = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
-        Long enterUserCnt = chatMessageRepository.getUserCnt(messageDto.getRoomId());
-        messageDto.setEnterUserCnt(enterUserCnt);
         messageDto.setSender(member.getNickname());
         messageDto.setProfileUrl(member.getProfileUrl());
         messageDto.setCreatedAt(formatDate);
         messageDto.setMemberId(member.getId());
-        messageDto.setQuitOwner(false);
 
         //받아온 메세지의 타입이 ENTER 일때
         if (ChatMessage.MessageType.ENTER.equals(messageDto.getType())) {
@@ -62,58 +57,29 @@ public class ChatService {
             String roomId = messageDto.getRoomId();
 
 
-            List<InvitedMembers> invitedUsersList = invitedMembersRepository.findAllByPostId(Long.parseLong(roomId));
-            for (InvitedMembers invitedMembers : invitedUsersList) {
+            List<InvitedMembers> invitedMembersList = invitedMembersRepository.findAllByRoomId(roomId);
+            for (InvitedMembers invitedMembers : invitedMembersList) {
                 if (invitedMembers.getMember().equals(member)) {
                     invitedMembers.setReadCheck(true);
                 }
             }
             // 이미 그방에 초대되어 있다면 중복으로 저장을 하지 않게 한다.
-            if (!invitedMembersRepository.existsByMemberIdAndPostId(member.getId(), Long.parseLong(roomId))) {
-                InvitedMembers invitedUsers = new InvitedMembers(Long.parseLong(roomId), member);
-                invitedMembersRepository.save(invitedUsers);
+            if (!invitedMembersRepository.existsByMemberIdAndRoomId(member.getId(),roomId)) {
+                InvitedMembers invitedMembers = new InvitedMembers(roomId, member);
+                invitedMembersRepository.save(invitedMembers);
             }
             //받아온 메세지 타입이 QUIT 일때
         } else if (ChatMessage.MessageType.QUIT.equals(messageDto.getType())) {
             messageDto.setMessage(messageDto.getSender() + "님이 나가셨습니다.");
-            if (invitedMembersRepository.existsByMemberIdAndPostId(member.getId(), Long.parseLong(messageDto.getRoomId()))) {
-                invitedMembersRepository.deleteByMemberIdAndPostId(member.getId(), Long.parseLong(messageDto.getRoomId()));
+            if (invitedMembersRepository.existsByMemberIdAndRoomId(member.getId(), messageDto.getRoomId())) {
+                invitedMembersRepository.deleteByMemberIdAndRoomId(member.getId(), messageDto.getRoomId());
             }
-            if (!postRepository.existsById(Long.parseLong(messageDto.getRoomId()))) {
-                ResignChatRoom chatRoom = resignChatRoomJpaRepository.findByRoomId(messageDto.getRoomId());
-                if (chatRoom.getNickname().equals(member.getNickname())) {
-                    messageDto.setQuitOwner(true);
-                    messageDto.setMessage("(방장) " + messageDto.getSender() + "님이 나가셨습니다. " +
-                            "더 이상 대화를 할 수 없으며 채팅방을 나가면 다시 입장할 수 없습니다.");
-                    postRepository.deleteById(Long.parseLong(messageDto.getRoomId()));
-                    member.setIsOwner(false);
-                    ChatRoom findChatRoom = chatRoomJpaRepository.findByRoomId(messageDto.getRoomId());
-                    List<ChatMessage> chatMessage = chatMessageJpaRepository.findAllByRoomId(messageDto.getRoomId());
-                    ResignChatRoom resignChatRoom = new ResignChatRoom(findChatRoom);
-                    resignChatRoomJpaRepository.save(resignChatRoom);
-                    for (ChatMessage message : chatMessage) {
-                        ResignChatMessage resignChatMessage = new ResignChatMessage(message);
-                        resignChatMessageJpaRepository.save(resignChatMessage);
-                    }
-                    chatMessageJpaRepository.deleteByRoomId(messageDto.getRoomId());
-                    chatRoomJpaRepository.deleteByRoomId(messageDto.getRoomId());
-                }
-            }else {
+           else if(postRepository.existsById(Long.parseLong(messageDto.getRoomId()))){
                 ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(messageDto.getRoomId());
                 if (chatRoom.getNickname().equals(member.getNickname())) {
-                    messageDto.setQuitOwner(true);
                     messageDto.setMessage("(방장) " + messageDto.getSender() + "님이 나가셨습니다. " +
                             "더 이상 대화를 할 수 없으며 채팅방을 나가면 다시 입장할 수 없습니다.");
                     postRepository.deleteById(Long.parseLong(messageDto.getRoomId()));
-                    member.setIsOwner(false);
-                    ChatRoom findChatRoom = chatRoomJpaRepository.findByRoomId(messageDto.getRoomId());
-                    List<ChatMessage> chatMessage = chatMessageJpaRepository.findAllByRoomId(messageDto.getRoomId());
-                    ResignChatRoom resignChatRoom = new ResignChatRoom(findChatRoom);
-                    resignChatRoomJpaRepository.save(resignChatRoom);
-                    for (ChatMessage message : chatMessage) {
-                        ResignChatMessage resignChatMessage = new ResignChatMessage(message);
-                        resignChatMessageJpaRepository.save(resignChatMessage);
-                    }
                     chatMessageJpaRepository.deleteByRoomId(messageDto.getRoomId());
                     chatRoomJpaRepository.deleteByRoomId(messageDto.getRoomId());
                 }
@@ -134,10 +100,10 @@ public class ChatService {
 
     //채팅방에 참여한 사용자 정보 조회
     public List<MemberinfoDto> getUserinfo(UserDetailsImpl userDetails, String roomId) {
-        userRepository.findById(userDetails.getMember().getId()).orElseThrow(
+        memberRepository.findById(userDetails.getMember().getId()).orElseThrow(
                 MemberNotFoundException::new
         );
-        List<InvitedMembers> invitedMembers = invitedMembersRepository.findAllByPostId(Long.parseLong(roomId));
+        List<InvitedMembers> invitedMembers = invitedMembersRepository.findAllByRoomId(roomId);
         List<MemberinfoDto> members = new ArrayList<>();
         for (InvitedMembers invitedMember : invitedMembers) {
             Member member = invitedMember.getMember();
@@ -148,7 +114,7 @@ public class ChatService {
 
     //유저 정보 상세조회 (채팅방 안에서)
     public ResponseEntity<MemberDetailDto> getUserDetails(String roomId, Long memberId) {
-        Member member = userRepository.findById(memberId).orElseThrow(
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 MemberNotFoundException::new
         );
         ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(roomId);
