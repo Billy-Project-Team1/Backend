@@ -38,7 +38,7 @@ public class ChatController {
 
 
     //채팅방에 참여한 사용자 정보 조회
-    @GetMapping("/chat/message/memberinfo/{roomId}")
+    @GetMapping("/chat/message/member-info/{roomId}")
     @ResponseBody
     public List<MemberinfoDto> getUserInfo(
             @PathVariable String roomId,
