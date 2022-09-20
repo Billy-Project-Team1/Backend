@@ -3,9 +3,9 @@ package com.sparta.billy.service;
 import com.sparta.billy.dto.MemberDto.*;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
-import com.sparta.billy.exception.ex.DuplicateEmailException;
-import com.sparta.billy.exception.ex.MemberNotFoundException;
-import com.sparta.billy.exception.ex.TokenExpiredException;
+import com.sparta.billy.exception.ex.MemberException.DuplicateEmailException;
+import com.sparta.billy.exception.ex.MemberException.MemberNotFoundException;
+import com.sparta.billy.exception.ex.MemberException.TokenExpiredException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
 import com.sparta.billy.repository.MemberRepository;
@@ -47,6 +47,7 @@ public class MemberService {
                 .email(signupRequestDto.getEmail())
                 .userId(userId)
                 .nickname(signupRequestDto.getNickname())
+                .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/nullimg.png")
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
                 .isOwner(false)
                 .build();

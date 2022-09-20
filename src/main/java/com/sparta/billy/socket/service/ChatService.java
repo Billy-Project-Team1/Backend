@@ -1,7 +1,7 @@
 package com.sparta.billy.socket.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.billy.exception.ex.MemberNotFoundException;
+import com.sparta.billy.exception.ex.MemberException.MemberNotFoundException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.repository.MemberRepository;

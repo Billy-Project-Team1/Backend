@@ -1,6 +1,5 @@
 package com.sparta.billy.dto.PostDto;
 
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
