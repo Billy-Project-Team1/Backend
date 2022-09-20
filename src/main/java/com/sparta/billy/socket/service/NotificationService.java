@@ -1,6 +1,6 @@
 package com.sparta.billy.socket.service;
 
-import com.sparta.billy.exception.ex.NotFoundPostException;
+import com.sparta.billy.exception.ex.PostException.NotFoundPostException;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.repository.PostRepository;

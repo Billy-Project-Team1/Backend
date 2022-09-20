@@ -7,8 +7,6 @@ import com.sparta.billy.dto.MemberDto.RefreshTokenDto;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.MemberService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Api(tags = {"회원관리 Controller"})
 @RequiredArgsConstructor
 @RestController
 public class MemberController {
