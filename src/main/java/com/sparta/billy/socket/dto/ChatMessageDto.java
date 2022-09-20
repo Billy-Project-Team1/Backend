@@ -16,10 +16,9 @@ public class ChatMessageDto {
     private String message; // 메시지
     private String sender; // nickname
     private String profileUrl;
-    private Long enterUserCnt;
     private Long memberId;
     private String createdAt;
-    private Boolean quitOwner;
+
 
 
     public ChatMessageDto(ChatMessage chatMessage, String createdAt) {
@@ -28,9 +27,7 @@ public class ChatMessageDto {
         this.message = chatMessage.getMessage();
         this.sender = chatMessage.getSender();
         this.profileUrl = chatMessage.getProfileUrl();
-        this.enterUserCnt = chatMessage.getEnterUserCnt();
         this.createdAt = createdAt;
         this.memberId = chatMessage.getMemberId();
-        this.quitOwner = chatMessage.getQuitOwner();
     }
 }

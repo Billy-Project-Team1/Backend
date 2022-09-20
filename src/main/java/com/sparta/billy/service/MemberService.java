@@ -48,7 +48,6 @@ public class MemberService {
                 .userId(userId)
                 .nickname(signupRequestDto.getNickname())
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
-                .isOwner(false)
                 .build();
         memberRepository.save(member);
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));

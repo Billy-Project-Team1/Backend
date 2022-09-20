@@ -18,8 +18,9 @@ public class InvitedMembers{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     @Column
-    private Long postId;
-    @JoinColumn(name="MEMBER_ID")
+    private String roomId;
+
+    @JoinColumn(name="member_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
     @Column
@@ -27,8 +28,8 @@ public class InvitedMembers{
     @Column
     private LocalDateTime readCheckTime;
 
-    public InvitedMembers(Long postId, Member member) {
-        this.postId = postId;
+    public InvitedMembers(String roomId, Member member) {
+        this.roomId = roomId;
         this.member = member;
         this.readCheck =true;
     }
