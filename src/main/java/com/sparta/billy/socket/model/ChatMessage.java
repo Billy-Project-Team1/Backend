@@ -21,26 +21,29 @@ public class ChatMessage{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String roomId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MessageType type;
+
     @Column(nullable = false)
     private String sender;
+
     @Column(nullable = false)
     private String message;
+
     @Column(nullable = false)
     private String profileUrl;
-    @Column
-    private Long enterUserCnt;
+
     @Column(nullable = false)
     private Long memberId ;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column
-    private Boolean quitOwner = false;
 
 
     public ChatMessage(ChatMessageDto chatMessageDto, LocalDateTime createdAt) {
@@ -49,7 +52,6 @@ public class ChatMessage{
         this.message = chatMessageDto.getMessage();
         this.sender = chatMessageDto.getSender();
         this.profileUrl = chatMessageDto.getProfileUrl();
-        this.enterUserCnt = chatMessageDto.getEnterUserCnt();
         this.createdAt = createdAt;
         this.memberId = chatMessageDto.getMemberId();
 

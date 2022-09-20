@@ -80,6 +80,12 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NotFoundChatRoomException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundChatRoomException() {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.NOT_FOUND_CHATROOM.getCode(), ErrorCode.NOT_FOUND_CHATROOM.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleApiRequestException(IllegalArgumentException ex) {
         Exception exception = new Exception();

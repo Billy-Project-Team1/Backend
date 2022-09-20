@@ -49,7 +49,6 @@ public class MemberService {
                 .nickname(signupRequestDto.getNickname())
                 .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/nullimg.png")
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
-                .isOwner(false)
                 .build();
         memberRepository.save(member);
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));

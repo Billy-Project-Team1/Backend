@@ -1,16 +1,14 @@
 package com.sparta.billy.socket.repository;
 
-import com.sparta.billy.exception.ex.MemberNotFoundException;
+import com.sparta.billy.exception.ex.NotFoundChatRoomException;
 import com.sparta.billy.exception.ex.NotFoundPostException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.PostImgUrl;
-import com.sparta.billy.repository.MemberRepository;
 import com.sparta.billy.repository.PostImgUrlRepository;
 import com.sparta.billy.repository.PostRepository;
 import com.sparta.billy.socket.dto.ChatListMessageDto;
 import com.sparta.billy.socket.dto.ChatRoomResponseDto;
-import com.sparta.billy.socket.dto.MemberDto;
 import com.sparta.billy.socket.model.ChatMessage;
 import com.sparta.billy.socket.model.ChatRoom;
 import com.sparta.billy.socket.model.InvitedMembers;
@@ -42,7 +40,7 @@ public class ChatRoomRepository {
     private final RedisSubscriber redisSubscriber;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
     private final PostRepository postRepository;
-    private final InvitedMembersRepository invitedUsersRepository;
+    private final InvitedMembersRepository invitedMembersRepository;
     private final ChatMessageJpaRepository chatMessageJpaRepository;
     private final PostImgUrlRepository postImgUrlRepository;
     private final StringRedisTemplate stringRedisTemplate; // StringRedisTemplate 사용
@@ -51,7 +49,6 @@ public class ChatRoomRepository {
     private HashOperations<String, String, ChatRoom> opsHashChatRoom;
     private static ValueOperations<String, String> topics;
 
-    private final MemberRepository userRepository;
 
     @PostConstruct
     private void init() {
@@ -63,16 +60,20 @@ public class ChatRoomRepository {
     @Transactional
     public ChatListMessageDto findAllRoom(Member member) {
 
-        List<InvitedMembers> invitedMembers = invitedUsersRepository.findAllByMemberId(member.getId());
+        List<InvitedMembers> invitedMembers = invitedMembersRepository.findAllByMemberId(member.getId());
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
         for (InvitedMembers invitedMember : invitedMembers) {
             if (invitedMember.getReadCheck()) {
                 invitedMember.setReadCheck(false);
                 invitedMember.setReadCheckTime(LocalDateTime.now());
             }
-            Post post = postRepository.findById(invitedMember.getPostId()).orElseThrow(
-                    NotFoundPostException::new);
-            ChatMessage chatMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedMember.getPostId().toString());
+
+            //채팅방 있는지 확인
+            ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(invitedMember.getRoomId());
+            if(chatRoom == null){
+                throw new NotFoundChatRoomException();
+            }
+            ChatMessage chatMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
             ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto();
             if (chatMessage.getMessage().isEmpty()) {
                 chatRoomResponseDto.setLastMessage("파일이 왔어요😲");
@@ -83,22 +84,13 @@ public class ChatRoomRepository {
             String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
 
             chatRoomResponseDto.setLastMessageTime(createdAtString);
-            chatRoomResponseDto.setPostTitle(post.getTitle());
-
-            List<PostImgUrl> postImgUrl = postImgUrlRepository.findAllByPost(post);
-            if (postImgUrl.isEmpty()) {
-                chatRoomResponseDto.setPostUrl(null);
-            } else {
-                chatRoomResponseDto.setPostUrl(postImgUrl.get(0).getImgUrl());
-            }
 
             chatRoomResponseDto.setProfileUrl(member.getProfileUrl());
             chatRoomResponseDto.setNickname(member.getNickname());
-            chatRoomResponseDto.setPostId(post.getId());
             chatRoomResponseDtoList.add(chatRoomResponseDto);
 
         }
-        return new ChatListMessageDto(chatRoomResponseDtoList, member.getIsOwner());
+        return new ChatListMessageDto(chatRoomResponseDtoList);
     }
     /**
      * 채팅방 입장 : redis에 topic을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.

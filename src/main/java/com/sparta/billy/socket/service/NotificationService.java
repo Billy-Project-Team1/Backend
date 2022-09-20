@@ -35,9 +35,9 @@ public class NotificationService {
         List<InvitedMembers> invitedMembers = invitedMembersRepository.findAllByMemberIdAndReadCheck(userId, readCheck);
 
         for (InvitedMembers invitedMember : invitedMembers) {
-            List<ChatMessage> findChatMessageDtoList = chatMessageJpaRepository.findAllByRoomId(String.valueOf(invitedMember.getPostId()));
+            List<ChatMessage> findChatMessageDtoList = chatMessageJpaRepository.findAllByRoomId(String.valueOf(invitedMember.getRoomId()));
             for (ChatMessage findChatMessageDto : findChatMessageDtoList) {
-                if (Objects.equals(String.valueOf(invitedMember.getPostId()), findChatMessageDto.getRoomId())) {
+                if (Objects.equals(String.valueOf(invitedMember.getRoomId()), findChatMessageDto.getRoomId())) {
                     if (invitedMember.getReadCheckTime().isBefore(findChatMessageDto.getCreatedAt())) {
                         Post post = postRepository.findById(Long.valueOf(findChatMessageDto.getRoomId())).orElseThrow(
                                 NotFoundPostException::new
