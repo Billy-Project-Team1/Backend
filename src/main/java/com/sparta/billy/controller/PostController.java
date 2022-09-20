@@ -51,9 +51,9 @@ public class PostController {
         return postService.getPostDetails(postId, userId);
     }
 
-    @GetMapping("/auth/posts/my-page")
-    public ResponseDto<?> postMyUpload(HttpServletRequest request) {
-        return postService.getMyPost(request);
+    @GetMapping("/auth/posts/member-page")
+    public ResponseDto<?> postMemberUpload(@RequestParam(required = false) String userId) {
+        return postService.getMemberPost(userId);
     }
 
     @GetMapping("/posts")
