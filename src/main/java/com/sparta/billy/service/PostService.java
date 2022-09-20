@@ -53,7 +53,6 @@ public class PostService {
                                      HttpServletRequest request) throws IOException {
         Member member = check.validateMember(request);
         check.tokenCheck(request, member);
-
         Post post = Post.builder()
                 .title(postUploadRequestDto.getTitle())
                 .content(postUploadRequestDto.getContent())
@@ -235,9 +234,9 @@ public class PostService {
 
 
     @Transactional
-    public ResponseDto<?> getMyPost(HttpServletRequest request) {
-        Member member = check.validateMember(request);
-        return ResponseDto.success(postQueryRepository.findMyPost(member));
+    public ResponseDto<?> getMemberPost(String userId) {
+        Member member = check.getMemberByUserId(userId);
+        return ResponseDto.success(postQueryRepository.findMemberPost(member));
     }
 
     @Transactional

@@ -14,6 +14,7 @@ import java.util.Objects;
 @Builder
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member extends Timestamped {
@@ -38,7 +39,7 @@ public class Member extends Timestamped {
 
     @Column
     private String profileUrl;
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -59,7 +60,6 @@ public class Member extends Timestamped {
         this.profileUrl = profileUrl;
         this.nickname = nickname;
         this.kakaoId = kakaoId;
-
     }
 
     public void updateProfile(MemberUpdateRequestDto memberRequestDto, String profileUrl) {
