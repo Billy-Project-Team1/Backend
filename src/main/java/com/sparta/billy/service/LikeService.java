@@ -30,7 +30,7 @@ public class LikeService {
         Post post = check.getCurrentPost(postId);
         check.checkPost(post);
 
-        Like findLike = likeRepository.findByMemberAndPost(member,post).orElse(null);
+        Like findLike = likeRepository.findByMemberAndPost(member, post).orElse(null);
 
         if(findLike == null){
             LikeRequestDto likerequestDto = new LikeRequestDto(member, post);
