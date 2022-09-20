@@ -37,7 +37,6 @@ public class PostService {
     private final ReviewQueryRepository reviewQueryRepository;
     private final LikeRepository likeRepository;
 
-    private final ChatRoomRepository chatRoomRepository;
 //    private final PostEsRepository postEsRepository;
     private final ReservationRepository reservationRepository;
     private final Check check;
@@ -234,17 +233,6 @@ public class PostService {
                 postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount, reservationCount, isLike));
     }
 
-    @Transactional
-    public ResponseDto<?> createChatRoom(Long postId, HttpServletRequest request) {
-        Member member = check.validateMember(request);
-        check.tokenCheck(request, member);
-        Post post = check.getCurrentPost(postId);
-        check.checkPost(post);
-        MemberDto memberDto = new MemberDto(member);
-        ChatRoom chatRoom = ChatRoom.create(post, memberDto);
-        chatRoomRepository.createChatRoom(chatRoom);
-        return ResponseDto.success(chatRoom.getRoomId());
-    }
 
     @Transactional
     public ResponseDto<?> getMyPost(HttpServletRequest request) {

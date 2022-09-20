@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ProfileNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleProfileNotFoundExceptio(){
+    public ResponseEntity<ErrorResponse> handleProfileNotFoundException(){
         return new ResponseEntity<>(new ErrorResponse(ErrorCode.PROFILE_NOT_FOUND.getCode(), ErrorCode.PROFILE_NOT_FOUND.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
@@ -69,8 +69,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TokenNotExistException.class)
-    public ResponseEntity<ErrorResponse> handleTokenNotExistExcetpion() {
+    public ResponseEntity<ErrorResponse> handleTokenNotExistException() {
         return new ResponseEntity<>(new ErrorResponse(ErrorCode.TOKEN_NOT_EXIST.getCode(), ErrorCode.TOKEN_NOT_EXIST.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotFoundChatRoomException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundChatRoomException() {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.NOT_FOUND_CHATROOM.getCode(), ErrorCode.NOT_FOUND_CHATROOM.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 

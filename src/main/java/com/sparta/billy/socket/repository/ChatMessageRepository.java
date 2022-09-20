@@ -25,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 public class ChatMessageRepository {
 
     private static final String CHAT_MESSAGE = "CHAT_MESSAGE"; // 채팅룸에 메세지들을 저장
-    public static final String USER_COUNT = "USER_COUNT"; // 채팅룸에 입장한 클라이언트수 저장
-    public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
 
     private final ChatMessageJpaRepository chatMessageJpaRepository;
     private final RedisTemplate<String, Object> redisTemplate; // redisTemplate 사용
@@ -43,16 +41,11 @@ public class ChatMessageRepository {
         valueOps = stringRedisTemplate.opsForValue();
     }
 
-    //유저 카운트 받아오기
-    public Long getUserCnt(String roomId) {
-        return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
-    }
-
     //redis 에 메세지 저장하기
     @Transactional
     public ChatMessageDto save(ChatMessageDto chatMessageDto) {
         //chatMessageDto 를 redis 에 저장하기 위하여 직렬화 한다.
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class)); //setValueSerializer() 메소드를 사용하여 직렬화
         String roomId = chatMessageDto.getRoomId();
         //redis에 저장되어있는 리스트를 가져와, 새로 받아온 chatmessageDto를 더하여 다시 저장한다.
         List<ChatMessageDto> chatMessageList = opsHashChatMessage.get(CHAT_MESSAGE, roomId);
@@ -91,23 +84,5 @@ public class ChatMessageRepository {
         }
     }
 
-    // 구독 요청시
-    public void setUserEnterInfo(String roomId, String sessionId) {
-        hashOpsEnterInfo.put(ENTER_INFO, sessionId, roomId);
-    }
-
-    // 구독시 유저 카운트 증가
-    public void plusUserCnt(String roomId) {
-        valueOps.increment(USER_COUNT + "_" + roomId); // redis string type에서 사용하는 increment 함수, 유저 카운트 증가
-    }
-
-    // unsubscribe 시 유저 카운트 감소
-    public void minusUserCnt(String roomId) {
-        Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0);
-    }
-
-    public void removeUserEnterInfo(String sessionId, String roomId) {
-        hashOpsEnterInfo.delete(ENTER_INFO, sessionId, roomId);
-    }
 
 }

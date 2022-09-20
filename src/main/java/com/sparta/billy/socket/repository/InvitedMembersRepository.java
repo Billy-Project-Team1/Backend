@@ -7,15 +7,11 @@ import java.util.List;
 
 public interface InvitedMembersRepository extends JpaRepository<InvitedMembers, Long> {
 
-    void deleteByMemberIdAndPostId(Long memberId, Long postId);
-    boolean existsByMemberIdAndPostId(Long member_id, Long postId);
+    void deleteByMemberIdAndRoomId(Long memberId, String roomId);
+    boolean existsByMemberIdAndRoomId(Long member_id, String roomId);
     List<InvitedMembers> findAllByMemberId(Long memberId);
-    void deleteAllByPostId(Long postId);
-    void deleteByMemberId(Long memberId);
-    List<InvitedMembers> findAllByPostId(Long postId);
-    InvitedMembers findByMemberIdAndPostId(Long id, Long id1);
+    List<InvitedMembers> findAllByRoomId(String roomId);
+
     List<InvitedMembers> findAllByMemberIdAndReadCheck(Long memberId, Boolean readCheck);
-    int countByPostId(Long postId);
-    boolean existsByPostId(Long id);
 
 }
