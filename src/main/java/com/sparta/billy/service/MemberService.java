@@ -64,7 +64,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> login(LoginDto loginDto, HttpServletResponse response) {
+    public ResponseDto<MemberResponseDto> login(LoginDto loginDto, HttpServletResponse response) {
         Member member = memberRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 

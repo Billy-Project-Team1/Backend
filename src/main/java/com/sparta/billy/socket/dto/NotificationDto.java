@@ -11,8 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class NotificationDto {
     String message;
+
     String nickname;
+
     LocalDateTime createdAt;
+
     String roomId;
+
     String title;
 }

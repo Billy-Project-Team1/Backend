@@ -1,6 +1,5 @@
 package com.sparta.billy.socket.model;
 
-import com.sparta.billy.model.Timestamped;
 import com.sparta.billy.socket.dto.ChatMessageDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +17,7 @@ public class ChatMessage{
     public enum MessageType {
         ENTER, TALK, QUIT
     }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,8 +43,6 @@ public class ChatMessage{
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
-
 
     public ChatMessage(ChatMessageDto chatMessageDto, LocalDateTime createdAt) {
         this.type = chatMessageDto.getType();

@@ -51,8 +51,8 @@ public class PostController {
         return postService.getPostDetails(postId, userId);
     }
 
-    @GetMapping("/auth/posts/member-page")
-    public ResponseDto<?> postMemberUpload(@RequestParam(required = false) String userId) {
+    @GetMapping("/auth/posts/member-page/{userId}")
+    public ResponseDto<?> postMemberUpload(@PathVariable String userId) {
         return postService.getMemberPost(userId);
     }
 
