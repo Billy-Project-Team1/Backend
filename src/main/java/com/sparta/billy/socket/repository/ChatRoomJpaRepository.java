@@ -9,6 +9,5 @@ import java.util.Optional;
 public interface ChatRoomJpaRepository extends JpaRepository<ChatRoom, Long> {
     ChatRoom findByRoomId(String roomId);
     void deleteByRoomId(String roomId);
-    boolean existsByRoomId(String roomId);
     Optional<ChatRoom> findByNicknameAndPost(String nickname, Post post);
 }

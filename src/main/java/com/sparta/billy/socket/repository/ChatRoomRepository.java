@@ -2,6 +2,7 @@ package com.sparta.billy.socket.repository;
 
 import com.sparta.billy.exception.ex.NotFoundChatRoomException;
 import com.sparta.billy.model.Member;
+import com.sparta.billy.model.PostImgUrl;
 import com.sparta.billy.repository.PostImgUrlRepository;
 import com.sparta.billy.repository.PostRepository;
 import com.sparta.billy.socket.dto.ChatListMessageDto;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,8 +34,9 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Repository
 public class ChatRoomRepository {
-    // 채팅방(topic)에 발행되는 메시지를 처리할 Listner
+    // 채팅방(topic)에 발행되는 메시지를 처리할 Listener
     private final RedisMessageListenerContainer redisMessageListener;
+
     // 구독 처리 서비스
     private final RedisSubscriber redisSubscriber;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
@@ -50,7 +51,6 @@ public class ChatRoomRepository {
     private HashOperations<String, String, ChatRoom> opsHashChatRoom;
     private static ValueOperations<String, String> topics;
 
-
     @PostConstruct
     private void init() {
         opsHashChatRoom = redisTemplate.opsForHash();
@@ -62,6 +62,8 @@ public class ChatRoomRepository {
     public ChatListMessageDto findAllRoom(HttpServletRequest request) {
         Member member = check.validateMember(request);
         List<InvitedMembers> invitedMembers = invitedMembersRepository.findAllByMemberId(member.getId());
+        if (invitedMembers.isEmpty()) { throw new NotFoundChatRoomException(); }
+
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
         for (InvitedMembers invitedMember : invitedMembers) {
             if (invitedMember.getReadCheck()) {
@@ -84,10 +86,23 @@ public class ChatRoomRepository {
             }
             LocalDateTime createdAt = chatMessage.getCreatedAt();
             String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
+            List<InvitedMembers> twoInvitedMembers = invitedMembersRepository.findByRoomId(chatRoom.getRoomId());
+
+            for (InvitedMembers otherMember : twoInvitedMembers) {
+                if (!otherMember.getMember().equals(member)) {
+                    String otherMemberNickname = otherMember.getMember().getNickname();
+                    String otherMemberProfileUrl = otherMember.getMember().getProfileUrl();
+                    chatRoomResponseDto.setOtherNickname(otherMemberNickname);
+                    chatRoomResponseDto.setProfileUrl(otherMemberProfileUrl);
+                }
+            }
+            List<PostImgUrl> postImgUrlList = postImgUrlRepository.findAllByPost(chatRoom.getPost());
 
             chatRoomResponseDto.setLastMessageTime(createdAtString);
-            chatRoomResponseDto.setProfileUrl(member.getProfileUrl());
             chatRoomResponseDto.setNickname(member.getNickname());
+            chatRoomResponseDto.setPostId(chatRoom.getPost().getId());
+            chatRoomResponseDto.setPostImgUrl(postImgUrlList.get(0).getImgUrl());
+            chatRoomResponseDto.setRoomId(chatRoom.getRoomId());
             chatRoomResponseDtoList.add(chatRoomResponseDto);
         }
         return new ChatListMessageDto(chatRoomResponseDtoList);
@@ -109,7 +124,7 @@ public class ChatRoomRepository {
     }
 
     /*
-     * 채팅방 생성 , 게시글 생성시 만들어진 postid를 받아와서 게시글 id로 사용한다.
+     * 채팅방 생성 , 게시글 생성시 만들어진 postId 를 받아와서 게시글 id로 사용한다.
      */
     public void createChatRoom(ChatRoom chatRoom) {
         opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom); // redis 저장

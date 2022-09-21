@@ -44,14 +44,16 @@ public class ChatRoomService {
         Post post = check.getCurrentPost(postId);
         check.checkPost(post);
 
-        Optional<ChatRoom> alreadyChatRoom = chatRoomJpaRepository.findByNicknameAndPost(member.getNickname(), post);
-        Optional<InvitedMembers> alreadyMember = invitedMembersRepository.findByMemberIdAndRoomId(member.getId(), alreadyChatRoom.get().getRoomId());
-        if (alreadyChatRoom.isPresent() && alreadyMember.isPresent()) {
-            return ResponseDto.success(alreadyChatRoom.get().getRoomId());
+        Optional<ChatRoom> chatRoom = chatRoomJpaRepository.findByNicknameAndPost(member.getNickname(), post);
+        if (chatRoom.isPresent()) {
+            Optional<InvitedMembers> invitedMembers = invitedMembersRepository.findByMemberIdAndRoomId(member.getId(), chatRoom.get().getRoomId());
+            if (invitedMembers.isPresent()) {
+                return ResponseDto.success(chatRoom.get().getRoomId());
+            }
         }
 
-        ChatRoom chatRoom = ChatRoom.create(post, member);
-        chatRoomRepository.createChatRoom(chatRoom);
-        return ResponseDto.success(chatRoom.getRoomId());
+        ChatRoom createChatRoom = ChatRoom.create(post, member);
+        chatRoomRepository.createChatRoom(createChatRoom);
+        return ResponseDto.success(createChatRoom.getRoomId());
     }
 }
