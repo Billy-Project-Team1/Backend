@@ -20,7 +20,8 @@ public class PostDetailResponseDto {
     private int reviewCount;
     private String nickname;
     private String profileUrl;
-    private String authorId;
+    private String memberUserId;
+    private Long memberId;
     private String title;
     private String content;
     private int price;
@@ -53,7 +54,8 @@ public class PostDetailResponseDto {
         this.reviewCount = reviewCount;
         this.nickname = post.getMember().getNickname();
         this.profileUrl = post.getMember().getProfileUrl();
-        this.authorId = post.getMember().getUserId();
+        this.memberUserId = post.getMember().getUserId();
+        this.memberId = post.getMember().getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.price = post.getPrice();
@@ -77,7 +79,8 @@ public class PostDetailResponseDto {
         this.id = post.getId();
         this.nickname = post.getMember().getNickname();
         this.profileUrl = post.getMember().getProfileUrl();
-        this.authorId = post.getMember().getUserId();
+        this.memberUserId = post.getMember().getUserId();
+        this.memberId = post.getMember().getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.price = post.getPrice();

@@ -2,6 +2,7 @@ package com.sparta.billy.socket.repository;
 
 import com.sparta.billy.exception.ex.NotFoundChatRoomException;
 import com.sparta.billy.model.Member;
+import com.sparta.billy.model.Post;
 import com.sparta.billy.model.PostImgUrl;
 import com.sparta.billy.repository.PostImgUrlRepository;
 import com.sparta.billy.repository.PostRepository;
@@ -99,7 +100,7 @@ public class ChatRoomRepository {
             List<PostImgUrl> postImgUrlList = postImgUrlRepository.findAllByPost(chatRoom.getPost());
 
             chatRoomResponseDto.setLastMessageTime(createdAtString);
-            chatRoomResponseDto.setNickname(member.getNickname());
+            chatRoomResponseDto.setUserId(member.getUserId());
             chatRoomResponseDto.setPostId(chatRoom.getPost().getId());
             chatRoomResponseDto.setPostImgUrl(postImgUrlList.get(0).getImgUrl());
             chatRoomResponseDto.setRoomId(chatRoom.getRoomId());
@@ -107,6 +108,7 @@ public class ChatRoomRepository {
         }
         return new ChatListMessageDto(chatRoomResponseDtoList);
     }
+
     /**
      * 채팅방 입장 : redis에 topic을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.
      */

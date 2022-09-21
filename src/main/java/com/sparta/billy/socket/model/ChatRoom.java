@@ -30,14 +30,15 @@ public class ChatRoom implements Serializable {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(nullable = false)
-    private String nickname;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     //채팅방 생성
     public static ChatRoom create(Post post, Member member) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.roomId = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
-        chatRoom.nickname = member.getNickname();
+        chatRoom.member = member;
         chatRoom.post = post;
         return chatRoom;
     }
