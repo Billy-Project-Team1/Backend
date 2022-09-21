@@ -10,10 +10,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ChatListMessageDto {
-    private List<ChatRoomResponseDto> messageDto;
+    private List<ChatRoomResponseDto> chatRoomResponseDtoList;
 
     public ChatListMessageDto(List<ChatRoomResponseDto> chatRoomResponseDtoList) {
-        this.messageDto = chatRoomResponseDtoList;
-
+        this.chatRoomResponseDtoList = chatRoomResponseDtoList;
     }
 }

@@ -1,5 +1,6 @@
 package com.sparta.billy.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import lombok.*;
 
@@ -42,6 +43,7 @@ public class Post extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
 
     public void update(PostUploadRequestDto requestDto) {

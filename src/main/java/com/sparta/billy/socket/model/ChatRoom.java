@@ -1,5 +1,6 @@
 package com.sparta.billy.socket.model;
 
+import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.socket.dto.MemberDto;
 import lombok.Getter;
@@ -28,14 +29,15 @@ public class ChatRoom implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
     @Column(nullable = false)
     private String nickname;
 
     //채팅방 생성
-    public static ChatRoom create(Post post, MemberDto memberDto) {
+    public static ChatRoom create(Post post, Member member) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.roomId = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
-        chatRoom.nickname = memberDto.getNickName();
+        chatRoom.nickname = member.getNickname();
         chatRoom.post = post;
         return chatRoom;
     }

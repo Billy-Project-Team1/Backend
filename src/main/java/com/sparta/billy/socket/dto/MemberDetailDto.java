@@ -20,6 +20,6 @@ public class MemberDetailDto {
         this.message = message;
         this.nickname = member.getNickname();
         this.profileUrl = member.getProfileUrl();
-        this.chatOwner =chatOwner;
+        this.chatOwner = chatOwner;
     }
 }
