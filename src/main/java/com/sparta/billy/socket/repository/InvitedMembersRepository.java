@@ -15,4 +15,7 @@ public interface InvitedMembersRepository extends JpaRepository<InvitedMembers, 
     List<InvitedMembers> findAllByRoomId(String roomId);
     List<InvitedMembers> findAllByMemberIdAndReadCheck(Long memberId, Boolean readCheck);
 
+    List<InvitedMembers> findByRoomId(String roomId);
+
+    void deleteAllByMemberId(Long memberId);
 }

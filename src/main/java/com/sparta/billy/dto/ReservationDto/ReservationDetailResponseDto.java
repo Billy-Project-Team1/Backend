@@ -23,10 +23,12 @@ public class ReservationDetailResponseDto {
     private int state;
     private boolean delivery;
     private String cancelMessage;
+    private Long postId;
 
     public ReservationDetailResponseDto(Long reservationId, String jullyNickname, String title, String postImgUrl,
                                         int price, int deposit, String location,
-                                        String billyNickname, int state, boolean delivery, String cancelMessage, String startDate, String endDate) {
+                                        String billyNickname, int state, boolean delivery, String cancelMessage,
+                                        String startDate, String endDate, Long postId) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate localStartDate = LocalDate.parse(startDate, dtf);
         LocalDate localEndDate = LocalDate.parse(endDate, dtf);
@@ -45,5 +47,6 @@ public class ReservationDetailResponseDto {
         this.cancelMessage = cancelMessage;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.postId = postId;
     }
 }
