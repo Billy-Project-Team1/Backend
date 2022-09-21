@@ -6,7 +6,6 @@ import com.sparta.billy.repository.MemberRepository;
 import com.sparta.billy.repository.PostRepository;
 import com.sparta.billy.socket.dto.ChatMessageDto;
 import com.sparta.billy.socket.model.ChatMessage;
-import com.sparta.billy.socket.model.ChatRoom;
 import com.sparta.billy.socket.model.InvitedMembers;
 import com.sparta.billy.socket.repository.*;
 import lombok.RequiredArgsConstructor;

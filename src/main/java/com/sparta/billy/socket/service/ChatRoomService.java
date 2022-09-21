@@ -44,7 +44,7 @@ public class ChatRoomService {
         Post post = check.getCurrentPost(postId);
         check.checkPost(post);
 
-        Optional<ChatRoom> chatRoom = chatRoomJpaRepository.findByNicknameAndPost(member.getNickname(), post);
+        Optional<ChatRoom> chatRoom = chatRoomJpaRepository.findByMemberAndPost(member, post);
         if (chatRoom.isPresent()) {
             Optional<InvitedMembers> invitedMembers = invitedMembersRepository.findByMemberIdAndRoomId(member.getId(), chatRoom.get().getRoomId());
             if (invitedMembers.isPresent()) {

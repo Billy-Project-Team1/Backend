@@ -12,6 +12,7 @@ import com.sparta.billy.repository.MemberRepository;
 import com.sparta.billy.repository.RefreshTokenRepository;
 import com.sparta.billy.repository.ReviewQueryRepository;
 import com.sparta.billy.security.jwt.TokenProvider;
+import com.sparta.billy.socket.repository.ChatRoomJpaRepository;
 import com.sparta.billy.socket.repository.InvitedMembersRepository;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final ReviewQueryRepository reviewQueryRepository;
     private final InvitedMembersRepository invitedMembersRepository;
+    private final ChatRoomJpaRepository chatRoomJpaRepository;
     private final TokenProvider tokenProvider;
     private final Check check;
 
@@ -49,7 +51,7 @@ public class MemberService {
                 .email(signupRequestDto.getEmail())
                 .userId(userId)
                 .nickname(signupRequestDto.getNickname())
-                .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/nullimg.png")
+                .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/38bd06b9-36fc-4cee-8b3e-547845431056profile.png")
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
                 .build();
         memberRepository.save(member);
@@ -150,6 +152,10 @@ public class MemberService {
 
         if (!invitedMembersRepository.findAllByMemberId(member.getId()).isEmpty()) {
             invitedMembersRepository.deleteAllByMemberId(member.getId());
+        }
+
+        if (!chatRoomJpaRepository.findAllByMemberId(member.getId()).isEmpty()) {
+            chatRoomJpaRepository.deleteAllByMemberId(member.getId());
         }
         memberRepository.delete(member);
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));

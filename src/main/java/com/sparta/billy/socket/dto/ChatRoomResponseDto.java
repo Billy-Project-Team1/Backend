@@ -11,7 +11,7 @@ import lombok.Setter;
 public class ChatRoomResponseDto {
     private String lastMessage;
 
-    private String nickname;
+    private String userId;
 
     private String otherNickname;
 
