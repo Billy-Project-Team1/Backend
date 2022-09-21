@@ -10,8 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MemberDto {
     private String password;
+
     private String nickName;
+
     private String profileUrl;
+
     private Long kakaoId;
 
     public MemberDto(Member member) {

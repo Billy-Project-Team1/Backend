@@ -13,11 +13,16 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatRoomResponseDto {
     private String lastMessage;
-    private String postUrl;
-    private String postTitle;
-    private String nickname;
-    private String profileUrl;
-    private String lastMessageTime;
-    private Long postId;
 
+    private String postUrl;
+
+    private String postTitle;
+
+    private String nickname;
+
+    private String profileUrl;
+
+    private String lastMessageTime;
+
+    private Long postId;
 }
