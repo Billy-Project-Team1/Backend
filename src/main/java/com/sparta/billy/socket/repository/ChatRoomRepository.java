@@ -80,11 +80,7 @@ public class ChatRoomRepository {
 
             ChatMessage chatMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
             ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto();
-            if (chatMessage.getMessage().isEmpty()) {
-                chatRoomResponseDto.setLastMessage("비어있음");
-            } else {
-                chatRoomResponseDto.setLastMessage(chatMessage.getMessage());
-            }
+            chatRoomResponseDto.setLastMessage(chatMessage.getMessage());
             LocalDateTime createdAt = chatMessage.getCreatedAt();
             String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
             List<InvitedMembers> twoInvitedMembers = invitedMembersRepository.findByRoomId(chatRoom.getRoomId());
