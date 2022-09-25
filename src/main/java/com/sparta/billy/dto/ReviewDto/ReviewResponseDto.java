@@ -19,6 +19,8 @@ import java.util.List;
 public class ReviewResponseDto {
     private Long reviewId;
 
+    private String title;
+
     private String nickname;
 
     private String authorId;
@@ -46,15 +48,16 @@ public class ReviewResponseDto {
     private LocalDateTime updateAt;
 
     @QueryProjection
-    public ReviewResponseDto(Long reviewId, String nickname, String authorId,
+    public ReviewResponseDto(Long reviewId, String title, String nickname, String authorId,
                              int star, String comment, String startDate, String endDate,
                              LocalDateTime createAt, LocalDateTime updateAt, boolean isMine) {
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate localStartDate = LocalDate.parse(startDate, dtf);
         LocalDate localEndDate = LocalDate.parse(endDate, dtf);
 
         this.reviewId = reviewId;
+        this.title = title;
         this.nickname = nickname;
         this.authorId = authorId;
         this.star = star;

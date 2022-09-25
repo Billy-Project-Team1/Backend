@@ -107,6 +107,7 @@ public class PostService {
                                      PostUploadRequestDto postUploadRequestDto,
                                      List<String> blockDateDtoList,
                                      List<MultipartFile> files,
+                                     List<String> imgUrlList,
                                      HttpServletRequest request) throws IOException {
         Member member = check.validateMember(request);
         Post post = check.getCurrentPost(postId);
@@ -129,8 +130,12 @@ public class PostService {
                         .build();
                 postImgUrlRepository.save(postImgUrl);
                 imgList.add(imgUrl);
-                postImgUrlDto = new PostImgUrlResponseDto(imgList);
+                //postImgUrlDto = new PostImgUrlResponseDto(imgList);
             }
+            if (imgUrlList != null) {
+                imgList.addAll(imgUrlList);
+            }
+            postImgUrlDto = new PostImgUrlResponseDto(imgList);
         }
 
         BlockDateResponseDto blockDateDto = null;
