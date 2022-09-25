@@ -44,6 +44,8 @@ public class KakaoMemberService {
 
     private final Check check;
 
+    //
+
     @Value("${myKaKaoRestAplKey}")
     private String myKaKaoRestAplKey;
 
@@ -73,7 +75,7 @@ public class KakaoMemberService {
             String profileUrl = kakaoMemberInfo.getProfileUrl();
             String nickname = kakaoMemberInfo.getNickname();
             Long kakaoId= kakaoMemberInfo.getId();
-            kakaoMember = new Member(email, userId, encodedPassword, profileUrl, nickname, kakaoId, false);
+            kakaoMember = new Member(email, userId, encodedPassword, profileUrl, nickname, kakaoId);
 
             memberRepository.save(kakaoMember);
         }

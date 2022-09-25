@@ -12,15 +12,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ChatMessageDto {
     private ChatMessage.MessageType type; // 메시지 타입
-    private String roomId; // 방번호
-    private String message; // 메시지
-    private String sender; // nickname
-    private String profileUrl;
-    private Long enterUserCnt;
-    private Long memberId;
-    private String createdAt;
-    private Boolean quitOwner;
 
+    private String roomId; // 방번호
+
+    private String message; // 메시지
+
+    private String sender; // nickname
+
+    private String profileUrl;
+
+    private Long memberId;
+
+    private String createdAt;
 
     public ChatMessageDto(ChatMessage chatMessage, String createdAt) {
         this.type = chatMessage.getType();
@@ -28,9 +31,7 @@ public class ChatMessageDto {
         this.message = chatMessage.getMessage();
         this.sender = chatMessage.getSender();
         this.profileUrl = chatMessage.getProfileUrl();
-        this.enterUserCnt = chatMessage.getEnterUserCnt();
         this.createdAt = createdAt;
         this.memberId = chatMessage.getMemberId();
-        this.quitOwner = chatMessage.getQuitOwner();
     }
 }

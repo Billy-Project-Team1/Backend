@@ -3,15 +3,17 @@ package com.sparta.billy.service;
 import com.sparta.billy.dto.MemberDto.*;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
-import com.sparta.billy.exception.ex.DuplicateEmailException;
-import com.sparta.billy.exception.ex.MemberNotFoundException;
-import com.sparta.billy.exception.ex.TokenExpiredException;
+import com.sparta.billy.exception.ex.MemberException.DuplicateEmailException;
+import com.sparta.billy.exception.ex.MemberException.MemberNotFoundException;
+import com.sparta.billy.exception.ex.MemberException.TokenExpiredException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.RefreshToken;
 import com.sparta.billy.repository.MemberRepository;
 import com.sparta.billy.repository.RefreshTokenRepository;
 import com.sparta.billy.repository.ReviewQueryRepository;
 import com.sparta.billy.security.jwt.TokenProvider;
+import com.sparta.billy.socket.repository.ChatRoomJpaRepository;
+import com.sparta.billy.socket.repository.InvitedMembersRepository;
 import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,8 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final ReviewQueryRepository reviewQueryRepository;
+    private final InvitedMembersRepository invitedMembersRepository;
+    private final ChatRoomJpaRepository chatRoomJpaRepository;
     private final TokenProvider tokenProvider;
     private final Check check;
 
@@ -47,15 +51,15 @@ public class MemberService {
                 .email(signupRequestDto.getEmail())
                 .userId(userId)
                 .nickname(signupRequestDto.getNickname())
+                .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/profile.png")
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
-                .isOwner(false)
                 .build();
         memberRepository.save(member);
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseEntity<SuccessDto> emailDuplicateCheck(String email) {
         if (memberRepository.countByEmail(email) != 0) {
             throw new DuplicateEmailException();
@@ -64,7 +68,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> login(LoginDto loginDto, HttpServletResponse response) {
+    public ResponseDto<MemberResponseDto> login(LoginDto loginDto, HttpServletResponse response) {
         Member member = memberRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -144,6 +148,14 @@ public class MemberService {
 
         if (refreshTokenRepository.findByMember(member).isPresent()) {
             refreshTokenRepository.deleteByMember(member);
+        }
+
+        if (!invitedMembersRepository.findAllByMemberId(member.getId()).isEmpty()) {
+            invitedMembersRepository.deleteAllByMemberId(member.getId());
+        }
+
+        if (!chatRoomJpaRepository.findAllByMemberId(member.getId()).isEmpty()) {
+            chatRoomJpaRepository.deleteAllByMemberId(member.getId());
         }
         memberRepository.delete(member);
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));

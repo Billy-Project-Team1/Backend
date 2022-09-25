@@ -37,8 +37,9 @@ public class PostController {
                                      @RequestPart(required = false) PostUploadRequestDto postUploadRequestDto,
                                      @RequestParam(required = false) List<String> blockDateDtoList,
                                      @RequestPart(required = false) List<MultipartFile> files,
+                                     @RequestParam(required = false) List<String> imgUrlList,
                                      HttpServletRequest request) throws IOException {
-        return postService.updatePost(postId, postUploadRequestDto, blockDateDtoList, files, request);
+        return postService.updatePost(postId, postUploadRequestDto, blockDateDtoList, files, imgUrlList, request);
     }
 
     @DeleteMapping("/auth/posts/{postId}")
@@ -51,9 +52,9 @@ public class PostController {
         return postService.getPostDetails(postId, userId);
     }
 
-    @GetMapping("/auth/posts/my-page")
-    public ResponseDto<?> postMyUpload(HttpServletRequest request) {
-        return postService.getMyPost(request);
+    @GetMapping("/auth/posts/member-page/{userId}")
+    public ResponseDto<?> postMemberUpload(@PathVariable String userId) {
+        return postService.getMemberPost(userId);
     }
 
     @GetMapping("/posts")

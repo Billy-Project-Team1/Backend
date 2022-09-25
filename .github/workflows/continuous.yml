@@ -31,14 +31,6 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    
-#     - name: Setup MySQL
-#       uses: samin/mysql-action@v1
-#       with:
-#           character set server: 'utf8'
-#           mysql database: planit
-#           mysql user: whddlrs
-#           mysql password: ${{ secrets.MYSQL_PASSWORD }} 
           
     ## create application-dev.properties
     - name: make application.properties
@@ -99,8 +91,11 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: 
         aws deploy create-deployment 
-        --application-name billy
+        --application-name billy-team
         --deployment-group-name billy-group
         --file-exists-behavior OVERWRITE 
         --s3-location bucket=billyteambucket,bundleType=zip,key=billyscript.zip
         --region ap-northeast-2
+        --ignore-application-stop-failures
+
+

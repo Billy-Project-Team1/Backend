@@ -1,6 +1,5 @@
 package com.sparta.billy.model;
 
-import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import com.sparta.billy.dto.ReviewDto.ReviewChildrenRequestDto;
 import com.sparta.billy.dto.ReviewDto.ReviewRequestDto;
 import lombok.*;

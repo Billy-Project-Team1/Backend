@@ -9,7 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MemberinfoDto {
     private String nickname;
+
     private String profileUrl;
+
     private Long userId;
 
     public MemberinfoDto(String nickname, String profileUrl, Long userId) {

@@ -55,7 +55,6 @@ public class PostService {
                                      HttpServletRequest request) throws IOException {
         Member member = check.validateMember(request);
         check.tokenCheck(request, member);
-
         Post post = Post.builder()
                 .title(postUploadRequestDto.getTitle())
                 .content(postUploadRequestDto.getContent())
@@ -113,6 +112,7 @@ public class PostService {
                                      PostUploadRequestDto postUploadRequestDto,
                                      List<String> blockDateDtoList,
                                      List<MultipartFile> files,
+                                     List<String> imgUrlList,
                                      HttpServletRequest request) throws IOException {
         Member member = check.validateMember(request);
         Post post = check.getCurrentPost(postId);
@@ -135,8 +135,12 @@ public class PostService {
                         .build();
                 postImgUrlRepository.save(postImgUrl);
                 imgList.add(imgUrl);
-                postImgUrlDto = new PostImgUrlResponseDto(imgList);
+                //postImgUrlDto = new PostImgUrlResponseDto(imgList);
             }
+            if (imgUrlList != null) {
+                imgList.addAll(imgUrlList);
+            }
+            postImgUrlDto = new PostImgUrlResponseDto(imgList);
         }
 
         BlockDateResponseDto blockDateDto = null;
@@ -229,14 +233,17 @@ public class PostService {
         // 내가 작성한 글인지 확인 (게시글 상세 조회는 로그인하지 않은 상태로도 조회가 가능해야하기 때문에 memberId를 따로 전달)
         boolean isMyPost = post.getMember().getUserId().equals(userId);
 
+        boolean isLike = likeRepository.findByMemberUserIdAndPost(userId, post).isPresent();
+
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateResponseDto,
-                postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount, reservationCount));
+                postImgUrlResponseDto, isMyPost, likeCount, postAvg, reviewCount, reservationCount, isLike));
     }
 
+
     @Transactional
-    public ResponseDto<?> getMyPost(HttpServletRequest request) {
-        Member member = check.validateMember(request);
-        return ResponseDto.success(postQueryRepository.findMyPost(member));
+    public ResponseDto<?> getMemberPost(String userId) {
+        Member member = check.getMemberByUserId(userId);
+        return ResponseDto.success(postQueryRepository.findMemberPost(member));
     }
 
     @Transactional

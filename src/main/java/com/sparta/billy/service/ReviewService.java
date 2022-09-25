@@ -5,7 +5,7 @@ import com.sparta.billy.dto.ReviewDto.ReviewImgUrlResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewRequestDto;
 import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.dto.SuccessDto;
-import com.sparta.billy.exception.ex.NotFoundReservationException;
+import com.sparta.billy.exception.ex.ReservationException.NotFoundReservationException;
 import com.sparta.billy.model.*;
 import com.sparta.billy.repository.ReservationRepository;
 import com.sparta.billy.repository.ReviewImgUrlRepository;

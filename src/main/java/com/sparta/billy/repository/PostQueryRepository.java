@@ -73,7 +73,7 @@ public class PostQueryRepository {
                 .fetch();
     }
 
-    public List<PostResponseDto> findMyPost(Member member1) {
+    public List<PostResponseDto> findMemberPost(Member member1) {
         return jpaQueryFactory.select(Projections.constructor(PostResponseDto.class,
                         post.id, post.title, postImgUrl.imgUrl, post.location,
                         post.price, post.deposit,
