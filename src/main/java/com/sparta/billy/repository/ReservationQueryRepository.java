@@ -5,7 +5,6 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.billy.dto.ReservationDto.ReservationDetailResponseDto;
 import com.sparta.billy.model.Member;
-import com.sparta.billy.model.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
