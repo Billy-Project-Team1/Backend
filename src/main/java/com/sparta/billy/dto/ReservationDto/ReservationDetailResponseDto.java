@@ -20,6 +20,7 @@ public class ReservationDetailResponseDto {
     private int totalAmount;// 총 대여 금액
     private String location;
     private String billyNickname;
+    private boolean delivery;
     private int state;
     private boolean delivery;
     private String cancelMessage;
