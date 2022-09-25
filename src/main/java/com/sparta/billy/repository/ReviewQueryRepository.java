@@ -2,13 +2,11 @@ package com.sparta.billy.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.billy.dto.PostDto.PostImgUrlResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewChildrenResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewImgUrlResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
-import com.sparta.billy.model.ReviewImgUrl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -17,9 +15,8 @@ import java.util.stream.Collectors;
 
 import static com.sparta.billy.model.QMember.member;
 import static com.sparta.billy.model.QPost.post;
-import static com.sparta.billy.model.QPostImgUrl.postImgUrl;
-import static com.sparta.billy.model.QReview.review;
 import static com.sparta.billy.model.QReservation.reservation;
+import static com.sparta.billy.model.QReview.review;
 import static com.sparta.billy.model.QReviewImgUrl.reviewImgUrl;
 
 @Repository
@@ -82,10 +79,12 @@ public class ReviewQueryRepository {
 
     public List<ReviewResponseDto> findReviewReceived(Member member1) {
         List<ReviewResponseDto> response = jpaQueryFactory.select(
-                        Projections.constructor(ReviewResponseDto.class, review.id, review.member.nickname,
+                        Projections.constructor(ReviewResponseDto.class, review.id,
+                                review.post.title, review.member.nickname,
                                 review.member.userId, review.star, review.comment,
                                 reservation.startDate, reservation.endDate,
-                                review.createdAt, review.updatedAt, review.member.userId.eq(member1.getUserId()))
+                                review.createdAt, review.updatedAt,
+                                review.member.userId.eq(member1.getUserId()))
                 )
                 .from(review)
                 .innerJoin(review.post, post)

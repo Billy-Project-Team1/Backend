@@ -51,7 +51,7 @@ public class MemberService {
                 .email(signupRequestDto.getEmail())
                 .userId(userId)
                 .nickname(signupRequestDto.getNickname())
-                .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/38bd06b9-36fc-4cee-8b3e-547845431056profile.png")
+                .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/profile.png")
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
                 .build();
         memberRepository.save(member);
@@ -59,7 +59,7 @@ public class MemberService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseEntity<SuccessDto> emailDuplicateCheck(String email) {
         if (memberRepository.countByEmail(email) != 0) {
             throw new DuplicateEmailException();
