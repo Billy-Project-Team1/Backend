@@ -3,7 +3,6 @@ package com.sparta.billy.socket.service;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
-import com.sparta.billy.socket.dto.MemberDto;
 import com.sparta.billy.socket.model.ChatRoom;
 import com.sparta.billy.socket.model.InvitedMembers;
 import com.sparta.billy.socket.repository.ChatRoomJpaRepository;
