@@ -31,12 +31,14 @@ public class ReviewQueryRepository {
         }
 
         List<ReviewResponseDto> response = jpaQueryFactory.select(
-                        Projections.constructor(ReviewResponseDto.class, review.id, review.member.nickname,
+                        Projections.constructor(ReviewResponseDto.class, review.id,
+                                review.post.title, review.member.nickname,
                                 review.member.userId, review.star, review.comment,
                                 reservation.startDate, reservation.endDate,
                                 review.createdAt, review.updatedAt, review.member.userId.eq(userId))
                 )
                 .from(review)
+                .innerJoin(review.post, post)
                 .innerJoin(review.member, member)
                 .innerJoin(review.reservation, reservation)
                 .where(review.post.id.eq(postId), review.parent.id.isNull())
@@ -105,12 +107,26 @@ public class ReviewQueryRepository {
                 .where(review.parent.id.isNotNull())
                 .fetch();
 
+        List<ReviewImgUrlResponseDto> dto = jpaQueryFactory.select(
+                        Projections.constructor(ReviewImgUrlResponseDto.class, reviewImgUrl.review.id, reviewImgUrl.imgUrl))
+                .from(reviewImgUrl)
+                .where(reviewImgUrl.review.id.eq(review.id))
+                .fetch();
+
+        response.stream()
+                .forEach(review -> {
+                    review.setReviewImgUrl(dto.stream()
+                            .filter(reviewImgUrlResponseDto -> reviewImgUrlResponseDto.getReviewId().equals(review.getReviewId()))
+                            .collect(Collectors.toList()));
+                });
+
         response.stream()
                 .forEach(parent -> {
                     parent.setChildren(comments.stream()
                             .filter(child -> child.getParentId().equals(parent.getReviewId()))
                             .collect(Collectors.toList()));
                 });
+
         return response;
     }
 

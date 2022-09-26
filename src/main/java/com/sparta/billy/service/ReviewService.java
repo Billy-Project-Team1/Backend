@@ -97,6 +97,7 @@ public class ReviewService {
     public ResponseDto<?> updateReview(Long reviewId,
                                        ReviewRequestDto reviewRequestDto,
                                        List<MultipartFile> files,
+                                       List<String> imgUrlList,
                                        HttpServletRequest request) throws IOException {
         Member member = check.validateMember(request);
         Review review = check.getCurrentReview(reviewId);
@@ -122,6 +123,15 @@ public class ReviewService {
                         .reviewImgUrl(imgUrl)
                         .build();
                 imgList.add(imgUrlResponseDto);
+            }
+            if (imgUrlList != null) {
+                for (String img : imgUrlList) {
+                    ReviewImgUrlResponseDto imgUrlDto = ReviewImgUrlResponseDto.builder()
+                            .reviewId(review.getId())
+                            .reviewImgUrl(img)
+                            .build();
+                    imgList.add(imgUrlDto);
+                }
             }
         }
 
@@ -156,8 +166,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseDto<?> getReceivedReview(HttpServletRequest request) {
-        Member member = check.validateMember(request);
+    public ResponseDto<?> getReceivedReview(String userId, HttpServletRequest request) {
+        Member member = check.getMemberByUserId(userId);
         check.tokenCheck(request, member);
 
         List<ReviewResponseDto> response = reviewQueryRepository.findReviewReceived(member);
