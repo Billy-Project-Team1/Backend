@@ -18,7 +18,7 @@ public enum ErrorCode {
     NOT_AUTHOR("A001", "작성자가 아닙니다."),
     TOKEN_EXPIRED("T001", "만료된 토큰입니다."),
     TOKEN_NOT_EXIST("T002", "토큰이 존재하지 않습니다."),
-    NOT_FOUND_CHATROOM("C001", "존재하지 않는 채팅방입니다.입니다.");
+    NOT_FOUND_CHATROOM("C001", "존재하지 않는 채팅방입니다.");
 
     private final String code;
     private final String message;

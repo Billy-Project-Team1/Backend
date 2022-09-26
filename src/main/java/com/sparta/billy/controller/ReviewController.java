@@ -29,8 +29,9 @@ public class ReviewController {
     public ResponseDto<?> reviewUpdate(@PathVariable Long reviewId,
                                        @RequestPart ReviewRequestDto reviewRequestDto,
                                        @RequestPart(required = false) List<MultipartFile> files,
+                                       @RequestParam(required = false) List<String> imgUrlList,
                                        HttpServletRequest request) throws IOException {
-        return reviewService.updateReview(reviewId, reviewRequestDto, files, request);
+        return reviewService.updateReview(reviewId, reviewRequestDto, files, imgUrlList, request);
     }
 
     @DeleteMapping("/auth/reviews/{reviewId}")
@@ -43,8 +44,8 @@ public class ReviewController {
         return reviewService.getReviewsByPost(postId, userId);
     }
 
-    @GetMapping("/auth/reviews/received")
-    public ResponseDto<?> reviewMyReceived(HttpServletRequest request) {
-        return reviewService.getReceivedReview(request);
+    @GetMapping("/auth/reviews/received/{userId}")
+    public ResponseDto<?> reviewByReceived(@PathVariable String userId, HttpServletRequest request) {
+        return reviewService.getReceivedReview(userId, request);
     }
 }
