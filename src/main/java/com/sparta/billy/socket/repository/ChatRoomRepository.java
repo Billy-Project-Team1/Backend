@@ -77,7 +77,7 @@ public class ChatRoomRepository {
             if(chatRoom == null){
                 throw new NotFoundChatRoomException();
             }
-            ChatMessage lastMessage = chatMessageJpaRepository.findByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
+            ChatMessage lastMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
             ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto();
             if (lastMessage.getMessage().isEmpty()) {
                 chatRoomResponseDto.setLastMessage(lastMessage.getMessage());
