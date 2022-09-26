@@ -17,6 +17,4 @@ public class NotificationDto {
     LocalDateTime createdAt;
 
     String roomId;
-
-    String title;
 }
