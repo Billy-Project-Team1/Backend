@@ -38,7 +38,7 @@ public class NotificationService {
         for (InvitedMembers invitedMember : invitedMembers) {
             List<ChatMessage> findChatMessageDtoList = chatMessageJpaRepository.findAllByRoomId(invitedMember.getRoomId());
             for (ChatMessage findChatMessageDto : findChatMessageDtoList) {
-                if (Objects.equals(String.valueOf(invitedMember.getRoomId()), findChatMessageDto.getRoomId())) {
+                if (Objects.equals(invitedMember.getRoomId(), findChatMessageDto.getRoomId())) {
                     if (invitedMember.getReadCheckTime().isBefore(findChatMessageDto.getCreatedAt())) {
                         ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(invitedMember.getRoomId());
                         if (chatRoom == null) {
@@ -57,7 +57,6 @@ public class NotificationService {
                 }
             }
         }
-        notificationDtoList.sort(new NotificationComparator());
         return notificationDtoList;
     }
 
