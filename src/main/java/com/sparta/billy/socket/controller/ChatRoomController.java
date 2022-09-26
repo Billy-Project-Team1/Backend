@@ -1,12 +1,10 @@
 package com.sparta.billy.socket.controller;
 
 import com.sparta.billy.dto.ResponseDto;
-import com.sparta.billy.model.Member;
 import com.sparta.billy.socket.dto.ChatListMessageDto;
 import com.sparta.billy.socket.dto.ChatResponseDto;
 import com.sparta.billy.socket.repository.ChatRoomRepository;
 import com.sparta.billy.socket.service.ChatRoomService;
-import com.sparta.billy.util.Check;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ChatRoomController {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomService chatRoomService;
-    private final Check check;
+
 
     // 내 채팅방 목록 반환
     @GetMapping("/chat/rooms")

@@ -9,7 +9,6 @@ import com.sparta.billy.socket.model.InvitedMembers;
 import com.sparta.billy.socket.repository.ChatMessageJpaRepository;
 import com.sparta.billy.socket.repository.ChatRoomJpaRepository;
 import com.sparta.billy.socket.repository.InvitedMembersRepository;
-import com.sparta.billy.util.NotificationComparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
