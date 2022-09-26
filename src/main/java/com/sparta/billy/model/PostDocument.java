@@ -19,15 +19,15 @@ public class PostDocument {
     private String title;
 
     @Field(type = FieldType.Text)
-    private String location;
+    private String detailLocation;
 
     @Field(type = FieldType.Text)
-    private String titleAndLocation;
+    private String titleAndDetailLocation;
 
-    public PostDocument(Long id, String title, String location, String titleAndLocation) {
+    public PostDocument(Long id, String title, String detailLocation, String titleAndDetailLocation) {
         this.id = id;
         this.title = title;
-        this.location = location;
-        this.titleAndLocation = titleAndLocation;
+        this.detailLocation = detailLocation;
+        this.titleAndDetailLocation = titleAndDetailLocation;
     }
 }
