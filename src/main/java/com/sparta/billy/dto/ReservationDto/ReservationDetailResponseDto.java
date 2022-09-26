@@ -22,7 +22,6 @@ public class ReservationDetailResponseDto {
     private String billyNickname;
     private boolean delivery;
     private int state;
-    private boolean delivery;
     private String cancelMessage;
     private Long postId;
 

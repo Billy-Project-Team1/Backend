@@ -77,11 +77,10 @@ public class ChatRoomRepository {
             if(chatRoom == null){
                 throw new NotFoundChatRoomException();
             }
-
-            ChatMessage chatMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
+            ChatMessage lastMessage = chatMessageJpaRepository.findByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
             ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto();
-            chatRoomResponseDto.setLastMessage(chatMessage.getMessage());
-            LocalDateTime createdAt = chatMessage.getCreatedAt();
+            chatRoomResponseDto.setLastMessage(lastMessage.getMessage());
+            LocalDateTime createdAt = lastMessage.getCreatedAt();
             String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
             List<InvitedMembers> twoInvitedMembers = invitedMembersRepository.findByRoomId(chatRoom.getRoomId());
 
