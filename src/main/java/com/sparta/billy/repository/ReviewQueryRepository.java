@@ -63,11 +63,11 @@ public class ReviewQueryRepository {
                 .fetch();
 
         response.stream()
-                        .forEach(review -> {
-                            review.setReviewImgUrl(dto.stream()
-                                    .filter(reviewImgUrlResponseDto -> reviewImgUrlResponseDto.getReviewId().equals(review.getReviewId()))
-                                    .collect(Collectors.toList()));
-                        });
+                .forEach(review -> {
+                    review.setReviewImgUrl(dto.stream()
+                            .filter(reviewImgUrlResponseDto -> reviewImgUrlResponseDto.getReviewId().equals(review.getReviewId()))
+                            .collect(Collectors.toList()));
+                });
 
         response.stream()
                 .forEach(parent -> {

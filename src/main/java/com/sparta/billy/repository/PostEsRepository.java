@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface PostEsRepository extends ElasticsearchRepository<PostDocument, Long> {
-    @Query("{\"query_string\": {\"fields\": [\"title\",\"location\"], \"query\": \"*?0*\"}}")
-    List<PostDocument> findByKeyword(String keyword);
+    @Query("{\"match\": {\"titleAndDetailLocation\": {\"query\": \"?0\", \"operator\": \"and\"}}}")
+    List<PostDocument> findBySearchKeyword(String keyword);
 }

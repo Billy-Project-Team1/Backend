@@ -105,8 +105,8 @@ public class ReviewService {
         check.tokenCheck(request, member);
 
         List<ReviewImgUrlResponseDto> imgList = new ArrayList<>();
+        reviewImgUrlRepository.deleteByReview(review);
         if (files != null) {
-            reviewImgUrlRepository.deleteByReview(review);
             for (MultipartFile imgFile : files) {
                 String fileName = awsS3Service.upload(imgFile);
                 String imgUrl = URLDecoder.decode(fileName, "UTF-8");
@@ -124,14 +124,19 @@ public class ReviewService {
                         .build();
                 imgList.add(imgUrlResponseDto);
             }
-            if (imgUrlList != null) {
-                for (String img : imgUrlList) {
-                    ReviewImgUrlResponseDto imgUrlDto = ReviewImgUrlResponseDto.builder()
-                            .reviewId(review.getId())
-                            .reviewImgUrl(img)
-                            .build();
-                    imgList.add(imgUrlDto);
-                }
+        }
+        if (imgUrlList != null) {
+            for (String img : imgUrlList) {
+                ReviewImgUrl reviewImgUrl = ReviewImgUrl.builder()
+                        .imgUrl(img)
+                        .review(review)
+                        .build();
+                reviewImgUrlRepository.save(reviewImgUrl);
+                ReviewImgUrlResponseDto imgUrlResponseDto = ReviewImgUrlResponseDto.builder()
+                        .reviewId(review.getId())
+                        .reviewImgUrl(img)
+                        .build();
+                imgList.add(imgUrlResponseDto);
             }
         }
 
@@ -166,9 +171,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseDto<?> getReceivedReview(String userId, HttpServletRequest request) {
+    public ResponseDto<?> getReceivedReview(String userId) {
         Member member = check.getMemberByUserId(userId);
-        check.tokenCheck(request, member);
 
         List<ReviewResponseDto> response = reviewQueryRepository.findReviewReceived(member);
         return ResponseDto.success(response);
