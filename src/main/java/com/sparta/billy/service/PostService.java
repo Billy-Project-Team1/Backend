@@ -20,11 +20,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.domain.*;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +42,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -129,9 +139,9 @@ public class PostService {
         check.checkPostAuthor(member, post);
 
         PostImgUrlResponseDto postImgUrlDto = null;
+        List<String> imgList = new ArrayList<>();
+        postImgUrlRepository.deleteByPost(post);
         if (files != null) {
-            postImgUrlRepository.deleteByPost(post);
-            List<String> imgList = new ArrayList<>();
             for (MultipartFile imgFile : files) {
                 String fileName = awsS3Service.upload(imgFile);
                 String imgUrl = URLDecoder.decode(fileName, "UTF-8");
@@ -144,13 +154,22 @@ public class PostService {
                         .build();
                 postImgUrlRepository.save(postImgUrl);
                 imgList.add(imgUrl);
-                //postImgUrlDto = new PostImgUrlResponseDto(imgList);
             }
-            if (imgUrlList != null) {
-                imgList.addAll(imgUrlList);
-            }
-            postImgUrlDto = new PostImgUrlResponseDto(imgList);
         }
+        if (imgUrlList != null) {
+            for (String img : imgUrlList) {
+                PostImgUrl postImgUrl = PostImgUrl.builder()
+                        .imgUrl(img)
+                        .post(post)
+                        .build();
+                postImgUrlRepository.save(postImgUrl);
+                imgList.add(img);
+            }
+        }
+        if (files == null && imgUrlList == null) {
+            throw new IllegalArgumentException("사진을 넣어주세요.");
+        }
+        postImgUrlDto = new PostImgUrlResponseDto(imgList);
 
         BlockDateResponseDto blockDateDto = null;
         if (blockDateDtoList != null) {
@@ -172,12 +191,7 @@ public class PostService {
         PostDocument postDocument = new PostDocument(post.getId(), post.getTitle(), post.getDetailLocation(),
                 post.getTitle() + " " + post.getDetailLocation());
         postEsRepository.save(postDocument);
-//        Map<String, Object> bodyMap = new HashMap<>();
-//        bodyMap.put("title", post.getTitle());
-//        bodyMap.put("location", post.getLocation());
-//        bodyMap.put("titleAndLocation", post.getTitle() + " " + post.getLocation());
-//        UpdateRequest updateRequest = new UpdateRequest("billy", String.valueOf(post.getId()));
-//        updateRequest.doc(bodyMap);
+
         return ResponseDto.success(new PostDetailResponseDto(post, blockDateDto, postImgUrlDto, true));
     }
 
@@ -267,43 +281,14 @@ public class PostService {
         return ResponseDto.success(response);
     }
 
-    @Transactional
-    public ResponseDto<?> getPostsByElasticSearch(SearchRequestDto searchRequestDto) throws IOException {
-        List<PostDocument> postDocumentList = postEsRepository.findByKeyword(searchRequestDto.getKeyword());
+    public ResponseDto<?> getPostsByElasticSearch(SearchRequestDto searchRequestDto) {
+        List<PostDocument> postDocumentList = postEsRepository.findBySearchKeyword(searchRequestDto.getKeyword());
 
-        List<Long> postIdList = new ArrayList<>();
-        for (PostDocument p : postDocumentList) {
-            postIdList.add(p.getId());
+        List<PostResponseDto> response = new ArrayList<>();
+
+        for (PostDocument post : postDocumentList) {
+            response.add(postQueryRepository.findPostByElasticSearch(post.getId()));
         }
-        return ResponseDto.success(postIdList);
-//        SearchResponse<PostDocument> response = client.search(s -> s
-//                        .index("billy") // <1>
-//                        .query(q -> q      // <2>
-//                                .match(t -> t   // <3>
-//                                        .field("title")  // <4>
-//                                        .query(searchRequestDto.getKeyword())
-//                                )
-//                        ),
-//                PostDocument.class      // <5>
-//        );
-//
-//        TotalHits total = response.hits().total();
-//        boolean isExactResult = total.relation() == TotalHitsRelation.Eq;
-//
-//        if (isExactResult) {
-//            log.info("There are " + total.value() + " results");
-//        } else {
-//            log.info("There are more than " + total.value() + " results");
-//        }
-//
-//        List<Long> postIdList = new ArrayList<>();
-//        List<Hit<PostDocument>> hits = response.hits().hits();
-//        for (Hit<PostDocument> hit: hits) {
-//            PostDocument postDocument = hit.source();
-//            log.info("Found product " + postDocument.getId() + ", score " + hit.score());
-//            postIdList.add(postDocument.getId());
-//        }
-//        //end::search-simple
-//        return ResponseDto.success(postIdList);
+        return ResponseDto.success(response);
     }
 }

@@ -143,6 +143,28 @@ public class PostQueryRepository {
                 .fetch();
     }
 
+    public PostResponseDto findPostByElasticSearch(Long postId) {
+        return jpaQueryFactory.select(Projections.constructor(PostResponseDto.class,
+                        post.id, post.title, postImgUrl.imgUrl, post.location,
+                        post.price, post.deposit,
+                        JPAExpressions.select(review.star.avg())
+                                .from(review)
+                                .where(review.post.id.eq(post.id).and(review.parent.isNull())),
+                        JPAExpressions.select(review.count())
+                                .from(review)
+                                .where(review.post.id.eq(post.id)),
+                        JPAExpressions.select(like.id.count())
+                                .from(like)
+                                .where(like.post.id.eq(post.id))))
+                .from(post)
+                .leftJoin(postImgUrl)
+                .on(postImgUrl.post.id.eq(post.id), postImgUrl.id.eq(JPAExpressions.select(postImgUrl.id.min())
+                        .from(postImgUrl).where(postImgUrl.post.id.eq(post.id))))
+                .where(post.id.eq(postId))
+                .orderBy(post.createdAt.desc())
+                .fetchOne();
+    }
+
     // no-offset 방식 처리하는 메서드
     private BooleanExpression ltPostId(Long storeId) {
         if (storeId == null) {
