@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -18,7 +19,7 @@ public class NotificationController {
 
 
     @GetMapping("/notification")
-    public List<NotificationDto> getNotification(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return notificationService.getNotification(userDetails);
+    public List<NotificationDto> getNotification(HttpServletRequest request){
+        return notificationService.getNotification(request);
     }
 }
