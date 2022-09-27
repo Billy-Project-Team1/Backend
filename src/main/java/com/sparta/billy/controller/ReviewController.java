@@ -45,7 +45,7 @@ public class ReviewController {
     }
 
     @GetMapping("/auth/reviews/received/{userId}")
-    public ResponseDto<?> reviewByReceived(@PathVariable String userId, HttpServletRequest request) {
-        return reviewService.getReceivedReview(userId, request);
+    public ResponseDto<?> reviewByReceived(@PathVariable String userId) {
+        return reviewService.getReceivedReview(userId);
     }
 }

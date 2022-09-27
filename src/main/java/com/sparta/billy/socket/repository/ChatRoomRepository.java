@@ -2,7 +2,6 @@ package com.sparta.billy.socket.repository;
 
 import com.sparta.billy.exception.ex.NotFoundChatRoomException;
 import com.sparta.billy.model.Member;
-import com.sparta.billy.model.Post;
 import com.sparta.billy.model.PostImgUrl;
 import com.sparta.billy.repository.PostImgUrlRepository;
 import com.sparta.billy.repository.PostRepository;
@@ -74,10 +73,8 @@ public class ChatRoomRepository {
 
             //채팅방 있는지 확인
             ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(invitedMember.getRoomId());
-            if(chatRoom == null){
-                throw new NotFoundChatRoomException();
-            }
-            ChatMessage lastMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
+
+            ChatMessage lastMessage = chatMessageJpaRepository.findTop1ByRoomIdAndTypeOrderByCreatedAtDesc(invitedMember.getRoomId(), ChatMessage.MessageType.TALK);
             ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto();
             if (lastMessage.getMessage().isEmpty()) {
                 chatRoomResponseDto.setLastMessage(lastMessage.getMessage());
