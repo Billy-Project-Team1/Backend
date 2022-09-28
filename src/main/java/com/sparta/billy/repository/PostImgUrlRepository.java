@@ -1,6 +1,5 @@
 package com.sparta.billy.repository;
 
-import com.querydsl.core.types.dsl.NumberPath;
 import com.sparta.billy.model.Post;
 import com.sparta.billy.model.PostImgUrl;
 import org.springframework.data.jpa.repository.JpaRepository;

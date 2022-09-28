@@ -2,7 +2,6 @@ package com.sparta.billy.socket.model;
 
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.Post;
-import com.sparta.billy.socket.dto.MemberDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

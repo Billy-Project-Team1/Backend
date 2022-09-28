@@ -60,7 +60,7 @@ public class PostQueryRepository {
                                 .where(review.post.id.eq(like.post.id).and(review.parent.isNull())),
                         JPAExpressions.select(review.count())
                                 .from(review)
-                                .where(review.post.id.eq(like.post.id)),
+                                .where(review.post.id.eq(like.post.id).and(review.parent.isNull())),
                         JPAExpressions.select(like.id.count())
                                 .from(like)
                                 .where(like.post.id.eq(post.id))))
@@ -82,7 +82,7 @@ public class PostQueryRepository {
                                 .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(review.count())
                                 .from(review)
-                                .where(review.post.id.eq(post.id)),
+                                .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(like.id.count())
                                 .from(like)
                                 .where(like.post.id.eq(post.id))))
@@ -103,7 +103,7 @@ public class PostQueryRepository {
                                 .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(review.count())
                                 .from(review)
-                                .where(review.post.id.eq(post.id)),
+                                .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(like.id.count())
                                 .from(like)
                                 .where(like.post.id.eq(post.id))))
@@ -130,7 +130,7 @@ public class PostQueryRepository {
                                 .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(review.count())
                                 .from(review)
-                                .where(review.post.id.eq(post.id)),
+                                .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(like.id.count())
                                 .from(like)
                                 .where(like.post.id.eq(post.id))))
@@ -152,7 +152,7 @@ public class PostQueryRepository {
                                 .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(review.count())
                                 .from(review)
-                                .where(review.post.id.eq(post.id)),
+                                .where(review.post.id.eq(post.id).and(review.parent.isNull())),
                         JPAExpressions.select(like.id.count())
                                 .from(like)
                                 .where(like.post.id.eq(post.id))))
