@@ -50,6 +50,7 @@ public class ReservationService {
                 .delivery(false)
                 .startDate(reservationRequestDto.getStartDate())
                 .endDate(reservationRequestDto.getEndDate())
+                .reviewCheck(false)
                 .build();
         reservationRepository.save(reservation);
 
