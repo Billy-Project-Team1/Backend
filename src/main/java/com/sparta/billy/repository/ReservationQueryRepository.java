@@ -27,7 +27,7 @@ public class ReservationQueryRepository {
                         reservation.id, reservation.jully.nickname, reservation.post.title, postImgUrl.imgUrl, reservation.post.price,
                                 reservation.post.deposit, reservation.post.location, reservation.billy.nickname,
                                 reservation.state, reservation.delivery, reservation.cancelMessage,
-                                reservation.startDate, reservation.endDate, reservation.post.id
+                                reservation.startDate, reservation.endDate, reservation.reviewCheck, reservation.post.id
                         )
                 )
                 .from(reservation)
@@ -51,7 +51,7 @@ public class ReservationQueryRepository {
                                 reservation.id, reservation.jully.nickname, reservation.post.title, postImgUrl.imgUrl, reservation.post.price,
                                 reservation.post.deposit, reservation.post.location, reservation.billy.nickname,
                                 reservation.state, reservation.delivery, reservation.cancelMessage,
-                                reservation.startDate, reservation.endDate, reservation.post.id
+                                reservation.startDate, reservation.endDate, reservation.reviewCheck, reservation.post.id
                         )
                 )
                 .from(reservation)
