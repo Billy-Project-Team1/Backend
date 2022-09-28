@@ -1,6 +1,5 @@
 package com.sparta.billy.socket.service;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.billy.socket.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;

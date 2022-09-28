@@ -68,7 +68,7 @@ public class ReviewService {
                 .comment(reviewRequestDto.getComment())
                 .build();
         reviewRepository.save(review);
-
+        reservation.setReviewCheck(true);
         List<ReviewImgUrlResponseDto> imgList = new ArrayList<>();
         if (files != null) {
             for (MultipartFile imgFile : files) {

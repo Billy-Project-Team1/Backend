@@ -6,7 +6,6 @@ import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

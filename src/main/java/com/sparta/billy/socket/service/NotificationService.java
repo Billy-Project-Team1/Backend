@@ -1,10 +1,7 @@
 package com.sparta.billy.socket.service;
 
-import com.sparta.billy.exception.ex.NotFoundChatRoomException;
-import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.socket.dto.NotificationDto;
 import com.sparta.billy.socket.model.ChatMessage;
-import com.sparta.billy.socket.model.ChatRoom;
 import com.sparta.billy.socket.model.InvitedMembers;
 import com.sparta.billy.socket.repository.ChatMessageJpaRepository;
 import com.sparta.billy.socket.repository.ChatRoomJpaRepository;
@@ -17,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

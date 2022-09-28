@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -44,11 +45,10 @@ public class KakaoMemberService {
 
     private final Check check;
 
-    //
-
     @Value("${myKaKaoRestAplKey}")
     private String myKaKaoRestAplKey;
 
+    @Transactional
     public ResponseDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
@@ -66,9 +66,6 @@ public class KakaoMemberService {
         }
         if (kakaoMember == null) {
             // 회원가입
-            // username: kakao nickname
-
-            // password: random UUID
             String password = UUID.randomUUID().toString();
             String userId = UUID.randomUUID().toString().substring(0, 8);
             String encodedPassword = passwordEncoder.encode(password);
@@ -112,7 +109,7 @@ public class KakaoMemberService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", myKaKaoRestAplKey);
-        body.add("redirect_uri", "https://frontend-billyjully.vercel.app/kakao");
+        body.add("redirect_uri", "https://billyproject.shop/kakao");
         body.add("code", code);
 
         // HTTP 요청 보내기

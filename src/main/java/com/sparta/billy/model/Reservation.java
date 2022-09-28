@@ -39,6 +39,9 @@ public class Reservation extends Timestamped {
     @Column(nullable = false)
     private String endDate;
 
+    @Column
+    private boolean reviewCheck;
+
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
