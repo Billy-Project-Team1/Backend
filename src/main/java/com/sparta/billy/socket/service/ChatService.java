@@ -9,6 +9,7 @@ import com.sparta.billy.socket.model.ChatMessage;
 import com.sparta.billy.socket.model.InvitedMembers;
 import com.sparta.billy.socket.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,7 +22,6 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final RedisPublisher redisPublisher;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MemberRepository memberRepository;
@@ -29,6 +29,7 @@ public class ChatService {
     private final InvitedMembersRepository invitedMembersRepository;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
     private final PostRepository postRepository;
+    private final SimpMessageSendingOperations sendingOperations;
 
     @Transactional
     public void save(ChatMessageDto messageDto, Long pk) throws JsonProcessingException {
@@ -45,7 +46,6 @@ public class ChatService {
 
         //받아온 메세지의 타입이 ENTER 일때
         if (ChatMessage.MessageType.ENTER.equals(messageDto.getType())) {
-            chatRoomRepository.enterChatRoom(messageDto.getRoomId());
             String roomId = messageDto.getRoomId();
 
             List<InvitedMembers> invitedMembersList = invitedMembersRepository.findAllByRoomId(roomId);
@@ -76,11 +76,9 @@ public class ChatService {
         chatMessageRepository.save(messageDto); // 캐시에 저장 했다.
         ChatMessage chatMessage = new ChatMessage(messageDto, createdAt);
         chatMessageJpaRepository.save(chatMessage); // DB 저장
-        // Websocket 에 발행된 메시지를 redis 로 발행한다(publish)
-        redisPublisher.publish(ChatRoomRepository.getTopic(messageDto.getRoomId()), messageDto);
+        sendingOperations.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
     }
 
-    //redis에 저장되어있는 message 들 출력
     public List<ChatMessageDto> getMessages(String roomId) {
         return chatMessageRepository.findAllMessage(roomId);
     }
