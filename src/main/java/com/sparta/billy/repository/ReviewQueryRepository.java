@@ -27,7 +27,7 @@ public class ReviewQueryRepository {
 
     public List<ReviewResponseDto> findReviewByPostId(Long postId, String userId) {
         if (userId == null) {
-            userId = null;
+            userId = "abcdabcd";
         }
 
         List<ReviewResponseDto> response = jpaQueryFactory.select(
