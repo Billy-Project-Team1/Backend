@@ -5,6 +5,8 @@ import com.sparta.billy.config.DocTestsTransport;
 import com.sparta.billy.dto.PostDto.*;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
+import com.sparta.billy.exception.ex.PostException.DeletePostException;
+import com.sparta.billy.exception.ex.PostException.NotFoundPostException;
 import com.sparta.billy.model.*;
 import com.sparta.billy.repository.*;
 import com.sparta.billy.util.Check;
@@ -60,6 +62,7 @@ public class PostService {
                 .detailLocation(postUploadRequestDto.getDetailLocation())
                 .latitude(postUploadRequestDto.getLatitude())
                 .longitude(postUploadRequestDto.getLongitude())
+                .isDelete(false)
                 .member(member)
                 .build();
         postRepository.save(post);
@@ -179,33 +182,11 @@ public class PostService {
         check.checkPost(post);
         check.checkPostAuthor(member, post);
 
-        List<BlockDate> blockDates = check.getBlockDateByPost(post);
-        List<PostImgUrl> postImgUrls = check.getPostImgUrlByPost(post);
-        List<Review> reviews = check.getReviewByPost(post);
-        List<Reservation> reservations = check.getReservationByPost(post);
-
-        if (!blockDates.isEmpty()) {
-            blockDateRepository.deleteByPost(post);
-        }
-        if (!postImgUrls.isEmpty()) {
-            postImgUrlRepository.deleteByPost(post);
-        }
-        if (!reviews.isEmpty()) {
-            reviewRepository.deleteByPost(post);
-        }
-        if (!reservations.isEmpty()) {
-            for (Reservation r : reservations) {
-                r.setPost(null);
-            }
-        }
-
-        postRepository.delete(post);
+        post.setDelete(true);
 
         // elasticsearch document 삭제
         PostDocument postDocument = postEsRepository.findById(post.getId()).orElse(null);
         postEsRepository.delete(postDocument);
-//        DeleteRequest deleteRequest = new DeleteRequest("billy", post.getId().toString());
-
 
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
@@ -217,6 +198,9 @@ public class PostService {
         PostImgUrlResponseDto postImgUrlResponseDto = postQueryRepository.findPostImgListByPostId(postId);
         BlockDateResponseDto blockDateResponseDto = postQueryRepository.findBlockDateByPostId(postId);
 
+        if (post.isDelete()) {
+            throw new DeletePostException();
+        }
         // 관심 수
         int likeCount = likeRepository.countByPost(post);
 

@@ -69,7 +69,7 @@ public class PostQueryRepository {
                 .leftJoin(postImgUrl)
                 .on(postImgUrl.post.id.eq(like.post.id), postImgUrl.id.eq(JPAExpressions.select(postImgUrl.id.min())
                         .from(postImgUrl).where(postImgUrl.post.id.eq(like.post.id))))
-                .where(like.member.id.eq(member1.getId()))
+                .where(like.member.id.eq(member1.getId()), like.post.isDelete.isFalse())
                 .fetch();
     }
 
@@ -90,7 +90,7 @@ public class PostQueryRepository {
                 .leftJoin(postImgUrl)
                 .on(postImgUrl.post.id.eq(post.id), postImgUrl.id.eq(JPAExpressions.select(postImgUrl.id.min())
                         .from(postImgUrl).where(postImgUrl.post.id.eq(post.id))))
-                .where(post.member.id.eq(member1.getId()))
+                .where(post.member.id.eq(member1.getId()), post.isDelete.isFalse())
                 .fetch();
     }
 
@@ -111,7 +111,7 @@ public class PostQueryRepository {
                 .leftJoin(postImgUrl)
                 .on(postImgUrl.post.id.eq(post.id), postImgUrl.id.eq(JPAExpressions.select(postImgUrl.id.min())
                         .from(postImgUrl).where(postImgUrl.post.id.eq(post.id))))
-                .where(ltPostId(lastPostId))
+                .where(ltPostId(lastPostId), post.isDelete.isFalse())
                 .orderBy(post.createdAt.desc())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -138,7 +138,7 @@ public class PostQueryRepository {
                 .leftJoin(postImgUrl)
                 .on(postImgUrl.post.id.eq(post.id), postImgUrl.id.eq(JPAExpressions.select(postImgUrl.id.min())
                         .from(postImgUrl).where(postImgUrl.post.id.eq(post.id))))
-                .where(post.location.contains(keyword[0]).and(post.title.contains(keyword[1])))
+                .where(post.location.contains(keyword[0]).and(post.title.contains(keyword[1])), post.isDelete.isFalse())
                 .orderBy(post.createdAt.desc())
                 .fetch();
     }
