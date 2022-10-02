@@ -39,7 +39,10 @@ public class Member extends Timestamped {
 
     @Column
     private String profileUrl;
-    
+
+    @Column
+    private boolean isDelete;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -53,13 +56,15 @@ public class Member extends Timestamped {
     }
 
     @Builder
-    public Member(String email, String userId, String password, String profileUrl, String nickname, Long kakaoId) {
+    public Member(String email, String userId, String password, String profileUrl,
+                  String nickname, Long kakaoId, boolean isDelete) {
         this.email = email;
         this.userId = userId;
         this.password = password;
         this.profileUrl = profileUrl;
         this.nickname = nickname;
         this.kakaoId = kakaoId;
+        this.isDelete = isDelete;
     }
 
     public void updateProfile(MemberUpdateRequestDto memberRequestDto, String profileUrl) {

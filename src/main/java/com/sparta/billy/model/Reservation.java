@@ -20,7 +20,7 @@ public class Reservation extends Timestamped {
     @ManyToOne
     private Member jully; // 물건 대여해주는 회원
 
-    @JoinColumn(name = "billy_id", nullable = false)
+    @JoinColumn(name = "billy_id")
     @ManyToOne
     private Member billy; // 물건 대여하는 회원
 

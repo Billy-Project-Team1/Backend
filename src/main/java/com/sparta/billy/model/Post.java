@@ -41,6 +41,9 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private Double longitude;
 
+    @Column
+    private boolean isDelete;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @JsonIgnore
