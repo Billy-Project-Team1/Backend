@@ -9,6 +9,12 @@ import java.util.List;
 
 @Repository
 public interface PostEsRepository extends ElasticsearchRepository<PostDocument, Long> {
-    @Query("{\"match\": {\"titleAndDetailLocation\": {\"query\": \"?0\", \"operator\": \"and\"}}}")
+    @Query("{\"multi_match\" : {\"query\": \"?0\", \"type\": \"best_fields\", \"fields\":" +
+            " [ \"titleAndDetailLocation.nori\", \"titleAndDetailLocation.ngram\" ],\n" +
+            "      \"operator\":   \"and\" \n" +
+            "    }\n" +
+            "  }")
     List<PostDocument> findBySearchKeyword(String keyword);
+
+    List<PostDocument> findAll();
 }

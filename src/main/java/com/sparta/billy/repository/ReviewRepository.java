@@ -14,5 +14,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByMemberAndReservation(Member member, Reservation reservation);
 
     int countByPost(Post post);
-    void deleteByPost(Post post);
 }
