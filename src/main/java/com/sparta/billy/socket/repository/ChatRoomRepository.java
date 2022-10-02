@@ -47,12 +47,14 @@ public class ChatRoomRepository {
             //채팅방 있는지 확인
             ChatRoom chatRoom = chatRoomJpaRepository.findByRoomId(invitedMember.getRoomId());
 
-            ChatMessage lastMessage = chatMessageJpaRepository.findTop1ByRoomIdAndTypeOrderByCreatedAtDesc(invitedMember.getRoomId(), ChatMessage.MessageType.TALK);
+            ChatMessage lastMessage = chatMessageJpaRepository.findTop1ByRoomIdOrderByCreatedAtDesc(invitedMember.getRoomId());
+            ChatMessage lastTalkMessage = chatMessageJpaRepository.findTop1ByRoomIdAndTypeOrderByCreatedAtDesc(invitedMember.getRoomId(), ChatMessage.MessageType.TALK);
             ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto();
+
             if (lastMessage.getMessage().isEmpty()) {
-                chatRoomResponseDto.setLastMessage(lastMessage.getMessage());
-            } else{
-                chatRoomResponseDto.setLastMessage(lastMessage.getMessage());
+                chatRoomResponseDto.setLastMessage(lastTalkMessage.getMessage());
+            } else {
+                chatRoomResponseDto.setLastMessage(lastTalkMessage.getMessage());
             }
             LocalDateTime createdAt = lastMessage.getCreatedAt();
             String createdAtString = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA));
