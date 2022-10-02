@@ -6,11 +6,8 @@ import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.exception.ex.MemberException.DuplicateEmailException;
 import com.sparta.billy.exception.ex.MemberException.MemberNotFoundException;
 import com.sparta.billy.exception.ex.MemberException.TokenExpiredException;
-import com.sparta.billy.model.Member;
-import com.sparta.billy.model.RefreshToken;
-import com.sparta.billy.repository.MemberRepository;
-import com.sparta.billy.repository.RefreshTokenRepository;
-import com.sparta.billy.repository.ReviewQueryRepository;
+import com.sparta.billy.model.*;
+import com.sparta.billy.repository.*;
 import com.sparta.billy.security.jwt.TokenProvider;
 import com.sparta.billy.socket.repository.ChatRoomJpaRepository;
 import com.sparta.billy.socket.repository.InvitedMembersRepository;
@@ -26,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -39,6 +37,10 @@ public class MemberService {
     private final ReviewQueryRepository reviewQueryRepository;
     private final InvitedMembersRepository invitedMembersRepository;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
+    private final PostRepository postRepository;
+    private final ReviewRepository reviewRepository;
+    private final LikeRepository likeRepository;
+    private final ReservationRepository reservationRepository;
     private final TokenProvider tokenProvider;
     private final Check check;
 
@@ -53,6 +55,7 @@ public class MemberService {
                 .nickname(signupRequestDto.getNickname())
                 .profileUrl("https://billy-img-bucket.s3.ap-northeast-2.amazonaws.com/%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png")
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
+                .isDelete(false)
                 .build();
         memberRepository.save(member);
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
@@ -71,6 +74,10 @@ public class MemberService {
     public ResponseDto<MemberResponseDto> login(LoginDto loginDto, HttpServletResponse response) {
         Member member = memberRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
+
+        if (member.isDelete()) {
+            throw new MemberNotFoundException();
+        }
 
         if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
             throw new MemberNotFoundException();
@@ -127,7 +134,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> getMemberDetails(String userId) {
+    public ResponseDto<?> getMemberDetails(String userId, HttpServletRequest request) {
         Member member = check.getMemberByUserId(userId);
         if (member == null) {
             throw new MemberNotFoundException();
@@ -139,7 +146,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseEntity<SuccessDto> deleteMember(String userId) {
+    public ResponseEntity<SuccessDto> deleteMember(String userId, HttpServletRequest request) {
         Member member = check.getMemberByUserId(userId);
 
         if (member == null) {
@@ -157,7 +164,29 @@ public class MemberService {
         if (!chatRoomJpaRepository.findAllByMemberId(member.getId()).isEmpty()) {
             chatRoomJpaRepository.deleteAllByMemberId(member.getId());
         }
-        memberRepository.delete(member);
+
+        List<Reservation> reservationListByJully = reservationRepository.findAllByJully(member);
+        for (Reservation r : reservationListByJully) {
+            if (r.getState() != 3 || r.getState() != 5) {
+                throw new IllegalArgumentException("진행중인 예약건이 있습니다.");
+            }
+         }
+
+        List<Reservation> reservationListByBilly = reservationRepository.findAllByBilly(member);
+        for (Reservation r : reservationListByBilly) {
+            if (r.getState() != 3 || r.getState() != 5) {
+                throw new IllegalArgumentException("진행중인 예약건이 있습니다.");
+            }
+        }
+        member.setDelete(true);
+
+        List<Post> posts = postRepository.findAllByMemberId(member.getId());
+        if (!posts.isEmpty()) {
+            for (Post p : posts) {
+                p.setDelete(true);
+            }
+        }
+
         return ResponseEntity.ok().body(SuccessDto.valueOf("true"));
     }
 

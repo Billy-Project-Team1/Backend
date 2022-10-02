@@ -45,13 +45,13 @@ public class MemberController {
     }
 
     @GetMapping("/auth/members/profile/{userId}")
-    public ResponseDto<?> memberDetails(@PathVariable String userId) {
-        return memberService.getMemberDetails(userId);
+    public ResponseDto<?> memberDetails(@PathVariable String userId, HttpServletRequest request) {
+        return memberService.getMemberDetails(userId, request);
     }
 
     @DeleteMapping("/auth/members/withdrawal/{userId}")
-    public ResponseEntity<SuccessDto> memberDelete(@PathVariable String userId) {
-        return memberService.deleteMember(userId);
+    public ResponseEntity<SuccessDto> memberDelete(@PathVariable String userId, HttpServletRequest request) {
+        return memberService.deleteMember(userId, request);
     }
 
     @PostMapping("/auth/members/reissue")
