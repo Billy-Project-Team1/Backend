@@ -124,7 +124,7 @@ JWT는 보낸 사람이 자신이 누구인지 확인할 수 있음
     <li><strong>결과</strong>
       <ul dir="auto">
         <li>
-          JMeter를 통해 1000명의 User가 동시에 이용했을 때의 평균 속도 10% 가량 감소
+          JMeter를 통해 1000명의 User가 동시에 이용했을 때의 평균 속도 17.4% 가량 감소
             <ul dir="auto">
               <li>
                 JPA를 통한 검색 기능 JMeter Summary Report<br>
