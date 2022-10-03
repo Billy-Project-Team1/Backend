@@ -129,7 +129,7 @@ JWT는 보낸 사람이 자신이 누구인지 확인할 수 있음
               <li>
                 JPA를 통한 검색 기능 JMeter Summary Report<br>
                 ![image](https://user-images.githubusercontent.com/83330576/193503401-c3989dae-c43f-42e7-8e3f-e03fbb3ad52d.png)
-                https://www.notion.so/ea94ae26ec094d57a380cffc3e791c75#43d0cfe36fdf46cd8166ea80fb35351e
+                https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F0ee10949-77aa-4869-a449-d9bdba18ca59%2FScreen_Shot_2022-10-03_at_1.39.31_PM.png?table=block&id=43d0cfe3-6fdf-46cd-8166-ea80fb35351e&spaceId=4cc19098-8ec4-4a0d-a3b3-cee139eedfa7&width=2000&userId=d8a484c8-6cd7-49b2-bc29-f9946f6ab28b&cache=v2
               </li>
               <li>
                 Elasticsearch를 통한 검색 기능 JMeter Summary Report<br>
