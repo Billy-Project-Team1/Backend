@@ -14,5 +14,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     int countReservationByJullyAndState(Member jully, int state);
     List<Reservation> findAllByBilly(Member billy);
     List<Reservation> findAllByJully(Member jully);
-
 }

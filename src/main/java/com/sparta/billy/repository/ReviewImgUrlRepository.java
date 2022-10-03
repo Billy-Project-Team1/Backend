@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface ReviewImgUrlRepository extends JpaRepository<ReviewImgUrl, Long> {
     void deleteByReview(Review review);
-
     List<ReviewImgUrl> findAllByReview(Review review);
 }

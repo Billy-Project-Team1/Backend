@@ -15,7 +15,6 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-
     @GetMapping("/notification")
     public List<NotificationDto> getNotification(HttpServletRequest request){
         return notificationService.getNotification(request);

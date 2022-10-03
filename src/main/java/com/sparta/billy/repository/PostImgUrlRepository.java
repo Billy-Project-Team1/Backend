@@ -9,5 +9,4 @@ import java.util.List;
 public interface PostImgUrlRepository extends JpaRepository<PostImgUrl, Long> {
     List<PostImgUrl> findAllByPost(Post post);
     void deleteByPost(Post post);
-
 }

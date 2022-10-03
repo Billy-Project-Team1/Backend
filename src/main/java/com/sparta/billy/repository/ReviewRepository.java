@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByPost(Post post);
     Optional<Review> findByMemberAndReservation(Member member, Reservation reservation);
-
     int countByPost(Post post);
 }
