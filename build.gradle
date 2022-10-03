@@ -58,13 +58,6 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
-    // swagger
-    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
-    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-
-    // redis
-    // implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
     // websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.webjars:sockjs-client:1.5.1'
@@ -78,13 +71,10 @@ dependencies {
     // Needed only if you use the spring-dependency-management and spring-boot Gradle plugins
     implementation 'jakarta.json:jakarta.json-api:2.0.1'
 
-
     implementation 'com.google.code.gson:gson:2.9.0'
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.3'
-
-
 }
 
 // querydsl 추가 시작
