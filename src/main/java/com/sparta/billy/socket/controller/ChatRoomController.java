@@ -19,7 +19,6 @@ public class ChatRoomController {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomService chatRoomService;
 
-
     // 내 채팅방 목록 반환
     @GetMapping("/chat/rooms")
     public ChatListMessageDto room(HttpServletRequest request) {
