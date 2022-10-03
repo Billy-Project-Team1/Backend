@@ -75,20 +75,7 @@ public class Check {
         return optionalReservation.orElse(null);
     }
 
-    public List<PostImgUrl> getPostImgUrlByPost(Post post) {
-        return postImgUrlRepository.findAllByPost(post);
-    }
-
-    public List<BlockDate> getBlockDateByPost(Post post) {
-        return blockDateRepository.findAllByPost(post);
-    }
-
-    public List<Review> getReviewByPost(Post post) {
-        return reviewRepository.findAllByPost(post);
-    }
-
     public List<ReviewImgUrl> getReviewImgUrlByReview(Review review) { return reviewImgUrlRepository.findAllByReview(review); }
-    public List<Reservation> getReservationByPost(Post post) { return reservationRepository.findAllByPost(post); }
 
     public Review getCurrentReview(Long id) {
         Optional<Review> optionalReview = reviewRepository.findById(id);

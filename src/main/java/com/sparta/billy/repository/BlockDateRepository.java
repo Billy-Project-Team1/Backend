@@ -9,5 +9,4 @@ import java.util.List;
 public interface BlockDateRepository extends JpaRepository<BlockDate, Long> {
     List<BlockDate> findAllByPost(Post post);
     void deleteByPost(Post post);
-
 }

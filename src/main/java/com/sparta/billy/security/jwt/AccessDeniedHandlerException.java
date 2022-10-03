@@ -11,11 +11,11 @@ import java.io.IOException;
 @Component
 public class AccessDeniedHandlerException implements AccessDeniedHandler {
 
-  @Override
-  public void handle(HttpServletRequest request, HttpServletResponse response,
-      AccessDeniedException accessDeniedException) throws IOException {
-      response.setContentType("application/json;charset=UTF-8");
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
-      response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-  }
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    }
 }

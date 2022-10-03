@@ -236,12 +236,6 @@ public class PostService {
         return ResponseDto.success(response);
     }
 
-    @Transactional
-    public ResponseDto<?> getPostsBySearching(SearchRequestDto searchRequestDto) {
-        List<PostResponseDto> response = postQueryRepository.findPostBySearching(searchRequestDto);
-        return ResponseDto.success(response);
-    }
-
     public ResponseDto<?> getPostsByElasticSearch(SearchRequestDto searchRequestDto) {
         List<PostDocument> postDocumentList = postEsRepository.findBySearchKeyword(searchRequestDto.getKeyword());
 
