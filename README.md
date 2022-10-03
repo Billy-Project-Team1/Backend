@@ -128,11 +128,11 @@ JWT는 보낸 사람이 자신이 누구인지 확인할 수 있음
             <ul dir="auto">
               <li>
                 JPA를 통한 검색 기능 JMeter Summary Report<br>
-                <img width="496" alt="Screen Shot 2022-10-03 at 3 09 44 PM" src="https://user-images.githubusercontent.com/98302518/193512103-a49e8a31-db5d-4adf-9f9a-c1709765f584.png">
+                <img width="499" alt="Screen Shot 2022-10-03 at 3 09 55 PM" src="https://user-images.githubusercontent.com/98302518/193512115-c86ae3d9-88a5-4987-8e9f-1213b149af38.png">
               </li>
               <li>
                 Elasticsearch를 통한 검색 기능 JMeter Summary Report<br>
-                <img width="499" alt="Screen Shot 2022-10-03 at 3 09 55 PM" src="https://user-images.githubusercontent.com/98302518/193512115-c86ae3d9-88a5-4987-8e9f-1213b149af38.png">
+                <img width="496" alt="Screen Shot 2022-10-03 at 3 09 44 PM" src="https://user-images.githubusercontent.com/98302518/193512103-a49e8a31-db5d-4adf-9f9a-c1709765f584.png">
               </li>
             </ul>
         </li>
