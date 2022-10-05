@@ -28,7 +28,6 @@ public class ChatService {
     private final ChatMessageJpaRepository chatMessageJpaRepository;
     private final InvitedMembersRepository invitedMembersRepository;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
-    private final PostRepository postRepository;
     private final SimpMessageSendingOperations sendingOperations;
 
     @Transactional
