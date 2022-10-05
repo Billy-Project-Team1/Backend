@@ -101,7 +101,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> updateMember(String userId, MemberUpdateRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
+    public ResponseDto<MemberResponseDto> updateMember(String userId, MemberUpdateRequestDto memberRequestDto, MultipartFile file, HttpServletRequest request) throws IOException {
         Member checkMember = check.validateMember(request);
         check.tokenCheck(request, checkMember);
 
@@ -134,7 +134,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> getMemberDetails(String userId, HttpServletRequest request) {
+    public ResponseDto<MemberResponseDto> getMemberDetails(String userId, HttpServletRequest request) {
         Member member = check.getMemberByUserId(userId);
         if (member == null) {
             throw new MemberNotFoundException();
@@ -191,7 +191,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> reissue(RefreshTokenDto refreshTokenDto, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDto<String> reissue(RefreshTokenDto refreshTokenDto, HttpServletRequest request, HttpServletResponse response) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
             throw new TokenExpiredException();
         }

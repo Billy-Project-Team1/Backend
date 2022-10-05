@@ -47,7 +47,7 @@ public class PostService {
 
     // 게시글 작성
     @Transactional
-    public ResponseDto<?> createPost(PostUploadRequestDto postUploadRequestDto,
+    public ResponseDto<PostDetailResponseDto> createPost(PostUploadRequestDto postUploadRequestDto,
                                      List<String> blockDateDtoList,
                                      List<MultipartFile> files,
                                      HttpServletRequest request) throws IOException {
@@ -107,7 +107,7 @@ public class PostService {
 
     // 게시글 수정
     @Transactional
-    public ResponseDto<?> updatePost(Long postId,
+    public ResponseDto<PostDetailResponseDto> updatePost(Long postId,
                                      PostUploadRequestDto postUploadRequestDto,
                                      List<String> blockDateDtoList,
                                      List<MultipartFile> files,
@@ -193,7 +193,7 @@ public class PostService {
 
     //게시글 상세 조회
     @Transactional
-    public ResponseDto<?> getPostDetails(Long postId, String userId) {
+    public ResponseDto<PostDetailResponseDto> getPostDetails(Long postId, String userId) {
         Post post = check.getCurrentPost(postId);
         PostImgUrlResponseDto postImgUrlResponseDto = postQueryRepository.findPostImgListByPostId(postId);
         BlockDateResponseDto blockDateResponseDto = postQueryRepository.findBlockDateByPostId(postId);
@@ -225,19 +225,20 @@ public class PostService {
 
 
     @Transactional
-    public ResponseDto<?> getMemberPost(String userId) {
+    public ResponseDto<List<PostResponseDto>> getMemberPost(String userId) {
         Member member = check.getMemberByUserId(userId);
-        return ResponseDto.success(postQueryRepository.findMemberPost(member));
+        List<PostResponseDto> response = postQueryRepository.findMemberPost(member);
+        return ResponseDto.success(response);
     }
 
     @Transactional
-    public ResponseDto<?> getAllPosts(Long lastPostId, Pageable pageable) {
+    public ResponseDto<Slice<PostResponseDto>> getAllPosts(Long lastPostId, Pageable pageable) {
         Slice<PostResponseDto> response = postQueryRepository.findAllPostByPaging(lastPostId, pageable);
         return ResponseDto.success(response);
     }
 
     @Transactional
-    public ResponseDto<?> getPostsByElasticSearch(SearchRequestDto searchRequestDto) {
+    public ResponseDto<List<PostResponseDto>> getPostsByElasticSearch(SearchRequestDto searchRequestDto) {
         List<PostDocument> postDocumentList = postEsRepository.findBySearchKeyword(searchRequestDto.getKeyword());
 
         List<PostResponseDto> response = new ArrayList<>();

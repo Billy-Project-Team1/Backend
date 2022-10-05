@@ -1,9 +1,6 @@
 package com.sparta.billy.controller;
 
-import com.sparta.billy.dto.MemberDto.LoginDto;
-import com.sparta.billy.dto.MemberDto.MemberUpdateRequestDto;
-import com.sparta.billy.dto.MemberDto.MemberSignupRequestDto;
-import com.sparta.billy.dto.MemberDto.RefreshTokenDto;
+import com.sparta.billy.dto.MemberDto.*;
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.MemberService;
@@ -32,12 +29,12 @@ public class MemberController {
     }
 
     @PostMapping("/members/login")
-    public ResponseDto<?> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+    public ResponseDto<MemberResponseDto> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
         return memberService.login(loginDto, response);
     }
 
     @PatchMapping("/auth/members/profile/{userId}")
-    public ResponseDto<?> memberUpdate(@PathVariable String userId,
+    public ResponseDto<MemberResponseDto> memberUpdate(@PathVariable String userId,
                                        @RequestPart(value = "data") MemberUpdateRequestDto memberRequestDto,
                                        @RequestPart(value = "image", required = false) MultipartFile file,
                                         HttpServletRequest request) throws IOException {
@@ -45,7 +42,7 @@ public class MemberController {
     }
 
     @GetMapping("/auth/members/profile/{userId}")
-    public ResponseDto<?> memberDetails(@PathVariable String userId, HttpServletRequest request) {
+    public ResponseDto<MemberResponseDto> memberDetails(@PathVariable String userId, HttpServletRequest request) {
         return memberService.getMemberDetails(userId, request);
     }
 
@@ -55,7 +52,7 @@ public class MemberController {
     }
 
     @PostMapping("/auth/members/reissue")
-    public ResponseDto<?> reissue(@RequestBody RefreshTokenDto refreshTokenDto, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDto<String> reissue(@RequestBody RefreshTokenDto refreshTokenDto, HttpServletRequest request, HttpServletResponse response) {
         return memberService.reissue(refreshTokenDto, request, response);
     }
 

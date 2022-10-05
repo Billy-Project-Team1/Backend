@@ -35,7 +35,7 @@ public class ReservationService {
     private final Check check;
 
     @Transactional
-    public ResponseDto<?> createReservation(ReservationRequestDto reservationRequestDto,
+    public ResponseDto<String> createReservation(ReservationRequestDto reservationRequestDto,
                                             HttpServletRequest request) throws ParseException {
         Member billyMember = check.validateMember(request);
         Post post = check.getCurrentPost(reservationRequestDto.getPostId());
@@ -125,7 +125,7 @@ public class ReservationService {
 
     // 빌리의 수령 완료 처리
     @Transactional
-    public ResponseDto<?> completedDelivery(Long reservationId,
+    public ResponseDto<String> completedDelivery(Long reservationId,
                                                     HttpServletRequest request) {
         Member billy = check.validateMember(request);
         Reservation reservation = check.getCurrentReservation(reservationId);
@@ -141,7 +141,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public ResponseDto<?> getReservationByBillyAndState(int state, HttpServletRequest request) {
+    public ResponseDto<List<ReservationDetailResponseDto>> getReservationByBillyAndState(int state, HttpServletRequest request) {
         Member billy = check.validateMember(request);
         check.tokenCheck(request, billy);
         List<ReservationDetailResponseDto> response
@@ -151,7 +151,7 @@ public class ReservationService {
 
 
     @Transactional
-    public ResponseDto<?> getReservationByJullyAndState(int state, HttpServletRequest request) {
+    public ResponseDto<List<ReservationDetailResponseDto>> getReservationByJullyAndState(int state, HttpServletRequest request) {
         Member jully = check.validateMember(request);
         check.tokenCheck(request, jully);
         List<ReservationDetailResponseDto> response
@@ -161,7 +161,7 @@ public class ReservationService {
 
 
     @Transactional
-    public ResponseDto<?> getReservationCountByBillyAndState(HttpServletRequest request) {
+    public ResponseDto<ReservationCountDto> getReservationCountByBillyAndState(HttpServletRequest request) {
         Member billy = check.validateMember(request);
         check.tokenCheck(request, billy);
 
@@ -177,7 +177,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public ResponseDto<?> getReservationCountByJullyAndState(HttpServletRequest request) {
+    public ResponseDto<ReservationCountDto> getReservationCountByJullyAndState(HttpServletRequest request) {
         Member jully = check.validateMember(request);
         check.tokenCheck(request, jully);
 
