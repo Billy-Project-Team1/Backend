@@ -144,17 +144,21 @@ public class ReservationService {
     public ResponseDto<?> getReservationByBillyAndState(int state, HttpServletRequest request) {
         Member billy = check.validateMember(request);
         check.tokenCheck(request, billy);
-        List<ReservationDetailResponseDto> response = reservationQueryRepository.findReservationByBillyAndState(billy, state);
+        List<ReservationDetailResponseDto> response
+                = reservationQueryRepository.findReservationByBillyAndState(billy, state);
         return ResponseDto.success(response);
     }
+
 
     @Transactional
     public ResponseDto<?> getReservationByJullyAndState(int state, HttpServletRequest request) {
         Member jully = check.validateMember(request);
         check.tokenCheck(request, jully);
-        List<ReservationDetailResponseDto> response = reservationQueryRepository.findReservationByJullyAndState(jully, state);
+        List<ReservationDetailResponseDto> response
+                = reservationQueryRepository.findReservationByJullyAndState(jully, state);
         return ResponseDto.success(response);
     }
+
 
     @Transactional
     public ResponseDto<?> getReservationCountByBillyAndState(HttpServletRequest request) {

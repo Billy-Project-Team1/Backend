@@ -236,6 +236,7 @@ public class PostService {
         return ResponseDto.success(response);
     }
 
+    @Transactional
     public ResponseDto<?> getPostsByElasticSearch(SearchRequestDto searchRequestDto) {
         List<PostDocument> postDocumentList = postEsRepository.findBySearchKeyword(searchRequestDto.getKeyword());
 
