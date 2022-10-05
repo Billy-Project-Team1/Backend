@@ -24,7 +24,7 @@ public class LikeService {
     private final Check check;
 
     @Transactional
-    public ResponseDto<?> upDownLike(Long postId, HttpServletRequest request) {
+    public ResponseDto<String> upDownLike(Long postId, HttpServletRequest request) {
         Member member = check.validateMember(request);
         check.tokenCheck(request, member);
         Post post = check.getCurrentPost(postId);
@@ -45,7 +45,7 @@ public class LikeService {
     }
 
     @Transactional
-    public ResponseDto<?> getLikePostListByMember(HttpServletRequest request) {
+    public ResponseDto<List<PostResponseDto>> getLikePostListByMember(HttpServletRequest request) {
         Member member = check.validateMember(request);
         check.tokenCheck(request, member);
         List<PostResponseDto> response = postQueryRepository.findLikePostByMember(member);

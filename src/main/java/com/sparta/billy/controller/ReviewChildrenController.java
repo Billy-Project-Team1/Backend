@@ -2,6 +2,7 @@ package com.sparta.billy.controller;
 
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewChildrenRequestDto;
+import com.sparta.billy.dto.ReviewDto.ReviewChildrenResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.ReviewChildrenService;
 import com.sparta.billy.service.ReviewService;
@@ -18,13 +19,13 @@ public class ReviewChildrenController {
     private final ReviewService reviewService;
 
     @PostMapping("/auth/reviews/comments")
-    public ResponseDto<?> commentCreate(@RequestBody ReviewChildrenRequestDto reviewChildrenRequestDto,
-                                        HttpServletRequest request) {
+    public ResponseDto<ReviewChildrenResponseDto> commentCreate(@RequestBody ReviewChildrenRequestDto reviewChildrenRequestDto,
+                                                                HttpServletRequest request) {
         return reviewChildrenService.createComment(reviewChildrenRequestDto, request);
     }
 
     @PutMapping("/auth/reviews/comments/{commentId}")
-    public ResponseDto<?> commentUpdate(@PathVariable Long commentId,
+    public ResponseDto<ReviewChildrenResponseDto> commentUpdate(@PathVariable Long commentId,
                                         @RequestBody ReviewChildrenRequestDto reviewChildrenRequestDto,
                                         HttpServletRequest request) {
         return reviewChildrenService.updateComment(commentId, reviewChildrenRequestDto, request);

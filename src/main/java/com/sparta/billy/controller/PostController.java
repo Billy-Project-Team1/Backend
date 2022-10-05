@@ -1,5 +1,7 @@
 package com.sparta.billy.controller;
 
+import com.sparta.billy.dto.PostDto.PostDetailResponseDto;
+import com.sparta.billy.dto.PostDto.PostResponseDto;
 import com.sparta.billy.dto.PostDto.PostUploadRequestDto;
 import com.sparta.billy.dto.PostDto.SearchRequestDto;
 import com.sparta.billy.dto.ResponseDto;
@@ -7,6 +9,7 @@ import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +24,10 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/auth/posts")
-    public ResponseDto<?> postCreate(@RequestPart PostUploadRequestDto postUploadRequestDto,
-                                     @RequestParam(required = false) List<String> blockDateDtoList,
-                                     @RequestPart(required = false) List<MultipartFile> files,
-                                     HttpServletRequest request) throws IOException {
+    public ResponseDto<PostDetailResponseDto> postCreate(@RequestPart PostUploadRequestDto postUploadRequestDto,
+                                                         @RequestParam(required = false) List<String> blockDateDtoList,
+                                                         @RequestPart(required = false) List<MultipartFile> files,
+                                                         HttpServletRequest request) throws IOException {
         if (files == null) {
             throw new IllegalArgumentException("MULTIPART FILE IS EMPTY");
         }
@@ -33,7 +36,7 @@ public class PostController {
     }
 
     @PatchMapping("/auth/posts/{postId}")
-    public ResponseDto<?> postUpdate(@PathVariable Long postId,
+    public ResponseDto<PostDetailResponseDto> postUpdate(@PathVariable Long postId,
                                      @RequestPart(required = false) PostUploadRequestDto postUploadRequestDto,
                                      @RequestParam(required = false) List<String> blockDateDtoList,
                                      @RequestPart(required = false) List<MultipartFile> files,
@@ -48,22 +51,22 @@ public class PostController {
     }
 
     @GetMapping("/posts/details/{postId}")
-    public ResponseDto<?> postDetails(@PathVariable Long postId, @RequestParam(required = false) String userId) {
+    public ResponseDto<PostDetailResponseDto> postDetails(@PathVariable Long postId, @RequestParam(required = false) String userId) {
         return postService.getPostDetails(postId, userId);
     }
 
     @GetMapping("/auth/posts/member-page/{userId}")
-    public ResponseDto<?> postMemberUpload(@PathVariable String userId) {
+    public ResponseDto<List<PostResponseDto>> postMemberUpload(@PathVariable String userId) {
         return postService.getMemberPost(userId);
     }
 
     @GetMapping("/posts")
-    public ResponseDto<?> postAll(Long lastPostId, Pageable pageable) {
+    public ResponseDto<Slice<PostResponseDto>> postAll(Long lastPostId, Pageable pageable) {
         return postService.getAllPosts(lastPostId, pageable);
     }
 
     @PostMapping("/posts/elasticsearch")
-    public ResponseDto<?> searchPost(@RequestBody SearchRequestDto searchRequestDto) throws IOException {
+    public ResponseDto<List<PostResponseDto>> searchPost(@RequestBody SearchRequestDto searchRequestDto) throws IOException {
         return postService.getPostsByElasticSearch(searchRequestDto);
     }
 

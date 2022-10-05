@@ -2,6 +2,7 @@ package com.sparta.billy.controller;
 
 import com.sparta.billy.dto.ResponseDto;
 import com.sparta.billy.dto.ReviewDto.ReviewRequestDto;
+import com.sparta.billy.dto.ReviewDto.ReviewResponseDto;
 import com.sparta.billy.dto.SuccessDto;
 import com.sparta.billy.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +20,14 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/auth/reviews")
-    public ResponseDto<?> reviewCreate(@RequestPart ReviewRequestDto reviewRequestDto,
-                                       @RequestPart(required = false) List<MultipartFile> files,
-                                       HttpServletRequest request) throws IOException {
+    public ResponseDto<ReviewResponseDto> reviewCreate(@RequestPart ReviewRequestDto reviewRequestDto,
+                                                       @RequestPart(required = false) List<MultipartFile> files,
+                                                       HttpServletRequest request) throws IOException {
         return reviewService.createReview(reviewRequestDto, files, request);
     }
 
     @PatchMapping("/auth/reviews/{reviewId}")
-    public ResponseDto<?> reviewUpdate(@PathVariable Long reviewId,
+    public ResponseDto<ReviewResponseDto> reviewUpdate(@PathVariable Long reviewId,
                                        @RequestPart ReviewRequestDto reviewRequestDto,
                                        @RequestPart(required = false) List<MultipartFile> files,
                                        @RequestParam(required = false) List<String> imgUrlList,
@@ -40,12 +41,12 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{postId}")
-    public ResponseDto<?> reviewByPost(@PathVariable Long postId, @RequestParam(required = false) String userId) {
+    public ResponseDto<List<ReviewResponseDto>> reviewByPost(@PathVariable Long postId, @RequestParam(required = false) String userId) {
         return reviewService.getReviewsByPost(postId, userId);
     }
 
     @GetMapping("/auth/reviews/received/{userId}")
-    public ResponseDto<?> reviewByReceived(@PathVariable String userId) {
+    public ResponseDto<List<ReviewResponseDto>> reviewByReceived(@PathVariable String userId) {
         return reviewService.getReceivedReview(userId);
     }
 }
