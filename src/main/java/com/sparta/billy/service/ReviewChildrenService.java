@@ -21,7 +21,7 @@ public class ReviewChildrenService {
     private final Check check;
 
     @Transactional
-    public ResponseDto<?> createComment(ReviewChildrenRequestDto reviewChildrenRequestDto,
+    public ResponseDto<ReviewChildrenResponseDto> createComment(ReviewChildrenRequestDto reviewChildrenRequestDto,
                                        HttpServletRequest request) {
         Member member = check.validateMember(request);
         Review review = check.getCurrentReview(reviewChildrenRequestDto.getReviewId());
@@ -41,7 +41,7 @@ public class ReviewChildrenService {
     }
 
     @Transactional
-    public ResponseDto<?> updateComment(Long commentId,
+    public ResponseDto<ReviewChildrenResponseDto> updateComment(Long commentId,
                                        ReviewChildrenRequestDto reviewChildrenRequestDto,
                                        HttpServletRequest request) {
         Member member = check.validateMember(request);

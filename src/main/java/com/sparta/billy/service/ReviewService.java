@@ -37,7 +37,7 @@ public class ReviewService {
     private final Check check;
 
     @Transactional
-    public ResponseDto<?> createReview(ReviewRequestDto reviewRequestDto,
+    public ResponseDto<ReviewResponseDto> createReview(ReviewRequestDto reviewRequestDto,
                                        List<MultipartFile> files,
                                        HttpServletRequest request) throws IOException {
         Member member = check.validateMember(request);
@@ -94,7 +94,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseDto<?> updateReview(Long reviewId,
+    public ResponseDto<ReviewResponseDto> updateReview(Long reviewId,
                                        ReviewRequestDto reviewRequestDto,
                                        List<MultipartFile> files,
                                        List<String> imgUrlList,
@@ -163,7 +163,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseDto<?> getReviewsByPost(Long postId, String userId) {
+    public ResponseDto<List<ReviewResponseDto>> getReviewsByPost(Long postId, String userId) {
         Post post = check.getCurrentPost(postId);
         check.checkPost(post);
         List<ReviewResponseDto> reviews = reviewQueryRepository.findReviewByPostId(postId, userId);
@@ -171,7 +171,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseDto<?> getReceivedReview(String userId) {
+    public ResponseDto<List<ReviewResponseDto>> getReceivedReview(String userId) {
         Member member = check.getMemberByUserId(userId);
 
         List<ReviewResponseDto> response = reviewQueryRepository.findReviewReceived(member);
