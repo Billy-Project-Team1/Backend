@@ -7,6 +7,7 @@ import com.sparta.billy.dto.MemberDto.KakaoMemberInfoDto;
 import com.sparta.billy.dto.MemberDto.MemberResponseDto;
 import com.sparta.billy.dto.MemberDto.TokenDto;
 import com.sparta.billy.dto.ResponseDto;
+import com.sparta.billy.exception.ex.MemberException.MemberNotFoundException;
 import com.sparta.billy.model.Member;
 import com.sparta.billy.model.UserDetailsImpl;
 import com.sparta.billy.repository.MemberRepository;
@@ -85,6 +86,10 @@ public class KakaoMemberService {
         Member member = check.getMemberByUserId(kakaoMember.getUserId());
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenDto.tokenToHeaders(response);
+
+        if (member.isDelete()) {
+            throw new MemberNotFoundException();
+        }
 
         return ResponseDto.success(
                 MemberResponseDto.builder()
