@@ -157,24 +157,24 @@ public class MemberService {
             refreshTokenRepository.deleteByMember(member);
         }
 
-        if (!invitedMembersRepository.findAllByMemberId(member.getId()).isEmpty()) {
-            invitedMembersRepository.deleteAllByMemberId(member.getId());
-        }
-
-        if (!chatRoomJpaRepository.findAllByMemberId(member.getId()).isEmpty()) {
-            chatRoomJpaRepository.deleteAllByMemberId(member.getId());
-        }
+//        if (!invitedMembersRepository.findAllByMemberId(member.getId()).isEmpty()) {
+//            invitedMembersRepository.deleteAllByMemberId(member.getId());
+//        }
+//
+//        if (!chatRoomJpaRepository.findAllByMemberId(member.getId()).isEmpty()) {
+//            chatRoomJpaRepository.deleteAllByMemberId(member.getId());
+//        }
 
         List<Reservation> reservationListByJully = reservationRepository.findAllByJully(member);
         for (Reservation r : reservationListByJully) {
-            if (r.getState() != 3 || r.getState() != 5) {
+            if (r.getState() != 3 && r.getState() != 5) {
                 throw new IllegalArgumentException("진행중인 예약건이 있습니다.");
             }
          }
 
         List<Reservation> reservationListByBilly = reservationRepository.findAllByBilly(member);
         for (Reservation r : reservationListByBilly) {
-            if (r.getState() != 3 || r.getState() != 5) {
+            if (r.getState() != 3 && r.getState() != 5) {
                 throw new IllegalArgumentException("진행중인 예약건이 있습니다.");
             }
         }
